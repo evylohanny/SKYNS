@@ -1,9 +1,11 @@
-import { useState } from 'react';
 
 function Header() {
 
   return (
-    <div>Header</div>
+    <div>
+      Header
+      <h1 class="text-3xl font-bold underline">Hello world!</h1>
+    </div>
   );
 };
 
