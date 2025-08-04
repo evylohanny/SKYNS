@@ -1,8 +1,30 @@
-import React from 'react'
+// import { useState } from "react";
+// import clsx from 'clsx';
 
 function Header() {
+
   return (
-    <div>Header</div>
+    <nav>
+        <div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div>
+            <div>
+                <img src="" alt="" />
+                <p></p>
+            </div>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+            <p>Departamento</p>
+        </div>
+    </nav>
   );
 };
 
