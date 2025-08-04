@@ -4,7 +4,7 @@
 function Header() {
 
   return (
-    <nav>
+    <nav className="flex bg-blue-600 w-full h-24 px-6">
         <div>
             <div></div>
             <div></div>
@@ -13,7 +13,7 @@ function Header() {
         <div>
             <div>
                 <img src="" alt="" />
-                <p></p>
+                <p>Todas as categorias</p>
             </div>
             <p>Departamento</p>
             <p>Departamento</p>
