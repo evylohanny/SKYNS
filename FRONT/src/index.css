@@ -3,6 +3,7 @@
 @theme {
     --color-*:initial;
     --color-purple: #BFA2DB;
+    --color-graypurple: #C7C1DB;
     --color-purpledark: #9643E6;
     --color-gray: #C7C1DB;
     --color-blue: #C2E9F9;
@@ -14,4 +15,5 @@
     --color-yellow: #FFDD59;
     --color-black: #000;
     --color-lightwhite: #ffff;
+    --color-gray: #1E1E1E;
 }
