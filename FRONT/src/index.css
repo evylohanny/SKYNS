@@ -14,3 +14,7 @@
     --color-black: #000;
     --color-lightwhite: #ffff;
 }
+
+html, body, #root {
+  height: 100%;
+}
