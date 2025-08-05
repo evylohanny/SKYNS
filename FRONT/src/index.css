@@ -19,6 +19,8 @@
     --color-blackwhite: #1E1E1E;
 
     --font-primary: 'Nunito Sans', sans-serif;
+    --color-gray1: #1E1E1E;
+    --color-footer: #C2B8E5;
 }
 
 html, body, #root {
