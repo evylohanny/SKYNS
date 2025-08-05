@@ -15,12 +15,8 @@
     --color-yellow: #FFDD59;
     --color-black: #000;
     --color-lightwhite: #ffff;
-<<<<<<< HEAD
 }
 
 html, body, #root {
   height: 100%;
-=======
-    --color-gray: #1E1E1E;
->>>>>>> e9baad57e8477a4c9482276fda9220f9a5c70010
 }
