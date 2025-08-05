@@ -1,12 +1,11 @@
 import Header from '../components/Header';
-import Footer from '../components/FooterTecnico'
-import FooterCompleto from '../components/FooterCompleto';
+import Footer from '../components/Footer'
 
 function Home() {
     
   return (
     <div>
-      <FooterCompleto/>
+      <Header/>
     </div>
   );
 };
