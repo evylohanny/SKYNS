@@ -11,9 +11,9 @@ function Home() {
           <div className="h-full w-full relative">
             <img className="w-full" src={poster} alt="" />
           </div>
-          <div className="absolute">
-            <p>CUIDAR DA PELE TAMBÉM É CUIDAR DE VOCÊ</p>
-            <h1>Transforme sua rotina em um ritual de acolhimento.</h1>
+          <div className="flex flex-col absolute m-30">
+            <p className="text-white font-secondary font-semibold">CUIDAR DA PELE TAMBÉM É CUIDAR DE VOCÊ</p>
+            <h1 className="text-extradarkpurple text-5xl w-150 font-secondary font-bold">Transforme sua rotina em um ritual de acolhimento.</h1>
             <p>
               SUA PELE É ÚNICA. DESCUBRA OS INGREDIENTES CERTOS PARA CUIDAR DELA COM CIÊNCIA E CARINHO.
             </p>

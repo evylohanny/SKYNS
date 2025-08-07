@@ -6,6 +6,7 @@
     --color-purple: #BFA2DB;
     --color-graypurple: #C7C1DB;
     --color-purpledark: #9643E6;
+    --color-extradarkpurple: #2A3659;
     --color-gray: #C7C1DB;
     --color-blue: #C2E9F9;
     --color-white: #F8F9F8;
@@ -19,6 +20,7 @@
     --color-blackwhite: #1E1E1E;
 
     --font-primary: 'Nunito Sans', sans-serif;
+    --font-secondary: 'DM Sans', sans-serif;
     --color-gray1: #1E1E1E;
     --color-footer: #C2B8E5;
 }
