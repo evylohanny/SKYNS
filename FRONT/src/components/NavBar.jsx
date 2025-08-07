@@ -55,7 +55,7 @@ function NavBar() {
 
       <div className='h-30 flex flex-col justify-start items-center gap-3 shadow-xl'>
 
-        <div className='flex justify-around items-center w-full p-3'>
+        <div className='flex justify-center gap-65 items-center w-full p-3'>
 
           <div className="relative w-[300px]">
             <input
@@ -69,7 +69,7 @@ function NavBar() {
             </span>
           </div>
 
-          <div>
+          <div className='pr-5'>
             <img src={logoNav} alt="" />
           </div>
 
@@ -150,7 +150,6 @@ function NavBar() {
             "Pedidos",
             "Mais vendidos",
             "Rastreio",
-            "Queima de estoque",
             "SKYNS ideal para sua pele",
             "Feedback",
             "Lojas físicas",
