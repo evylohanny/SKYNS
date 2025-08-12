@@ -1,8 +1,7 @@
 function Filtro() {
   return (
-    <div className="flex flex-col w-60 font-secondary">
-      <div className="flex flex-col text-blackwhite/80 gap-5 pb-5 sticky top-28">
-        {/* Seção Tipo de Pele */}
+    <div className="flex flex-col w-50 font-secondary">
+      <div className="flex flex-col text-blackwhite/80 gap-5 pb-5 sticky top-20">
         <div className="border-2 border-blue p-2 w-full rounded-full">
           <h1 className="font-semibold text-sm text-blackwhite/80 pl-2">Tipo de pele</h1>
         </div>
@@ -10,8 +9,7 @@ function Filtro() {
         <div className="flex flex-row pl-5">
           <p>Acneica</p>
         </div>
-        
-        {/* Seção Componentes */}
+     
         <div className="flex flex-col text-blackwhite/80 gap-4 font-medium">
           <div className="border-2 border-blue p-2 w-full rounded-full">
             <h1 className="font-semibold text-sm text-blackwhite/80 pl-2">Componentes</h1>
