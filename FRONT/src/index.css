@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;1,9..40,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 @theme {
     --color-*:initial;
@@ -24,8 +25,11 @@
 
     --font-primary: 'Nunito Sans', sans-serif;
     --font-secondary: 'DM Sans', sans-serif;
+    --font-tertiary: 'Open Sans', sans-serif;
     --color-gray1: #1E1E1E;
     --color-footer: #C2B8E5;
+    --color-blueG: #899BBD;
+    --color-graylight: #F6F9FF;
 }
 
 html, body, #root {
