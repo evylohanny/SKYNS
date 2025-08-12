@@ -6,11 +6,13 @@ import "swiper/css";
 
 import NavBar from "../components/NavBar";
 import poster from "../assets/poster.svg";
-import banner from "../assets/Frame 23864.svg";
-
-import fototeste from "../assets/logoNav.svg";
-
-import { FaStar } from "react-icons/fa";
+import banner from "../assets/banner.svg";
+import carrinho_roxo from "../assets/carrinho.svg";
+import carrinho_branco from "../assets/carrinho branco.svg";
+import seta_direita from "../assets/seta direita.svg";
+import seta_esquerda from "../assets/seta esquerda.svg";
+import product from "../assets/[PRODUCT] 1.svg";
+import estrela from "../assets/estrela.svg";
 
 function Home() {
 
@@ -20,41 +22,43 @@ function Home() {
     description:
       "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
     price: "59,90",
-    image: fototeste,
+    image: product,
   },
   {
-    name: "Ácido hialurônico hidratante firmador Premium",
+    name: "Ácido hialurônico Premium",
     description:
       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
     price: "89,90",
-    image: fototeste,
+    image: product,
   },
   {
     name: "Sérum humificado três leites",
     description: "O mais puro esfoliante extraído do leite de cabra.",
     price: "37,99",
-    image: fototeste,
+    image: product,
   },
   {
     name: "Protetor labial sabor cereja do amor",
     description:
       "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
     price: "37,99",
-    image: fototeste,
+    image: product,
   },
   {
     name: "Máscara facial detox de argila verde",
     description:
       "Remove impurezas e controla a oleosidade sem ressecar a pele.",
     price: "29,90",
-    image: fototeste,
+    image: product,
   },
   {
     name: "Creme nutritivo com vitamina C",
     description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
     price: "49,90",
-    image: fototeste,
+    image: product,
   }]);
+
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const scrollToSection = () => {
     document.getElementById("products").scrollIntoView({ behavior: "smooth" });
@@ -89,7 +93,7 @@ function Home() {
         </div>
       </section>
 
-      <section id="products" className="flex flex-col items-center h-[100vh]">
+      <section id="products" className="flex flex-col items-center h-[100vh] mt-30">
         <img className="max-w-[1200px] w-full shadow-lg" src={banner} alt="" />
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
           Queridinhos da galera
@@ -97,58 +101,54 @@ function Home() {
         <h1 className="mt-2 text-extradarkpurple font-secondary tracking-[1px] text-[45px] font-medium">
           Produtos mais vendidos
         </h1>
-        <div className="w-full mt-15">
+        <div className="w-full mt-15 relative">
 <Swiper
       modules={[Navigation, Pagination, A11y]}
       spaceBetween={20}
       slidesPerView={4}
-      navigation
+       navigation={{
+         nextEl: '.custom-next',
+         prevEl: '.custom-prev',
+        }}
       pagination={{ clickable: true }}
       breakpoints={{
         320: { slidesPerView: 1 },
         640: { slidesPerView: 2 },
         1024: { slidesPerView: 4 },
       }}
-      className="px-8"
+      className="w-265 gap-3 flex relative z-0"
     >
       {products?.map((item, index) => (
-        <SwiperSlide key={index} className="flex flex-col items-center">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden w-[260px] mr-15 ml-15">
-            <div className="w-full h-[240px] bg-gray-100 flex items-center justify-center">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="object-cover w-full h-full"
-              />
-            </div>
-
-            <div className="p-4 flex flex-col gap-2">
-              <h2 className="text-lg font-semibold">{item.name}</h2>
-              <p className="text-sm text-gray-600">{item.description}</p>
-
-              <div className="flex items-center gap-1 text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} />
-                ))}
-              </div>
-
-              <p className="text-lg font-bold text-purple-600">
-                R${item.price}
-              </p>
-
-              <div className="flex items-center gap-3">
-                <button className="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 rounded-full transition">
-                  Adicionar
-                </button>
-                <button className="p-2 border-2 border-purple-500 rounded-full hover:bg-purple-100 transition">
-                  🛒
-                </button>
-              </div>
-            </div>
+        <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer relative-group">
+        <div className="flex flex-col h-max-[100vh] w-[238px] gap-1">
+         <div className="w-[238px] h-[238px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+          <img className="w-full h-full object-cover" src={item.image} alt="" />
+         </div>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <div className="w-full mt-5 flex gap-1">
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+         </div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="flex flex-row w-full gap-1.5">
+          <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
+          <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
+           onMouseEnter={() => setHoveredIndex(index)}
+           onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <img className="w-5" src={hoveredIndex === index ? carrinho_branco : carrinho_roxo} alt="" />
           </div>
+         </div>
+        </div>
         </SwiperSlide>
       ))}
     </Swiper>
+      <div className="custom-prev absolute left-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next absolute right-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
         </div>
       </section>
     </div>
