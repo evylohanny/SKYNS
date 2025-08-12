@@ -6,11 +6,13 @@ import "swiper/css";
 
 import NavBar from "../components/NavBar";
 import poster from "../assets/poster.svg";
-import banner from "../assets/Frame 23864.svg";
+import banner from "../assets/banner.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
 import carrinho_branco from "../assets/carrinho branco.svg";
-
+import seta_direita from "../assets/seta direita.svg";
+import seta_esquerda from "../assets/seta esquerda.svg";
 import product from "../assets/[PRODUCT] 1.svg";
+import estrela from "../assets/estrela.svg";
 
 function Home() {
 
@@ -23,7 +25,7 @@ function Home() {
     image: product,
   },
   {
-    name: "Ácido hialurônico hidratante firmador Premium",
+    name: "Ácido hialurônico Premium",
     description:
       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
     price: "89,90",
@@ -99,33 +101,42 @@ function Home() {
         <h1 className="mt-2 text-extradarkpurple font-secondary tracking-[1px] text-[45px] font-medium">
           Produtos mais vendidos
         </h1>
-        <div className="w-full mt-15">
+        <div className="w-full mt-15 relative">
 <Swiper
       modules={[Navigation, Pagination, A11y]}
       spaceBetween={20}
       slidesPerView={4}
-      navigation
+       navigation={{
+         nextEl: '.custom-next',
+         prevEl: '.custom-prev',
+        }}
       pagination={{ clickable: true }}
       breakpoints={{
         320: { slidesPerView: 1 },
         640: { slidesPerView: 2 },
         1024: { slidesPerView: 4 },
       }}
-      className="w-265 gap-3"
+      className="w-265 gap-3 flex relative z-0"
     >
       {products?.map((item, index) => (
         <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer relative-group">
-        <div className="flex flex-col h-max-[100vh] w-[238px] gap-4">
-         <div className="w-[238px] h-[268px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+        <div className="flex flex-col h-max-[100vh] w-[238px] gap-1">
+         <div className="w-[238px] h-[238px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
           <img className="w-full h-full object-cover" src={item.image} alt="" />
          </div>
-         <h1 className="text-black opacity-70 text-[20px] h-[80px] font-secondary not-italic [font-optical-sizing:auto] font-bold ml-3 w-full">{item.name}</h1>
-         <p className="w-full ml-3 text-[13px] text-black h-[40px]">{item.description}</p>
-         <div className="w-full mt-2 ml-3">⭐⭐⭐⭐⭐</div>
-         <div className="text-purpledark text-[20px] font-semibold ml-3">{`R$ ${item.price}`}</div>
-         <div className="flex flex-row w-full ml-3 gap-1.5">
-          <div className="flex w-50 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
-          <div className="flex justify-center items-center border-[1.5px] w-15 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <div className="w-full mt-5 flex gap-1">
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+         </div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="flex flex-row w-full gap-1.5">
+          <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
+          <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
            onMouseEnter={() => setHoveredIndex(index)}
            onMouseLeave={() => setHoveredIndex(null)}
           >
@@ -136,6 +147,8 @@ function Home() {
         </SwiperSlide>
       ))}
     </Swiper>
+      <div className="custom-prev absolute left-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next absolute right-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
         </div>
       </section>
     </div>
