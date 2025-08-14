@@ -13,50 +13,107 @@ import seta_direita from "../assets/seta direita.svg";
 import seta_esquerda from "../assets/seta esquerda.svg";
 import product from "../assets/[PRODUCT] 1.svg";
 import estrela from "../assets/estrela.svg";
+import pessoas from "../assets/pessoas.svg";
 
 function Home() {
 
   const [products, setProcuts] = useState([
      {
-    name: "Ácido hialurônico hidratante firmador",
-    description:
-      "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
-    price: "59,90",
-    image: product,
-  },
-  {
-    name: "Ácido hialurônico Premium",
-    description:
-      "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
-    price: "89,90",
-    image: product,
-  },
-  {
-    name: "Sérum humificado três leites",
-    description: "O mais puro esfoliante extraído do leite de cabra.",
-    price: "37,99",
-    image: product,
-  },
-  {
-    name: "Protetor labial sabor cereja do amor",
-    description:
-      "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
-    price: "37,99",
-    image: product,
-  },
-  {
-    name: "Máscara facial detox de argila verde",
-    description:
-      "Remove impurezas e controla a oleosidade sem ressecar a pele.",
-    price: "29,90",
-    image: product,
-  },
-  {
-    name: "Creme nutritivo com vitamina C",
-    description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
-    price: "49,90",
-    image: product,
-  }]);
+      name: "Ácido hialurônico hidratante firmador",
+      description:
+        "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
+      price: "59,90",
+      image: product,
+    },
+    {
+      name: "Ácido hialurônico Premium",
+      description:
+        "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
+      price: "89,90",
+      image: product,
+    },
+    {
+      name: "Sérum humificado três leites",
+      description: "O mais puro esfoliante extraído do leite de cabra.",
+      price: "37,99",
+      image: product,
+    },
+    {
+      name: "Protetor labial sabor cereja do amor",
+      description:
+        "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
+      price: "37,99",
+      image: product,
+    },
+    {
+      name: "Máscara facial detox de argila verde",
+      description:
+        "Remove impurezas e controla a oleosidade sem ressecar a pele.",
+      price: "29,90",
+      image: product,
+    },
+    {
+      name: "Creme nutritivo com vitamina C",
+      description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
+      price: "49,90",
+      image: product,
+    },
+    {
+      name: "Ácido hialurônico hidratante firmador",
+      description: "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
+      price: "59,90",
+      image: product,
+    },
+    {
+      name: "Ácido hialurônico Premium",
+      description:
+        "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
+      price: "89,90",
+      image: product,
+    },
+    {
+      name: "Sérum humificado três leites",
+      description: "O mais puro esfoliante extraído do leite de cabra.",
+      price: "37,99",
+      image: product,
+    },
+    {
+      name: "Protetor labial sabor cereja do amor",
+      description:
+        "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
+      price: "37,99",
+      image: product,
+    },
+    {
+      name: "Máscara facial detox de argila verde",
+      description:
+        "Remove impurezas e controla a oleosidade sem ressecar a pele.",
+      price: "29,90",
+      image: product,
+    }]);
+
+    const comments = [
+      {
+        product_title: 'Creme Noturno Regenerador',
+        description: 'Acordo com a pele super macia e renovada! Esse creme noturno é maravilhoso, tem uma textura leve e um cheirinho calmante. Parece que minha pele descansa junto comigo.',
+        stars: 5
+      },
+      {
+        product_title: 'Creme Noturno Regenerador',
+        description: 'Acordo com a pele super macia e renovada! Esse creme noturno é maravilhoso, tem uma textura leve e um cheirinho calmante. Parece que minha pele descansa junto comigo.',
+        stars: 5
+      },
+      {
+        product_title: 'Creme Noturno Regenerador',
+        description: 'Acordo com a pele super macia e renovada! Esse creme noturno é maravilhoso, tem uma textura leve e um cheirinho calmante. Parece que minha pele descansa junto comigo.',
+        stars: 5
+      },
+      {
+        product_title: 'Creme Noturno Regenerador',
+        description: 'Acordo com a pele super macia e renovada! Esse creme noturno é maravilhoso, tem uma textura leve e um cheirinho calmante. Parece que minha pele descansa junto comigo.',
+        stars: 5
+      }
+    ];
 
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -65,7 +122,7 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-[1000vh] items-center">
       <NavBar />
 
       <section className="relative w-full h-[75vh] flex items-start">
@@ -93,8 +150,8 @@ function Home() {
         </div>
       </section>
 
-      <section id="products" className="flex flex-col items-center h-[100vh] mt-30">
-        <img className="max-w-[1200px] w-full shadow-lg" src={banner} alt="" />
+      <section id="products" className="flex flex-col items-center h-[120vh] mt-30">
+        <img className="w-295 shadow-lg" src={banner} alt="" />
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
           Queridinhos da galera
         </h2>
@@ -102,26 +159,38 @@ function Home() {
           Produtos mais vendidos
         </h1>
         <div className="w-full mt-15 relative">
-<Swiper
+    <Swiper
       modules={[Navigation, Pagination, A11y]}
-      spaceBetween={20}
+      spaceBetween={45}
       slidesPerView={4}
        navigation={{
          nextEl: '.custom-next',
          prevEl: '.custom-prev',
         }}
-      pagination={{ clickable: true }}
+      loop={true}
+      pagination={{
+        el: ".swiper-pagination",
+        clickable: true,
+        renderBullet: (index, className) => {
+          // Mostra apenas os 5 primeiros bullets
+          if (index < 5) {
+            return `<span class="${className}"></span>`;
+          }
+          return "";
+        },
+      }}
+      speed={600}
       breakpoints={{
         320: { slidesPerView: 1 },
         640: { slidesPerView: 2 },
         1024: { slidesPerView: 4 },
       }}
-      className="w-265 gap-3 flex relative z-0"
+      className="w-295 flex relative z-0"
     >
       {products?.map((item, index) => (
-        <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer relative-group">
-        <div className="flex flex-col h-max-[100vh] w-[238px] gap-1">
-         <div className="w-[238px] h-[238px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+        <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
+        <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
+         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
           <img className="w-full h-full object-cover" src={item.image} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
@@ -147,9 +216,144 @@ function Home() {
         </SwiperSlide>
       ))}
     </Swiper>
-      <div className="custom-prev absolute left-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next absolute right-10 top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="swiper-pagination cursor-pointer"></div>
+      <div className="custom-prev absolute left-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      </div>
+      </section>
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-50">
+        <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
+          Coleção de verão
+        </h2>
+        <h1 className="mt-2 text-extradarkpurple font-secondary tracking-[1px] text-[45px] font-medium">
+          Refrescantes e arejados
+        </h1>
+        <div className="w-full mt-15 relative">
+    <Swiper
+      modules={[Navigation, Pagination, A11y]}
+      spaceBetween={45}
+      slidesPerView={4}
+       navigation={{
+         nextEl: '.custom-next-2',
+         prevEl: '.custom-prev-2',
+        }}
+      loop={true}
+      pagination={{
+        el: ".swiper-pagination-2",
+        clickable: true,
+        renderBullet: (index, className) => {
+          // Mostra apenas os 5 primeiros bullets
+          if (index < 5) {
+            return `<span class="${className}"></span>`;
+          }
+          return "";
+        },
+      }}
+      speed={600}
+      breakpoints={{
+        320: { slidesPerView: 1 },
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 4 },
+      }}
+      className="w-295 flex relative z-0"
+    >
+      {products?.map((item, index) => (
+        <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
+        <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
+         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+          <img className="w-full h-full object-cover" src={item.image} alt="" />
+         </div>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <div className="w-full mt-5 flex gap-1">
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+         </div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="flex flex-row w-full gap-1.5">
+          <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
+          <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
+           onMouseEnter={() => setHoveredIndex(index)}
+           onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <img className="w-5" src={hoveredIndex === index ? carrinho_branco : carrinho_roxo} alt="" />
+          </div>
+         </div>
         </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+      <div className="swiper-pagination-2 cursor-pointer"></div>
+      <div className="custom-prev-2 absolute left-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next-2 absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      </div>
+      </section>
+      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 bg-purple mt-50">
+        <div className="flex flex-col m-10 w-60">
+          <h1 className="text-blackwhite text-[25px] font-secondary">A realidade sobre nossas entregas</h1>
+          <p className="text-blackwhite text-[14px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
+          <div className="mt-4">
+            <img src={pessoas} alt="" />
+          </div>
+        </div>
+        <Swiper>
+          {
+            comments?.map((item, index) => (
+              <SwiperSlide
+                key={index}
+              >
+                <div>
+                  {
+                    item.stars === 1
+                    ?
+                    <img src={estrela} alt="estrela" />
+                    :
+                    item.stars === 2
+                    ?
+                    <>
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    </>
+                    :
+                    item.stars === 3
+                    ?
+                    <>
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    </>
+                    :
+                    item.stars === 4
+                    ?
+                    <>
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    </>
+                    :
+                    item.stars === 5
+                    ?
+                    <>
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    <img src={estrela} alt="estrela" />
+                    </>
+                    :
+                    <div>Sem estrelas</div>
+                  }
+                </div>
+                <h1>{item.title}</h1>
+                <p>{`"${item.description}"`}</p>
+              </SwiperSlide>
+            ))
+          }
+        </Swiper>
       </section>
     </div>
   );
