@@ -371,6 +371,12 @@ function Produtos() {
           </div>
         </div>
       </div>
+        <div className="p-2">
+          <div class='flex gap-4 border-b-2 border-b-grayNaosei'>
+            <p class='text-purpledark font-semibold text-lg'>Como funciona</p>
+            <p class='text-purpledark font-semibold text-lg'>Composição especificada</p>
+          </div>
+        </div>
 
     </div>
   );

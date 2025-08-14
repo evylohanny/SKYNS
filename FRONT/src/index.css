@@ -31,6 +31,8 @@
     --color-footer: #C2B8E5;
     --color-blueG: #899BBD;
     --color-graylight: #F6F9FF;
+    --color-graymedium: #F4F4F4;
+    --color-grayNaosei: #D9D9D9;
 }
 
 .swiper-pagination-bullet, .swiper-pagination-2-bullet {
