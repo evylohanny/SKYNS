@@ -3,7 +3,7 @@ import React from 'react'
 function Cartoes() {
   return (
     <div className='bg-[#F4F4F4] h-160 w-60/100 flex flex-col items-center  rounded-2xl'>
-      <div className="w-84/100 h-10/100 mt-4 flex items-center"> 
+      <div className="w-84/100 h-10/100 mt-4 flex items-center text-purpledark"> 
           <h1 className="text-2xl font-medium ">Seu cartão</h1>
       </div>
       <div className="flex flex-col w-84/100">

@@ -12,7 +12,7 @@ function Enderecos() {
 };
   return (
     <div className='bg-[#F4F4F4] h-160 w-60/100 flex flex-col items-center  rounded-2xl'>
-      <div className="w-84/100 h-10/100 flex mt-4 items-center"> 
+      <div className="w-84/100 h-10/100 flex mt-4 items-center text-purpledark"> 
           <h1 className="text-2xl font-medium ">Endereço</h1>
       </div>
       <div className="flex flex-col w-84/100">

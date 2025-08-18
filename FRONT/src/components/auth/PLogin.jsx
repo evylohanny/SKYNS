@@ -67,7 +67,7 @@ function PLogin() {
         </label>
         <div className=" flex w-full pt-3 justify-center items-center ">
           <input
-            className="w-4/6 border-2 border-gray p-2 rounded-lg focus:border-purpledark outline-none "
+            className="w-4/6 border-2 border-[#D9D9D9]  p-2 rounded-lg focus:border-purpledark outline-none "
             type="text"
             placeholder="Ex: Ronaldo@gmail.com"
             onChange={(e) => setValor_email_login(e.target.value)}
@@ -84,9 +84,9 @@ function PLogin() {
           Senha
         </label>
         <div className="flex w-full  pt-3 justify-center items-center">
-          <div className="  flex w-4/6 border-2 border-gray justify-center items-center rounded-lg focus-within:border-purpledark outline-none   ">
+          <div className="  flex w-4/6 border-2 border-[#D9D9D9] justify-center items-center rounded-lg focus-within:border-purpledark outline-none   ">
             <input
-              className="w-full border-gray p-2 rounded-lg outline-none "
+              className="w-full border-[#D9D9D9]  p-2 rounded-lg outline-none "
               type={tipoInput}
               placeholder="Ex: 1234"
               maxLength={8}

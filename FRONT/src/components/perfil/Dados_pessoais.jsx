@@ -36,7 +36,7 @@ function Dados_pessoais() {
   return (
     <div className="bg-[#F4F4F4] w-60/100 flex flex-col items-center  rounded-2xl">
       <div className="w-84/100 h-10/100 flex  mt-8 items-center">
-        <h1 className="text-2xl font-medium ">Dados pessoais</h1>
+        <h1 className="text-2xl font-medium text-purpledark ">Dados pessoais</h1>
       </div>
       <div className="flex flex-col mt-4 w-84/100">
         <label htmlFor="" className="text-lg">
