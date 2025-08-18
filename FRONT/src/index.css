@@ -56,6 +56,12 @@
   gap: 3px;
 }
 
+.swiper-slide {
+
+  display: flex;
+  flex-direction: column;
+}
+
 html, body, #root {
   height: 100%;
 }

@@ -5,6 +5,8 @@ import { Navigation, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 
 import NavBar from "../components/NavBar";
+import Feedback from "../components/Feedback";
+
 import poster from "../assets/poster.svg";
 import banner from "../assets/banner.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
@@ -152,7 +154,7 @@ function Home() {
 
       <section id="products" className="flex flex-col items-center h-[120vh] mt-30">
         <img className="w-295 shadow-lg" src={banner} alt="" />
-        <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
+        <h2 className="mt-16 text-[22px] font-primary font-medium tracking-[2px] text-salmon">
           Queridinhos da galera
         </h2>
         <h1 className="mt-2 text-extradarkpurple font-secondary tracking-[1px] text-[45px] font-medium">
@@ -291,22 +293,39 @@ function Home() {
       <div className="custom-next-2 absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
-      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 bg-purple mt-50">
-        <div className="flex flex-col m-10 w-60">
-          <h1 className="text-blackwhite text-[25px] font-secondary">A realidade sobre nossas entregas</h1>
-          <p className="text-blackwhite text-[14px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
-          <div className="mt-4">
+      {/* <section className="flex flex-row w-295 h-[35vh] ml-30 mr-30 mt-5 gap-3"> */}
+        {/* <div className="flex flex-col w-80 gap-2">
+          <h1 className="text-blackwhite text-[25px] tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
+          <p className="text-blackwhite text-[15px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
+          <div className="mt-2">
             <img src={pessoas} alt="" />
           </div>
-        </div>
-        <Swiper className="w-full flex">
+        </div> */}
+        <Feedback />
+        {/* <Swiper
+           modules={[Navigation, A11y]}
+            spaceBetween={5}
+            slidesPerView={3}
+            // navigation={{
+            //   nextEl: '.custom-next',
+            //   prevEl: '.custom-prev',
+            //   }}
+            loop={true}
+            speed={600}
+            breakpoints={{
+              320: { slidesPerView: 1 },
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }} 
+          className="flex w-full gap-5 h-[27]vh] justify-between"
+          >
           {
             comments?.map((item, index) => (
               <SwiperSlide
-                className="w-[20px]"
+                className="flex flex-col gap-3 border-3 border-purple rounded-2xl justify-start p-7 pl-3"
                 key={index}
               >
-                <div>
+                <div className="flex flex-row gap-2 w-10">
                   {
                     item.stars === 1
                     ?
@@ -349,13 +368,13 @@ function Home() {
                     <div>Sem estrelas</div>
                   }
                 </div>
-                <h1>{item.title}</h1>
-                <p>{`"${item.description}"`}</p>
+                <h1 className="w-70 text-[1rem] font-secondary text-extradarkpurple">{item.product_title}</h1>
+                <p className="w-75 text-[14px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
               </SwiperSlide>
             ))
           }
-        </Swiper>
-      </section>
+        </Swiper> */}
+      {/* </section> */}
     </div>
   );
 }
