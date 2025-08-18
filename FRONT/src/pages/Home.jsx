@@ -5,8 +5,6 @@ import { Navigation, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 
 import NavBar from "../components/NavBar";
-import Feedback from "../components/Feedback";
-
 import poster from "../assets/poster.svg";
 import banner from "../assets/banner.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
@@ -293,16 +291,15 @@ function Home() {
       <div className="custom-next-2 absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
-      {/* <section className="flex flex-row w-295 h-[35vh] ml-30 mr-30 mt-5 gap-3"> */}
-        {/* <div className="flex flex-col w-80 gap-2">
-          <h1 className="text-blackwhite text-[25px] tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
+      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-5 gap-5">
+        <div className="flex flex-col w-80 gap-2 h-full">
+          <h1 className="text-blackwhite text-[28px] font-medium tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
           <p className="text-blackwhite text-[15px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
           <div className="mt-2">
             <img src={pessoas} alt="" />
           </div>
-        </div> */}
-        <Feedback />
-        {/* <Swiper
+        </div>
+        <Swiper
            modules={[Navigation, A11y]}
             spaceBetween={5}
             slidesPerView={3}
@@ -317,12 +314,12 @@ function Home() {
               640: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
             }} 
-          className="flex w-full gap-5 h-[27]vh] justify-between"
+          className="flex flex-row w-full gap-15 h-[30vh] justify-between items-center"
           >
           {
             comments?.map((item, index) => (
               <SwiperSlide
-                className="flex flex-col gap-3 border-3 border-purple rounded-2xl justify-start p-7 pl-3"
+                className="flex flex-col gap-3 border-3 w-[20vw] border-purple rounded-2xl justify-start pt-5 pb-0 pl-2 pr-2"
                 key={index}
               >
                 <div className="flex flex-row gap-2 w-10">
@@ -368,13 +365,13 @@ function Home() {
                     <div>Sem estrelas</div>
                   }
                 </div>
-                <h1 className="w-70 text-[1rem] font-secondary text-extradarkpurple">{item.product_title}</h1>
-                <p className="w-75 text-[14px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
+                <h1 className="w-70 text-[17px] font-secondary font-bold text-extradarkpurple">{item.product_title}</h1>
+                <p className="w-72 text-[15px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
               </SwiperSlide>
             ))
           }
-        </Swiper> */}
-      {/* </section> */}
+        </Swiper>
+      </section>
     </div>
   );
 }
