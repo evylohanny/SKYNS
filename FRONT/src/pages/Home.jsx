@@ -5,6 +5,8 @@ import { Navigation, Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 
 import NavBar from "../components/NavBar";
+import FooterCompleto from "../components/FooterCompleto";
+
 import poster from "../assets/poster.svg";
 import banner from "../assets/banner.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
@@ -14,6 +16,8 @@ import seta_esquerda from "../assets/seta esquerda.svg";
 import product from "../assets/[PRODUCT] 1.svg";
 import estrela from "../assets/estrela.svg";
 import pessoas from "../assets/pessoas.svg";
+import large_product from "../assets/large_product.svg";
+import banner_slogan from "../assets/banner_slogan.svg";
 
 function Home() {
 
@@ -221,7 +225,7 @@ function Home() {
       <div className="custom-next absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
-      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-50">
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
           Coleção de verão
         </h2>
@@ -293,7 +297,7 @@ function Home() {
       </section>
       <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-5 gap-5">
         <div className="flex flex-col w-80 gap-2 h-full">
-          <h1 className="text-blackwhite text-[28px] font-medium tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
+          <h1 className="text-blackwhite text-[28px] font-medium leading-[35px] tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
           <p className="text-blackwhite text-[15px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
           <div className="mt-2">
             <img src={pessoas} alt="" />
@@ -301,8 +305,8 @@ function Home() {
         </div>
         <Swiper
            modules={[Navigation, A11y]}
-            spaceBetween={5}
-            slidesPerView={3}
+            spaceBetween={15}
+            slidesPerView={"auto"}
             // navigation={{
             //   nextEl: '.custom-next',
             //   prevEl: '.custom-prev',
@@ -314,12 +318,12 @@ function Home() {
               640: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
             }} 
-          className="flex flex-row w-full gap-15 h-[30vh] justify-between items-center"
+          className="flex flex-row w-295 h-[28vh] items-center"
           >
           {
             comments?.map((item, index) => (
               <SwiperSlide
-                className="flex flex-col gap-3 border-3 w-[20vw] border-purple rounded-2xl justify-start pt-5 pb-0 pl-2 pr-2"
+                className="flex flex-col !w-73 gap-3 border-3 border-purple rounded-2xl justify-start p-5"
                 key={index}
               >
                 <div className="flex flex-row gap-2 w-10">
@@ -365,12 +369,19 @@ function Home() {
                     <div>Sem estrelas</div>
                   }
                 </div>
-                <h1 className="w-70 text-[17px] font-secondary font-bold text-extradarkpurple">{item.product_title}</h1>
-                <p className="w-72 text-[15px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
+                <h1 className="w-70 text-[16px] font-secondary font-bold text-extradarkpurple">{item.product_title}</h1>
+                <p className="w-65 text-[14px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
               </SwiperSlide>
             ))
           }
         </Swiper>
+      </section>
+      <section className="flex flex-col bg-black mt-10 h-[100vh]">
+        <img src={large_product} alt="" />
+        <img src={banner_slogan} alt="" />
+      </section>
+      <section className="h-[100vh] w-full mt-30">
+        <FooterCompleto />
       </section>
     </div>
   );
