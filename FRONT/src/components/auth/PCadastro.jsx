@@ -157,7 +157,7 @@ function PCadastro() {
         </label>
         <div className=" pl-17 flex w-full pt-3 justify-center items-center ">
           <input
-            className="w-5/6 border-2 border-gray p-2 rounded-lg focus:border-purpledark outline-none "
+            className="w-5/6 border-2 border-[#D9D9D9]  p-2 rounded-lg focus:border-purpledark outline-none "
             type="text"
             placeholder="Ex: Ronaldo fernandes"
             value={valor_nome_cadastro}
@@ -179,7 +179,7 @@ function PCadastro() {
         </label>
         <div className="pl-17 flex w-full pt-3 justify-center items-center ">
           <input
-            className="w-5/6 border-2 border-gray p-2 rounded-lg focus:border-purpledark outline-none "
+            className="w-5/6 border-2 border-[#D9D9D9]  p-2 rounded-lg focus:border-purpledark outline-none "
             type="text"
             placeholder="Ex: 14/02/2000"
             value={valor_data_cadastro}
@@ -200,7 +200,7 @@ function PCadastro() {
         </label>
         <div className=" pl-17 flex w-full pt-3 justify-center items-center ">
           <input
-            className="w-5/6 border-2 border-gray p-2 rounded-lg focus:border-purpledark outline-none "
+            className="w-5/6 border-2 border-[#D9D9D9]  p-2 rounded-lg focus:border-purpledark outline-none "
             type="text"
             placeholder="Ex: 123.456.789-10"
             value={valor_cpf_cadastro}
@@ -220,7 +220,7 @@ function PCadastro() {
         </label>
         <div className=" pl-17 flex w-full pt-3 justify-center items-center ">
           <input
-            className="w-5/6 border-2 border-gray p-2 rounded-lg focus:border-purpledark outline-none "
+            className="w-5/6 border-2 border-[#D9D9D9]  p-2 rounded-lg focus:border-purpledark outline-none "
             type="text"
             placeholder="Ex: Ronaldo@gmail.com"
             onChange={(e) => setValor_email_cadastro(e.target.value)}
@@ -238,7 +238,7 @@ function PCadastro() {
           Senha
         </label>
         <div className="flex w-full pl-17 pt-3 justify-center items-center">
-          <div className="  flex w-5/6 border-2 border-gray justify-center items-center rounded-lg focus-within:border-purpledark outline-none   ">
+          <div className="  flex w-5/6 border-2 border-[#D9D9D9]  justify-center items-center rounded-lg focus-within:border-purpledark outline-none   ">
             <input
               className="w-full border-gray p-2 rounded-lg outline-none "
               type={tipoInput}

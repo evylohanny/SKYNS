@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;1,9..40,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+<<<<<<< HEAD
+=======
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,700;1,9..40,700&display=swap');
+>>>>>>> 64014dc730d171402a0de192774724982e586880
 
 @theme {
     --color-*:initial;
@@ -32,7 +36,37 @@
     --color-graylight: #F6F9FF;
     --color-graymedium: #F4F4F4;
     --color-grayNaosei: #D9D9D9;
+<<<<<<< HEAD
     --color-gray2: #4A4A4A;
+=======
+}
+
+.swiper-pagination-bullet, .swiper-pagination-2-bullet {
+  width: 35px;
+  height: 6px;
+  border-radius: 8px;
+  background-color: #d9d9d9;
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+.swiper-pagination-bullet-active, .swiper-pagination-2-bullet-active {
+  background-color: #a259ff;
+  transition: ease-in-out;
+}
+
+.swiper-pagination, .swiper-pagination-2 {
+  bottom: 0px !important;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.swiper-slide {
+
+  display: flex;
+  flex-direction: column;
+>>>>>>> 64014dc730d171402a0de192774724982e586880
 }
 
 html, body, #root {
