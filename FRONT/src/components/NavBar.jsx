@@ -50,10 +50,12 @@ function NavBar() {
   };
 
   return (
-    <div>
+    <div className='w-full h-40'>
+      <div className='w-full h-40 fixed top-0 left-0 bg-white z-999'>
+
       <CarrosselPQ />
 
-      <div className='h-30 flex flex-col justify-start items-center gap-3 shadow-xl'>
+      <div className='h-28 flex flex-col justify-start items-center gap-3 shadow-xl'>
 
         <div className='flex justify-center gap-65 items-center w-full p-3'>
 
@@ -90,27 +92,27 @@ function NavBar() {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             className='relative flex gap-1'
-          >
+            >
             <button 
               onClick={handleClick}
               className="flex gap-1 items-center focus:outline-none"
-            >
+              >
               <img src={iconMenu} alt="" />
               <p
                 className={`
                   relative text-sm transition-colors
                   after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-purpledark after:transition-all after:duration-300
                   ${isLocked ? 'text-purpledark after:w-full' : 'text-blackwhite/90 hover:text-purpledark after:w-0 hover:after:w-full'}
-                `}
-              >
+                  `}
+                  >
                 Todas as Categorias de peles
               </p>
             </button>
 
             {isCategoriasOpen && (
               <div 
-                className="absolute h-65 top-full left-0 mt-6 w-[1235px] bg-white shadow-xl p-3 flex justify-between z-50"
-                onClick={(e) => e.stopPropagation()}
+              className="absolute h-65 top-full left-0 mt-6 w-[1235px] bg-white shadow-xl p-3 flex justify-between z-50"
+              onClick={(e) => e.stopPropagation()}
               >
                 <div className='w-[30%] text-sm text-blackwhite/90 p-4 flex flex-col gap-2'>
                   <Link className='hover:text-purpledark transition-colors'>Pele Acneica</Link>
@@ -129,7 +131,7 @@ function NavBar() {
                     src={testFoto}
                     alt=""
                     className=""
-                  />
+                    />
                   <img
                     src={testFoto}
                     alt=""
@@ -155,16 +157,17 @@ function NavBar() {
             "Lojas físicas",
           ].map((text, index) => (
             <Link
-              key={index}
-              className="relative text-sm text-blackwhite/90 hover:text-purpledark transition-colors
-                        after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 hover:after:w-full 
-                        after:bg-purpledark after:transition-all after:duration-300"
+            key={index}
+            className="relative text-sm text-blackwhite/90 hover:text-purpledark transition-colors
+            after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 hover:after:w-full 
+            after:bg-purpledark after:transition-all after:duration-300"
             >
               {text}
             </Link>
           ))}
 
         </div>
+      </div>
       </div>
     </div>
   );

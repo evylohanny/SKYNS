@@ -299,10 +299,11 @@ function Home() {
             <img src={pessoas} alt="" />
           </div>
         </div>
-        <Swiper>
+        <Swiper className="w-full flex">
           {
             comments?.map((item, index) => (
               <SwiperSlide
+                className="w-[20px]"
                 key={index}
               >
                 <div>
