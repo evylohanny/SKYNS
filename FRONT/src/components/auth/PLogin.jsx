@@ -3,10 +3,8 @@ import { useState, useEffect } from "react";
 function PLogin() {
   const [valor_email_login, setValor_email_login] = useState("");
   const [valor_senha_login, setValor_senha_login] = useState("");
-  const [mensagem_email_login, setMensagem_email_login] = useState("");
-  const [mensagem_senha_login, setMensagem_senha_login] = useState("");
-  const [Erro_senha_login, setErro_senha_login] = useState(false);
-  const [Erro_email_login, setErro_email_login] = useState(false);
+  const [mensagem_erro_login, setMensagem_erro_login] = useState('')
+  const [erro_login, setErro_login] = useState(false)
 
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
@@ -17,41 +15,36 @@ function PLogin() {
       prev === "icon_nao_ver.png" ? "icon_ver.png" : "icon_nao_ver.png"
     );
   };
-
+  
   useEffect(() => {
     if (valor_senha_login.length > 0) {
-      setMensagem_senha_login("");
-      setErro_senha_login(false);
+      setMensagem_erro_login("");
+      setErro_login(false);
     }
   }, [valor_senha_login]);
 
   useEffect(() => {
     if (valor_email_login.length > 0) {
-      setMensagem_email_login("");
-      setErro_email_login(false);
+      setMensagem_erro_login("");
+      setErro_login(false);
     }
   }, [valor_email_login]);
 
   const logar = () => {
-    if (valor_senha_login.length < 4) {
-      setMensagem_senha_login("senha incorreta!");
-      setErro_senha_login(true);
-    } else {
-      setErro_senha_login(false);
-      setMensagem_senha_login("");
-    }
 
     if (
       !valor_email_login.includes("@gmail.com") &&
-      !valor_email_login.includes("@hotmail.com")
+      !valor_email_login.includes("@hotmail.com") || valor_senha_login.length < 4
     ) {
-      setMensagem_email_login("Email incorreto!");
-      setErro_email_login(true);
+      setMensagem_erro_login("Email ou senha incorreto!");
+      setErro_login(true);
     } else {
-      setMensagem_email_login("");
-      setErro_email_login(false);
+      setMensagem_erro_login("");
+      setErro_login(false);
     }
   };
+
+  
 
   return (
     <div className="flex flex-col w-full  pt-12 ">
@@ -73,14 +66,8 @@ function PLogin() {
             onChange={(e) => setValor_email_login(e.target.value)}
           />
         </div>
-        <div
-          className={`text-purpledark w-66/100 h-2 transition-opacity duration-500 ${
-            Erro_email_login ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <p className="h4"> {mensagem_email_login} </p>
-        </div>
-        <label className=" w-4/6 text-xl pt-5" htmlFor="">
+      
+        <label className=" w-4/6 text-xl pt-7" htmlFor="">
           Senha
         </label>
         <div className="flex w-full  pt-3 justify-center items-center">
@@ -101,11 +88,11 @@ function PLogin() {
           </div>
         </div>
         <div
-          className={`text-purpledark w-4/6 pl-1 h-4 transition-opacity duration-500 ${
-            Erro_senha_login ? "opacity-100" : "opacity-0"
+          className={`text-purpledark w-4/6 pl-1 h-4 flex items-center transition-opacity duration-500 ${
+            erro_login ? "opacity-100" : "opacity-0"
           }`}
         >
-          <p className="h-3"> {mensagem_senha_login} </p>
+          <p className="h-3"> {mensagem_erro_login} </p>
         </div>
       </div>
 

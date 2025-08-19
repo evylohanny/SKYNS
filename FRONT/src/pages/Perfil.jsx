@@ -66,6 +66,10 @@ function Perfil() {
     }
   };
 
+  const inicio = () => {
+    navigate("/");
+  };
+
   useEffect(() => {
     if (valorSenhaExcluir.length > 0) {
       setErroExcluir(false);
@@ -77,6 +81,29 @@ function Perfil() {
       setErroExcluir(false);
     }
   }, [valorEmailExcluir]);
+
+  const pedidos = [
+    {
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      img: "img_pedidos.svg",
+      quantidade: "4",
+      preco: "89,90",
+    },
+    {
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      img: "img_pedidos.svg",
+      quantidade: "4",
+      preco: "89,90",
+    },
+    {
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      img: "img_pedidos.svg",
+      quantidade: "4",
+      preco: "89,90",
+    },
+    
+    
+  ];
 
   return (
     <div className="w-full h-full">
@@ -91,21 +118,66 @@ function Perfil() {
           Seus pedidos
         </div>
       </div>
-      <div className=" w-full h-34/100 pt-4 flex justify-center">
-        <div className="bg-[#F4F4F4] flex flex-col justify-center items-center w-76/100 h-86/100 rounded-2xl">
-          <p className="text-2xl">Você ainda não fez nenhum pedido</p>
-          <p className="text-lg pt-2">
-            Que tal conferir nossas fómulas incríveis?
-          </p>
-          <div className="pt-6 w-full flex items-center justify-center">
-            <button className="bg-purpledark w-16/100 cursor-pointer text-white p-2 text-md rounded-3xl font-medium">
-              Ver Produtos
-            </button>
+      {pedidos.length == 0 && (
+        <div className=" w-full h-34/100 pt-4 flex justify-center">
+          <div className="bg-[#F4F4F4] flex flex-col justify-center items-center w-76/100 h-86/100 rounded-2xl">
+            <p className="text-2xl">Você ainda não fez nenhum pedido</p>
+            <p className="text-lg pt-2">
+              Que tal conferir nossas fómulas incríveis?
+            </p>
+            <div className="pt-6 w-full flex items-center justify-center">
+              <button
+                className="bg-purpledark w-16/100 cursor-pointer text-white p-2 text-md rounded-3xl font-medium"
+                onClick={inicio}
+              >
+                Ver Produtos
+              </button>
+            </div>
           </div>
         </div>
+      )}
+      <div className="w-full flex justify-center items-center">
+        <div className="w-79/100 ml-12 flex flex-col  justify-start pr-9 items-center h-120 overflow-y-auto">
+          {pedidos.length > 0 &&
+            pedidos.map((items, index) => {
+              return (
+                <div
+                  className="w-full flex items-center pt-6 justify-center "
+                  key={index}
+                >
+                  <div className="bg-[#F4F4F4] h-50 flex items-center  justify-evenly w-full rounded-2xl">
+                    <div className="w-46 ">
+                      <img src={items.img} alt="" />
+                    </div>
+                    <div className="w-25/100 ml-5">
+                      <h1 className="text-2xl">{items.nome}</h1>
+                    </div>
+                    <div className="border-2 h-10 w-9/100 border-[#97989C] ml-15 gap-3 flex justify-center items-center rounded-lg">
+                      <h1 className="text-4xl pb-1 text-[#97989C]">-</h1>
+                      <h1 className="text-[#97989C] text-lg">
+                        {items.quantidade}
+                      </h1>
+                      <h1 className="text-[#97989C] text-2xl">+</h1>
+                    </div>
+                    <div>
+                      <h1 className="text-purpledark text-2xl font-bold ml-24 ">
+                        R$ {items.preco}
+                      </h1>
+                    </div>
+                    <div className="h-full w-14/100 justify-end  items-end flex  pb-5">
+                      <button className="border-2 w-full p-1.5 rounded-lg border-purpledark text-purpledark cursor-pointer">
+                        VER DETALHES
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
       </div>
+
       <div className=" w-full  flex justify-center items-center">
-        <div className=" flex items-center text-3xl p-2 w-76/100  font-medium ">
+        <div className=" flex items-center mt-6 text-3xl p-2 w-76/100  font-medium ">
           Informação da conta
         </div>
       </div>
@@ -211,7 +283,7 @@ function Perfil() {
                       onChange={(e) => setValorEmailExcluir(e.target.value)}
                     />
                   </div>
-                  <label className=" w-75/100 text-black text-xl pt-5" >
+                  <label className=" w-75/100 text-black text-xl pt-5">
                     Senha
                   </label>
                   <div className="flex w-full  pt-3 justify-center items-center">

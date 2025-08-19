@@ -1,6 +1,7 @@
 import React from "react";
 
 function Excluir() {
+  
   return (
     <div className="bg-[#F4F4F4] h-120 w-60/100 flex flex-col items-center  rounded-2xl">
       <div className="w-84/100 h-10/100 flex text-purpledark mt-8 items-center">
