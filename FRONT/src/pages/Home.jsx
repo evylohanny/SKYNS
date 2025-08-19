@@ -14,6 +14,7 @@ import carrinho_branco from "../assets/carrinho branco.svg";
 import seta_direita from "../assets/seta direita.svg";
 import seta_esquerda from "../assets/seta esquerda.svg";
 import product from "../assets/[PRODUCT] 1.svg";
+import product_2 from "../assets/[PRODUCT] 2.svg";
 import estrela from "../assets/estrela.svg";
 import pessoas from "../assets/pessoas.svg";
 import large_product from "../assets/large_product.svg";
@@ -34,7 +35,7 @@ function Home() {
       description:
         "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
       price: "89,90",
-      image: product,
+      image: product_2,
     },
     {
       name: "Sérum humificado três leites",
@@ -47,7 +48,7 @@ function Home() {
       description:
         "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
       price: "37,99",
-      image: product,
+      image: product_2,
     },
     {
       name: "Máscara facial detox de argila verde",
@@ -60,7 +61,7 @@ function Home() {
       name: "Creme nutritivo com vitamina C",
       description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
       price: "49,90",
-      image: product,
+      image: product_2,
     },
     {
       name: "Ácido hialurônico hidratante firmador",
@@ -73,7 +74,7 @@ function Home() {
       description:
         "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
       price: "89,90",
-      image: product,
+      image: product_2,
     },
     {
       name: "Sérum humificado três leites",
@@ -86,7 +87,7 @@ function Home() {
       description:
         "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
       price: "37,99",
-      image: product,
+      image: product_2,
     },
     {
       name: "Máscara facial detox de argila verde",
@@ -221,8 +222,8 @@ function Home() {
       ))}
     </Swiper>
       <div className="swiper-pagination cursor-pointer"></div>
-      <div className="custom-prev absolute left-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="custom-prev absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
       <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
@@ -291,8 +292,8 @@ function Home() {
       ))}
     </Swiper>
       <div className="swiper-pagination-2 cursor-pointer"></div>
-      <div className="custom-prev-2 absolute left-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next-2 absolute right-[-60px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="custom-prev-2 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
       <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-5 gap-5">
@@ -379,6 +380,76 @@ function Home() {
       <section className="flex flex-col bg-black mt-10 h-[100vh]">
         <img src={large_product} alt="" />
         <img src={banner_slogan} alt="" />
+      </section>
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
+        <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-extradarkpurple">
+          Personalizáveis
+        </h2>
+        <h1 className="mt-2 text-purpledark font-secondary tracking-[1px] text-[45px] font-medium">
+          O produto ideal para você
+        </h1>
+        <div className="w-full mt-15 relative">
+    <Swiper
+      modules={[Navigation, Pagination, A11y]}
+      spaceBetween={45}
+      slidesPerView={4}
+       navigation={{
+         nextEl: '.custom-next-2',
+         prevEl: '.custom-prev-2',
+        }}
+      loop={true}
+      pagination={{
+        el: ".swiper-pagination-2",
+        clickable: true,
+        renderBullet: (index, className) => {
+          // Mostra apenas os 5 primeiros bullets
+          if (index < 5) {
+            return `<span class="${className}"></span>`;
+          }
+          return "";
+        },
+      }}
+      speed={600}
+      breakpoints={{
+        320: { slidesPerView: 1 },
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 4 },
+      }}
+      className="w-295 flex relative z-0"
+    >
+      {products?.map((item, index) => (
+        <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
+        <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
+         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+          <img className="w-full h-full object-cover" src={item.image} alt="" />
+         </div>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <div className="w-full mt-5 flex gap-1">
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+          <img src={estrela} alt="" />
+         </div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="flex flex-row w-full gap-1.5">
+          <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
+          <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
+           onMouseEnter={() => setHoveredIndex(index)}
+           onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <img className="w-5" src={hoveredIndex === index ? carrinho_branco : carrinho_roxo} alt="" />
+          </div>
+         </div>
+        </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+      <div className="swiper-pagination-2 cursor-pointer"></div>
+      <div className="custom-prev-2 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      </div>
       </section>
       <section className="h-[100vh] w-full mt-30">
         <FooterCompleto />
