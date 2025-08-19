@@ -9,6 +9,7 @@ import FooterCompleto from "../components/FooterCompleto";
 
 import poster from "../assets/poster.svg";
 import banner from "../assets/banner.svg";
+import banner2 from "../assets/banner2.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
 import carrinho_branco from "../assets/carrinho branco.svg";
 import seta_direita from "../assets/seta direita.svg";
@@ -19,6 +20,11 @@ import estrela from "../assets/estrela.svg";
 import pessoas from "../assets/pessoas.svg";
 import large_product from "../assets/large_product.svg";
 import banner_slogan from "../assets/banner_slogan.svg";
+import woman from "../assets/woman.svg";
+import image1 from "../assets/image1.svg";
+import image2 from "../assets/image2.svg";
+import image3 from "../assets/image3.svg";
+import image4 from "../assets/image4.svg";
 
 function Home() {
 
@@ -127,7 +133,7 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[1000vh] items-center">
+    <div className="flex flex-col w-full h-[930vh] items-center">
       <NavBar />
 
       <section className="relative w-full h-[75vh] flex items-start">
@@ -381,7 +387,7 @@ function Home() {
         <img src={large_product} alt="" />
         <img src={banner_slogan} alt="" />
       </section>
-      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-30">
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-extradarkpurple">
           Personalizáveis
         </h2>
@@ -394,12 +400,12 @@ function Home() {
       spaceBetween={45}
       slidesPerView={4}
        navigation={{
-         nextEl: '.custom-next-2',
-         prevEl: '.custom-prev-2',
+         nextEl: '.custom-next-3',
+         prevEl: '.custom-prev-3',
         }}
       loop={true}
       pagination={{
-        el: ".swiper-pagination-2",
+        el: ".swiper-pagination-3",
         clickable: true,
         renderBullet: (index, className) => {
           // Mostra apenas os 5 primeiros bullets
@@ -446,10 +452,42 @@ function Home() {
         </SwiperSlide>
       ))}
     </Swiper>
-      <div className="swiper-pagination-2 cursor-pointer"></div>
-      <div className="custom-prev-2 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="swiper-pagination-3 cursor-pointer"></div>
+      <div className="custom-prev-3 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
+      <div className="custom-next-3 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
+        <img className="w-295 shadow-lg mt-30" src={banner2} alt="" />
+      </section>
+      <section className="relative w-full h-[100vh] flex items-start justify-center mt-60">
+        <div className="h-full w-295 flex flex-col">
+          <div className="w-full flex h-[70%]">
+          <div className="w-[70%]">
+            <h1 className="font-secondary text-extradarkpurple font-bold text-5xl p-4">Produtos Errados Podem Danificar Sua Pele</h1>
+            <h2 className="p-4 font-primary text-salmon font-medium text-2xl">Personalize o seu com Segurança</h2>
+            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-9 w-[90%]">Na SKYNS, entendemos que cada pele é única, e que nem todo produto funciona da mesma forma para todos. Sabemos que algumas formulações industrializadas podem conter substâncias que irritam, sensibilizam ou até agravam condições como acne, dermatites ou rosácea.</p>
+            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-5 w-[95%]">Por isso, desenvolvemos uma funcionalidade exclusiva no nosso sistema: você pode personalizar a composição de determinados produtos, escolhendo ingredientes compatíveis com o seu tipo de pele e evitando substâncias que já causaram reações ou desconforto.</p>
+          </div>
+          <img src={woman} alt="" />
+          </div>
+            <p className="font-secondary text-[23px] w-full text-black opacity-70 ml-4 mt-15">Essa personalização é feita com base em critérios dermatológicos e pensada para promover o equilíbrio da barreira cutânea, respeitando as necessidades específicas da sua pele. O resultado é um cuidado mais seguro, eficaz e consciente, feito sob medida para você.
+Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
+        </div>
+      </section>
+      <section className="flex flex-col h-[100vh] w-full justify-start items-center gap-3">
+        <p className="font-primary text-[25px] text-salmon">Acne não define você</p>
+        <h1 className="font-secondary text-5xl mt-5 text-extradarkpurple w-200 font-medium text-center">Cuidado de verdade começa com conhecimento da sua pele.</h1>
+        <div className="flex w-295 h-100 justify-center items-start gap-5 mt-15">
+          <div className="flex flex-col font-normal bg-salmon opacity-78 h-100 w-90 mt-3 rounded-3xl p-5 gap-5">
+            <img src={image1} alt="" /> 
+          </div>
+          <div className="h-100 w-fit">
+            <img className="w-fit h-106" src={image2} alt="" />
+          </div>
+          <div className="flex flex-col h-100 w-fit gap-4">
+            <img className="h-50 w-fit" src={image3} alt="" />
+            <img className="h-50 w-fit" src={image4} alt="" />
+          </div>
+        </div>
       </section>
       <section className="h-[100vh] w-full mt-30">
         <FooterCompleto />

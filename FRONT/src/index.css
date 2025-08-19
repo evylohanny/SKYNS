@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;1,9..40,500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,700;1,9..40,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap');
 
 @theme {
     --color-*:initial;
@@ -27,6 +28,7 @@
     --font-primary: 'Nunito Sans', sans-serif;
     --font-secondary: 'DM Sans', sans-serif;
     --font-tertiary: 'Open Sans', sans-serif;
+    --font-alternative: "Gloria Hallelujah", cursive;
     --color-gray1: #1E1E1E;
     --color-footer: #C2B8E5;
     --color-blueG: #899BBD;
@@ -34,6 +36,10 @@
     --color-graymedium: #F4F4F4;
     --color-grayNaosei: #D9D9D9;
     --color-gray2: #4A4A4A;
+}
+
+html, body, #root {
+  height: 100%;
 }
 
 .swiper-pagination-bullet, .swiper-pagination-2-bullet {
@@ -50,7 +56,7 @@
   transition: ease-in-out;
 }
 
-.swiper-pagination, .swiper-pagination-2 {
+.swiper-pagination, .swiper-pagination-2, .swiper-pagination-3 {
   bottom: 0px !important;
   display: flex;
   justify-content: center;
@@ -61,8 +67,4 @@
 
   display: flex;
   flex-direction: column;
-}
-
-html, body, #root {
-  height: 100%;
 }
