@@ -133,7 +133,7 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[1000vh] items-center">
+    <div className="flex flex-col w-full h-[1000vh] mt-[-0.9%] items-center gap-10">
       <NavBar />
 
       <section className="relative w-full h-[75vh] flex items-start">
@@ -232,7 +232,7 @@ function Home() {
       <div className="custom-next absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
-      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-20">
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
           Coleção de verão
         </h2>
@@ -302,7 +302,7 @@ function Home() {
       <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
       </div>
       </section>
-      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-5 gap-5">
+      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-25 gap-5">
         <div className="flex flex-col w-80 gap-2 h-full">
           <h1 className="text-blackwhite text-[28px] font-medium leading-[35px] tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
           <p className="text-blackwhite text-[15px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
@@ -464,12 +464,12 @@ function Home() {
           <div className="w-[70%]">
             <h1 className="font-secondary text-extradarkpurple font-bold text-5xl p-4">Produtos Errados Podem Danificar Sua Pele</h1>
             <h2 className="p-4 font-primary text-salmon font-medium text-2xl">Personalize o seu com Segurança</h2>
-            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-9 w-[90%]">Na SKYNS, entendemos que cada pele é única, e que nem todo produto funciona da mesma forma para todos. Sabemos que algumas formulações industrializadas podem conter substâncias que irritam, sensibilizam ou até agravam condições como acne, dermatites ou rosácea.</p>
-            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-5 w-[95%]">Por isso, desenvolvemos uma funcionalidade exclusiva no nosso sistema: você pode personalizar a composição de determinados produtos, escolhendo ingredientes compatíveis com o seu tipo de pele e evitando substâncias que já causaram reações ou desconforto.</p>
+            <p className="font-secondary text-[1.43rem] text-black opacity-70 ml-4 mt-9 w-[90%]">Na SKYNS, entendemos que cada pele é única, e que nem todo produto funciona da mesma forma para todos. Sabemos que algumas formulações industrializadas podem conter substâncias que irritam, sensibilizam ou até agravam condições como acne, dermatites ou rosácea.</p>
+            <p className="font-secondary text-[1.43rem] text-black opacity-70 ml-4 mt-5 w-[95%]">Por isso, desenvolvemos uma funcionalidade exclusiva no nosso sistema: você pode personalizar a composição de determinados produtos, escolhendo ingredientes compatíveis com o seu tipo de pele e evitando substâncias que já causaram reações ou desconforto.</p>
           </div>
           <img src={woman} alt="" />
           </div>
-            <p className="font-secondary text-[23px] w-full text-black opacity-70 ml-4 mt-15">Essa personalização é feita com base em critérios dermatológicos e pensada para promover o equilíbrio da barreira cutânea, respeitando as necessidades específicas da sua pele. O resultado é um cuidado mais seguro, eficaz e consciente, feito sob medida para você.
+            <p className="font-secondary text-[1.43rem] w-full text-black opacity-70 ml-4 mt-15">Essa personalização é feita com base em critérios dermatológicos e pensada para promover o equilíbrio da barreira cutânea, respeitando as necessidades específicas da sua pele. O resultado é um cuidado mais seguro, eficaz e consciente, feito sob medida para você.
 Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
         </div>
       </section>
@@ -489,7 +489,7 @@ Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
           </div>
         </div>
       </section>
-      <section className="h-[30vh] mt-10 mb-[-30%]">
+      <section className="h-[30vh] mt-15 mb-[-10%]">
         <img className="w-295 shadow-lg" src={banner} alt="" />
       </section>
       <section className="h-[150vh] w-full flex flex-col justify-end">
