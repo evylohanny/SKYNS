@@ -129,11 +129,11 @@ function Home() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const scrollToSection = () => {
-    document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("banner").scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="flex flex-col w-full h-[930vh] items-center">
+    <div className="flex flex-col w-full h-[1000vh] items-center">
       <NavBar />
 
       <section className="relative w-full h-[75vh] flex items-start">
@@ -387,7 +387,7 @@ function Home() {
         <img src={large_product} alt="" />
         <img src={banner_slogan} alt="" />
       </section>
-      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-30">
+      <section id="banner" className="flex flex-col items-center h-[120vh] mt-30">
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-extradarkpurple">
           Personalizáveis
         </h2>
@@ -458,7 +458,7 @@ function Home() {
       </div>
         <img className="w-295 shadow-lg mt-30" src={banner2} alt="" />
       </section>
-      <section className="relative w-full h-[100vh] flex items-start justify-center mt-60">
+      <section className="relative w-full h-[100vh] flex items-start justify-center mt-70">
         <div className="h-full w-295 flex flex-col">
           <div className="w-full flex h-[70%]">
           <div className="w-[70%]">
@@ -473,7 +473,7 @@ function Home() {
 Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
         </div>
       </section>
-      <section className="flex flex-col h-[100vh] w-full justify-start items-center gap-3">
+      <section className="flex flex-col h-[100vh] w-full justify-center items-center gap-3">
         <p className="font-primary text-[25px] text-salmon">Acne não define você</p>
         <h1 className="font-secondary text-5xl mt-5 text-extradarkpurple w-200 font-medium text-center">Cuidado de verdade começa com conhecimento da sua pele.</h1>
         <div className="flex w-295 h-100 justify-center items-start gap-5 mt-15">
@@ -489,7 +489,10 @@ Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
           </div>
         </div>
       </section>
-      <section className="h-[100vh] w-full mt-30">
+      <section className="h-[30vh] mt-10 mb-[-30%]">
+        <img className="w-295 shadow-lg" src={banner} alt="" />
+      </section>
+      <section className="h-[150vh] w-full flex flex-col justify-end">
         <FooterCompleto />
       </section>
     </div>

@@ -38,6 +38,11 @@
     --color-gray2: #4A4A4A;
 }
 
+*{
+
+  outline: none;
+}
+
 html, body, #root {
   height: 100%;
 }
