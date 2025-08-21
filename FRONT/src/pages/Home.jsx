@@ -12,8 +12,7 @@ import banner from "../assets/banner.svg";
 import banner2 from "../assets/banner2.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
 import carrinho_branco from "../assets/carrinho branco.svg";
-import seta_direita from "../assets/seta direita.svg";
-import seta_esquerda from "../assets/seta esquerda.svg";
+import seta from "../assets/seta direita.svg";
 import product from "../assets/[PRODUCT] 1.svg";
 import product_2 from "../assets/[PRODUCT] 2.svg";
 import estrela from "../assets/estrela.svg";
@@ -25,6 +24,7 @@ import image1 from "../assets/image1.svg";
 import image2 from "../assets/image2.svg";
 import image3 from "../assets/image3.svg";
 import image4 from "../assets/image4.svg";
+import seta_comments from "../assets/seta-comments.svg";
 
 function Home() {
 
@@ -132,8 +132,13 @@ function Home() {
     document.getElementById("banner").scrollIntoView({ behavior: "smooth" });
   };
 
+  const renderStars = (count) => {
+
+    return Array.from({ length: count }, (_, i) => <img key={i} src={estrela} alt="estrela" />);
+  }
+
   return (
-    <div className="flex flex-col w-full h-[1000vh] items-center">
+    <div className="flex flex-col w-full h-[1000vh] mt-[-0.9%] items-center gap-10">
       <NavBar />
 
       <section className="relative w-full h-[75vh] flex items-start">
@@ -184,7 +189,7 @@ function Home() {
         clickable: true,
         renderBullet: (index, className) => {
           // Mostra apenas os 5 primeiros bullets
-          if (index < 5) {
+          if (index < 11) {
             return `<span class="${className}"></span>`;
           }
           return "";
@@ -206,13 +211,7 @@ function Home() {
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
-         <div className="w-full mt-5 flex gap-1">
-          <img src={estrela} alt="" />
-          <img src={estrela} alt="" />
-          <img src={estrela} alt="" />
-          <img src={estrela} alt="" />
-          <img src={estrela} alt="" />
-         </div>
+         <div className="w-full mt-5 flex gap-1">{renderStars(5)}</div>
          <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
          <div className="flex flex-row w-full gap-1.5">
           <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
@@ -228,11 +227,11 @@ function Home() {
       ))}
     </Swiper>
       <div className="swiper-pagination cursor-pointer"></div>
-      <div className="custom-prev absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="custom-prev absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img className="transform scale-x-[-1]" src={seta} alt="" /></div>
+      <div className="custom-next absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta} /></div>
       </div>
       </section>
-      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-10">
+      <section id="products#2" className="flex flex-col items-center h-[120vh] mt-20">
         <h2 className="mt-16 text-[22px] font-medium tracking-[2px] text-salmon">
           Coleção de verão
         </h2>
@@ -254,7 +253,7 @@ function Home() {
         clickable: true,
         renderBullet: (index, className) => {
           // Mostra apenas os 5 primeiros bullets
-          if (index < 5) {
+          if (index < 11) {
             return `<span class="${className}"></span>`;
           }
           return "";
@@ -298,11 +297,11 @@ function Home() {
       ))}
     </Swiper>
       <div className="swiper-pagination-2 cursor-pointer"></div>
-      <div className="custom-prev-2 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="custom-prev-2 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img className="transform scale-x-[-1]" src={seta} alt="" /></div>
+      <div className="custom-next-2 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta} alt="" /></div>
       </div>
       </section>
-      <section className="flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-5 gap-5">
+      <section className="relative flex flex-row w-295 h-[45vh] ml-30 mr-30 mt-25 gap-5">
         <div className="flex flex-col w-80 gap-2 h-full">
           <h1 className="text-blackwhite text-[28px] font-medium leading-[35px] tracking-[1px] font-secondary">A realidade sobre nossas entregas</h1>
           <p className="text-blackwhite text-[15px] font-secondary">Felizmente, com todo o esforço da nossa trajetória, recebemos diversos feedbacks dos clientes — e achamos importante compartilhá-los.</p>
@@ -312,12 +311,11 @@ function Home() {
         </div>
         <Swiper
            modules={[Navigation, A11y]}
-            spaceBetween={15}
+            spaceBetween={18}
             slidesPerView={"auto"}
-            // navigation={{
-            //   nextEl: '.custom-next',
-            //   prevEl: '.custom-prev',
-            //   }}
+            navigation={{
+              nextEl: '.custom-next-comments'
+              }}
             loop={true}
             speed={600}
             breakpoints={{
@@ -382,6 +380,7 @@ function Home() {
             ))
           }
         </Swiper>
+        <div className="custom-next-comments absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_comments} /></div> 
       </section>
       <section className="flex flex-col bg-black mt-10 h-[100vh]">
         <img src={large_product} alt="" />
@@ -409,7 +408,7 @@ function Home() {
         clickable: true,
         renderBullet: (index, className) => {
           // Mostra apenas os 5 primeiros bullets
-          if (index < 5) {
+          if (index < 11) {
             return `<span class="${className}"></span>`;
           }
           return "";
@@ -453,8 +452,8 @@ function Home() {
       ))}
     </Swiper>
       <div className="swiper-pagination-3 cursor-pointer"></div>
-      <div className="custom-prev-3 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_esquerda} alt="" /></div>
-      <div className="custom-next-3 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_direita} alt="" /></div>
+      <div className="custom-prev-3 absolute left-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img className="transform scale-x-[-1]" src={seta} alt="" /></div>
+      <div className="custom-next-3 absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta} alt="" /></div>
       </div>
         <img className="w-295 shadow-lg mt-30" src={banner2} alt="" />
       </section>
@@ -464,12 +463,12 @@ function Home() {
           <div className="w-[70%]">
             <h1 className="font-secondary text-extradarkpurple font-bold text-5xl p-4">Produtos Errados Podem Danificar Sua Pele</h1>
             <h2 className="p-4 font-primary text-salmon font-medium text-2xl">Personalize o seu com Segurança</h2>
-            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-9 w-[90%]">Na SKYNS, entendemos que cada pele é única, e que nem todo produto funciona da mesma forma para todos. Sabemos que algumas formulações industrializadas podem conter substâncias que irritam, sensibilizam ou até agravam condições como acne, dermatites ou rosácea.</p>
-            <p className="font-secondary text-[23px] text-black opacity-70 ml-4 mt-5 w-[95%]">Por isso, desenvolvemos uma funcionalidade exclusiva no nosso sistema: você pode personalizar a composição de determinados produtos, escolhendo ingredientes compatíveis com o seu tipo de pele e evitando substâncias que já causaram reações ou desconforto.</p>
+            <p className="font-secondary text-[1.43rem] text-black opacity-70 ml-4 mt-9 w-[90%]">Na SKYNS, entendemos que cada pele é única, e que nem todo produto funciona da mesma forma para todos. Sabemos que algumas formulações industrializadas podem conter substâncias que irritam, sensibilizam ou até agravam condições como acne, dermatites ou rosácea.</p>
+            <p className="font-secondary text-[1.43rem] text-black opacity-70 ml-4 mt-5 w-[95%]">Por isso, desenvolvemos uma funcionalidade exclusiva no nosso sistema: você pode personalizar a composição de determinados produtos, escolhendo ingredientes compatíveis com o seu tipo de pele e evitando substâncias que já causaram reações ou desconforto.</p>
           </div>
           <img src={woman} alt="" />
           </div>
-            <p className="font-secondary text-[23px] w-full text-black opacity-70 ml-4 mt-15">Essa personalização é feita com base em critérios dermatológicos e pensada para promover o equilíbrio da barreira cutânea, respeitando as necessidades específicas da sua pele. O resultado é um cuidado mais seguro, eficaz e consciente, feito sob medida para você.
+            <p className="font-secondary text-[1.43rem] w-full text-black opacity-70 ml-4 mt-15">Essa personalização é feita com base em critérios dermatológicos e pensada para promover o equilíbrio da barreira cutânea, respeitando as necessidades específicas da sua pele. O resultado é um cuidado mais seguro, eficaz e consciente, feito sob medida para você.
 Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
         </div>
       </section>
@@ -489,7 +488,7 @@ Sua pele fala. Nós ouvimos. E damos a você o poder de escolher.</p>
           </div>
         </div>
       </section>
-      <section className="h-[30vh] mt-10 mb-[-30%]">
+      <section className="h-[30vh] mt-15 mb-[-10%]">
         <img className="w-295 shadow-lg" src={banner} alt="" />
       </section>
       <section className="h-[150vh] w-full flex flex-col justify-end">

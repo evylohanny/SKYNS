@@ -50,7 +50,6 @@ html, body, #root {
 .swiper-pagination-bullet, .swiper-pagination-2-bullet {
   width: 35px;
   height: 6px;
-  border-radius: 8px;
   background-color: #d9d9d9;
   opacity: 1;
   transition: background-color 0.3s;
@@ -65,7 +64,6 @@ html, body, #root {
   bottom: 0px !important;
   display: flex;
   justify-content: center;
-  gap: 3px;
 }
 
 .swiper-slide {
