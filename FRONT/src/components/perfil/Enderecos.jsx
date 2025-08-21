@@ -18,28 +18,28 @@ function Enderecos() {
       <div className="flex flex-col w-84/100">
          <label htmlFor="" className="text-lg">CEP</label>
          <div className="w-full pt-2" >
-           <input type="text" placeholder="Ex: 88060-205" className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none " 
+           <input type="text" placeholder="Ex: 88060-205" className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              value={valor_cep_endereco}
             onChange={(e) => setValor_cep_endereco(formatarCEP(e.target.value))}
              />
          </div>
          <label htmlFor="" className="text-lg pt-5">Rua/servidão</label>
          <div className="w-full pt-2" >
-           <input type="text" placeholder="Ex: Servidão rosalina" className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none " 
+           <input type="text" placeholder="Ex: Servidão rosalina" className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              />
          </div>
          <label htmlFor="" className="text-lg pt-5">Numero</label>
          <div className="w-full pt-2" >
-           <input type="text" maxLength={5} placeholder="Ex: 163" className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none " 
+           <input type="text" maxLength={5} placeholder="Ex: 163" className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              />
          </div>
          <label htmlFor="" className="text-lg pt-5">Complemento</label>
          <div className="w-full pt-2" >
-           <input type="text" placeholder="Ex: Casa/apartamento" className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none " 
+           <input type="text" placeholder="Ex: Casa/apartamento" className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              />
          </div>
        

@@ -37,8 +37,8 @@ function Cartoes() {
           <input
             type="text"
             placeholder="Ex: Manassés marcelino"
-            className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none "
+            className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              value={valorNomeTitular}
              onChange={(e) => setValorNomeTitular(formatarNome(e.target.value))}
           />
@@ -50,8 +50,8 @@ function Cartoes() {
           <input
             type="text"
             placeholder="Ex: 1111 1111 1111 1111"
-            className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none "
+           className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
             value={valorCartao}
             onChange={(e) => setValorCartao(formatarCartao(e.target.value))}
           />
@@ -64,8 +64,8 @@ function Cartoes() {
             type="text"
             maxLength={3}
             placeholder="Ex: 011"
-            className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none "
+            className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
           />
         </div>
         <label htmlFor="" className="text-lg pt-5">
@@ -75,8 +75,8 @@ function Cartoes() {
           <input
             type="text"
             placeholder="Ex: 06/40"
-            className="w-full border-[#D9D9D9] border-2 rounded-lg p-1.5
-             focus:border-purpleborde outline-none "
+             className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
+             focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 "
              value={validadeCartao}
              onChange={(e) => setValidadeCartao(formatarValidade(e.target.value))}
           />
