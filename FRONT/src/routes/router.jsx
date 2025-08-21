@@ -4,6 +4,7 @@ import Cadastro_login from "../pages/Cadastro_login";
 import Perfil from "../pages/Perfil";
 import Produtos from "../pages/Produtos";
 import Gestão from "../pages/Gestão";
+import Pedidos from "../pages/Pedidos";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
     {
         path: '/gestao',
         element: <Gestão />
+    },
+    {
+        path: '/pedidos',
+        element: <Pedidos/>
     }
 ]);
 

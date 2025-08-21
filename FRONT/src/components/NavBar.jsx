@@ -7,11 +7,23 @@ import iconCarrinho from '../assets/iconCarrinho.svg';
 import iconLupa from '../assets/iconLupa.svg';
 import iconMenu from '../assets/iconMenu.svg';
 import testFoto from '../assets/testFoto.svg'
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate()
+  
+  const links =[
+            "Promoções",
+            "Pedidos",
+            "Mais vendidos",
+            "Rastreio",
+            "SKYNS ideal para sua pele",
+            "Feedback",
+            "Lojas físicas",
+          ]
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -26,7 +38,14 @@ function NavBar() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  
+  const caminho = (index) => {
 
+    if(index == 1){
+
+      navigate("/pedidos")
+    }
+  }
   const handleClick = () => {
     if (isLocked) {
       setCategoriasOpen(false);
@@ -48,6 +67,10 @@ function NavBar() {
       setCategoriasOpen(false);
     }
   };
+
+  const perfil = () => {
+    navigate("/perfil")
+  }
 
   return (
     <div className='w-full h-40'>
@@ -76,7 +99,7 @@ function NavBar() {
           </div>
 
           <div className='flex justify-around w-40 items-center'>
-            <Link><img src={iconUser} alt=""/></Link>
+            <Link onClick={perfil}><img src={iconUser} alt=""/></Link>
             <div className='flex flex-col text-sm text-blackwhite/80 font-primary'>
               <p>Olá,</p>
               <p>Nome Cliente</p>
@@ -147,16 +170,9 @@ function NavBar() {
             )}
           </div>
 
-          {[
-            "Promoções",
-            "Pedidos",
-            "Mais vendidos",
-            "Rastreio",
-            "SKYNS ideal para sua pele",
-            "Feedback",
-            "Lojas físicas",
-          ].map((text, index) => (
+          {links.map((text, index) => (
             <Link
+            onClick={() => caminho(index)}
             key={index}
             className="relative text-sm text-blackwhite/90 hover:text-purpledark transition-colors
             after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 hover:after:w-full 

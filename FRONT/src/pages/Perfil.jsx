@@ -83,26 +83,7 @@ function Perfil() {
   }, [valorEmailExcluir]);
 
   const pedidos = [
-    {
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      img: "img_pedidos.svg",
-      quantidade: "4",
-      preco: "89,90",
-    },
-    {
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      img: "img_pedidos.svg",
-      quantidade: "4",
-      preco: "89,90",
-    },
-    {
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      img: "img_pedidos.svg",
-      quantidade: "4",
-      preco: "89,90",
-    },
-    
-    
+   
   ];
 
   return (
@@ -113,13 +94,60 @@ function Perfil() {
           <p className=" pl-2 text-purpledark">Olá, Manassés!</p>
         </div>
       </div>
-      <div className=" w-full pt-6 flex justify-center items-center">
-        <div className=" flex items-center text-2xl p-2 w-76/100  font-medium ">
-          Seus pedidos
-        </div>
-      </div>
-      {pedidos.length == 0 && (
-        <div className=" w-full h-34/100 pt-4 flex justify-center">
+      {pedidos.length > 0 ? (
+        <>
+          <div className=" w-full pt-6 flex justify-center items-center">
+            <div className=" flex items-center text-2xl p-2 w-76/100  font-medium ">
+              Historico de pedidos
+            </div>
+          </div>
+
+          <div className="w-full flex justify-center ">
+            <div className="w-79/100 ml-12 flex flex-col  justify-start pr-9 items-center h-95 overflow-y-auto">
+              {pedidos.map((items, index) => {
+                return (
+                  <div
+                    className="w-full flex items-center pt-8 justify-center "
+                    key={index}
+                  >
+                    <div className="bg-[#F4F4F4]  h-36 flex items-center   w-full rounded-2xl">
+                      <div className="ml-4 w-9/100 mr-40 flex justify-center items-center ">
+                        <img className="w-100/100" src={items.img} alt="" />
+                      </div>
+                      <div className="w-20/100 mr-20">
+                        <h1 className="text-lg">{items.nome}</h1>
+                      </div>
+                      <div className="border-2 h-8 w-7/100 border-[#97989C] ml-15 mr-4 gap-3 flex justify-center items-center rounded-lg">
+                        <h1 className="text-4xl pb-1 text-[#97989C]">-</h1>
+                        <h1 className="text-[#97989C]  text-lg">
+                          {items.quantidade}
+                        </h1>
+                        <h1 className="text-[#97989C] text-2xl">+</h1>
+                      </div>
+                      <div>
+                        <h1 className="text-purpledark text-2xl font-bold ml-24 mr-10 ">
+                          R$ {items.preco}
+                        </h1>
+                      </div>
+                      <div className="h-full w-12/100 justify-end  items-end flex  pb-5">
+                        <button className="border-2 w-full p-1.5 text-sm rounded-lg border-purpledark text-purpledark cursor-pointer">
+                          VER DETALHES
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className=" w-full h-40/100 pt-4 flex flex-col  items-center">
+          <div className=" w-full pt-6 pb-4 flex justify-center items-center">
+            <div className=" flex items-center text-2xl p-2 w-76/100  font-medium ">
+              Historico de pedidos
+            </div>
+          </div>
           <div className="bg-[#F4F4F4] flex flex-col justify-center items-center w-76/100 h-86/100 rounded-2xl">
             <p className="text-2xl">Você ainda não fez nenhum pedido</p>
             <p className="text-lg pt-2">
@@ -136,46 +164,6 @@ function Perfil() {
           </div>
         </div>
       )}
-      <div className="w-full flex justify-center items-center">
-        <div className="w-79/100 ml-12 flex flex-col  justify-start pr-9 items-center h-120 overflow-y-auto">
-          {pedidos.length > 0 &&
-            pedidos.map((items, index) => {
-              return (
-                <div
-                  className="w-full flex items-center pt-6 justify-center "
-                  key={index}
-                >
-                  <div className="bg-[#F4F4F4] h-50 flex items-center  justify-evenly w-full rounded-2xl">
-                    <div className="w-46 ">
-                      <img src={items.img} alt="" />
-                    </div>
-                    <div className="w-25/100 ml-5">
-                      <h1 className="text-2xl">{items.nome}</h1>
-                    </div>
-                    <div className="border-2 h-10 w-9/100 border-[#97989C] ml-15 gap-3 flex justify-center items-center rounded-lg">
-                      <h1 className="text-4xl pb-1 text-[#97989C]">-</h1>
-                      <h1 className="text-[#97989C] text-lg">
-                        {items.quantidade}
-                      </h1>
-                      <h1 className="text-[#97989C] text-2xl">+</h1>
-                    </div>
-                    <div>
-                      <h1 className="text-purpledark text-2xl font-bold ml-24 ">
-                        R$ {items.preco}
-                      </h1>
-                    </div>
-                    <div className="h-full w-14/100 justify-end  items-end flex  pb-5">
-                      <button className="border-2 w-full p-1.5 rounded-lg border-purpledark text-purpledark cursor-pointer">
-                        VER DETALHES
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      </div>
-
       <div className=" w-full  flex justify-center items-center">
         <div className=" flex items-center mt-6 text-3xl p-2 w-76/100  font-medium ">
           Informação da conta
