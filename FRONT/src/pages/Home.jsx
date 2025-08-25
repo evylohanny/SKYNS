@@ -1,13 +1,16 @@
 import { useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, A11y } from "swiper/modules";
+import { Navigation, Pagination, A11y, Autoplay } from "swiper/modules";
 import "swiper/css";
 
 import NavBar from "../components/NavBar";
 import FooterCompleto from "../components/FooterCompleto";
 
 import poster from "../assets/poster.svg";
+import poster_2 from "../assets/poster_2.svg";
+import poster_3 from "../assets/poster_3.svg";
+import poster_4 from "../assets/poster_4.svg";
 import banner from "../assets/banner.svg";
 import banner2 from "../assets/banner2.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
@@ -127,6 +130,7 @@ function Home() {
     ];
 
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const posters = [poster, poster_2, poster_3, poster_4];
 
   const scrollToSection = () => {
     document.getElementById("banner").scrollIntoView({ behavior: "smooth" });
@@ -140,32 +144,42 @@ function Home() {
   return (
     <div className="flex flex-col w-full h-[1000vh] mt-[-0.9%] items-center gap-10">
       <NavBar />
-
       <section className="relative w-full h-[75vh] flex items-start">
-        <div className="absolute left-[8%] top-[25%] flex flex-col gap-3 max-w-[600px]">
-          <p className="text-white text-[15px] tracking-[1.5px] uppercase font-semibold">
-            Cuidar da pele também é cuidar de você
-          </p>
-          <h1 className="text-extradarkpurple w-160 font-bold text-[50px] leading-[65px]">
-            Transforme sua rotina em um ritual de acolhimento.
-          </h1>
-          <p className="text-white w-150 text-[15px] tracking-[1.5px] uppercase font-semibold">
-            Sua pele é única. Descubra os ingredientes certos para cuidar dela com ciência e carinho.
-          </p>
-          <button onClick={scrollToSection} className="cursor-pointer text-[23px] bg-purpledark text-white hover:bg-white hover:text-purple px-6 py-3 rounded-full font-semibold w-40 transition-colors duration-500">
-              Vamos lá
-          </button>
-        </div>
-
         <div className="flex items-center">
-          <img
-            src={poster}
-            alt="Mulher segurando produto"
-            className="h-[100%] object-contain"
-          />
+          <Swiper
+            modules={[Autoplay]}
+            slidesPerView={1}
+            loop={true}
+            autoplay={{
+              delay: 6000,
+              disableOnInteraction: false,
+            }}
+            className="h-[100%] w-422 object-contain flex"
+          >
+            {
+              posters.map((src, index) => (
+
+              <SwiperSlide key={index} className="relative h-full w-full">
+                <img
+                  src={src}
+                  alt=""
+                  className=""
+                />
+
+                {
+                  (index === 0 || index === 2) &&
+                   <div className={index === 0? "absolute z-100 left-[8%] top-[70%] flex flex-col gap-3 max-w-[600px]" : "absolute z-100 left-[55%] top-[70%] flex flex-col gap-3 max-w-[600px]"}>
+                    <button onClick={scrollToSection} className="cursor-pointer text-[26px] bg-purpledark text-white hover:bg-white hover:text-purple px-6 py-3 rounded-full font-semibold w-50 transition-colors duration-500">
+                        Vamos lá
+                    </button>
+                  </div>
+                }
+              </SwiperSlide>
+            ))
+          }
+            </Swiper>
         </div>
       </section>
-
       <section id="products" className="flex flex-col items-center h-[120vh] mt-30">
         <img className="w-295 shadow-lg" src={banner} alt="" />
         <h2 className="mt-16 text-[22px] font-primary font-medium tracking-[2px] text-salmon">
