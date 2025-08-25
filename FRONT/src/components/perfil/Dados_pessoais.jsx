@@ -45,7 +45,6 @@ function Dados_pessoais() {
             className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={valor_nome_editar}
-            disabled={!isEditing}
             onChange={(e) => setvalor_nome_editar(formatarNome(e.target.value))}
           />
         </div>
@@ -56,7 +55,7 @@ function Dados_pessoais() {
             placeholder="Ex: Manassés@gmail.com"
             className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
-            disabled={!isEditing}
+            
           />
         </div>
         <label className="text-lg pt-5">CPF</label>
@@ -67,7 +66,7 @@ function Dados_pessoais() {
              className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={valor_cpf_editar}
-            disabled={!isEditing}
+           
             onChange={(e) => setValor_cpf_editar(formatarCPF(e.target.value))}
           />
         </div>
@@ -79,7 +78,7 @@ function Dados_pessoais() {
              className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={valor_data_editar}
-            disabled={!isEditing}
+           
             onChange={(e) => setValor_data_editar(formatarData(e.target.value))}
           />
         </div>
@@ -87,7 +86,7 @@ function Dados_pessoais() {
         <div className="w-full pt-2">
           <select
             value={genero}
-            disabled={!isEditing}
+           
             onChange={(e) => setGenero(e.target.value)}
              className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
@@ -106,7 +105,6 @@ function Dados_pessoais() {
              className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={valor_tele_editar}
-            disabled={!isEditing}
             onChange={(e) => setValor_tele_editar(formatarTele(e.target.value))}
           />
         </div>
@@ -116,7 +114,7 @@ function Dados_pessoais() {
             hover:cursor-pointer hover:bg-purpledark hover:text-white hover:transition duration-400 ease-in-out"
             onClick={() => setIsEditing(!isEditing)}
           >
-            {isEditing ? "SALVAR" : "EDITAR"}
+            <h1>SALVAR</h1>
           </button>
         </div>
       </div>

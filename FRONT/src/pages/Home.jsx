@@ -142,7 +142,7 @@ function Home() {
   }
 
   return (
-    <div className="flex flex-col w-full h-[1000vh] mt-[-0.9%] items-center gap-10">
+    <div className="flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10">
       <NavBar />
       <section className="relative w-full h-[75vh] flex items-start">
         <div className="flex items-center w-full">
