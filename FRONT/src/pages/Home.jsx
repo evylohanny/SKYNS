@@ -145,7 +145,7 @@ function Home() {
     <div className="flex flex-col w-full h-[1000vh] mt-[-0.9%] items-center gap-10">
       <NavBar />
       <section className="relative w-full h-[75vh] flex items-start">
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <Swiper
             modules={[Autoplay]}
             slidesPerView={1}
@@ -154,7 +154,7 @@ function Home() {
               delay: 6000,
               disableOnInteraction: false,
             }}
-            className="h-[100%] w-422 object-contain flex"
+            className="relative w-full h-[100%] object-contain flex"
           >
             {
               posters.map((src, index) => (
