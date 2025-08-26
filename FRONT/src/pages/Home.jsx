@@ -140,7 +140,7 @@ function Home() {
 
     return Array.from({ length: count }, (_, i) => <img key={i} src={estrela} alt="estrela" />);
   }
-
+  
   return (
     <div className="flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10">
       <NavBar />

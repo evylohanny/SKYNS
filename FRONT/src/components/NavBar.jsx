@@ -9,7 +9,7 @@ import iconMenu from '../assets/iconMenu.svg';
 import testFoto from '../assets/testFoto.svg'
 import { useNavigate } from "react-router-dom";
 
-function NavBar() {
+function NavBar({search}) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const dropdownRef = useRef(null);
@@ -70,7 +70,12 @@ function NavBar() {
 
   const perfil = () => {
     navigate("/perfil")
-  }
+  };
+
+    const onSearchChange = (event) => {
+
+      navigate(`/results?search=${encodeURIComponent(event.target.value)}`);
+    };
 
   return (
     <div className='w-full h-40'>
@@ -86,6 +91,9 @@ function NavBar() {
             <input
               type="text"
               placeholder="Buscar"
+              value={search}
+              onFocus={true}
+              onChange={onSearchChange}
               className="w-full py-1 px-4 pr-10 border border-blackwhite/30 rounded-full focus:outline-none 
               focus:border-purpledark focus:border-1 placeholder-blackwhite/70 placeholder:font-medium"
             />
