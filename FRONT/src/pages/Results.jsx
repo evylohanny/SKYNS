@@ -9,6 +9,8 @@ import banner from "../assets/banner.svg";
 import estrela from "../assets/estrela.svg";
 import carrinho_roxo from "../assets/carrinho.svg";
 import carrinho_branco from "../assets/carrinho branco.svg";
+import Footer from "../components/FooterTecnico";
+import FooterCompleto from "../components/FooterCompleto";
 
 function Results() {
 
@@ -103,20 +105,20 @@ function Results() {
       <section className="w-295 h-fit mt-10">
         <img src={banner} alt="Banner" />
       </section>
-      <div>
+      <div className="mb-20">
         {
           filtrados.length <= 0 || !search
           ?
           (
             <div className="cursor-pointer p-5 opacity-70 text-gray2 text-[16px]">
-              Não há resultados para esta busca.
+              {`Não há resultados para "${search}"`}
             </div>
           )
           :
           (
             <div className="flex flex-col h-fit w-295">
-            <div className="p-5">
-              <h1 onClick={() => navigate('/')} className="cursor-pointer opacity-70 text-gray2 text-[14px]">{`Início > Pesquisa > ${search}`}</h1>
+            <div className="p-6">
+              <h1 onClick={() => navigate('/')} className="cursor-pointer opacity-70 text-gray2 text-[16px]">{`Início > Pesquisa > ${search}`}</h1>
             </div>
             <div className="w-full h-fit grid grid-cols-4">
             {
@@ -154,6 +156,7 @@ function Results() {
           )
         }
       </div>
+      <FooterCompleto />
     </div>
   );
 }

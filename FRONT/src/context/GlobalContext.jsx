@@ -4,8 +4,10 @@ export const GlobalContext = createContext();
 
 export const GlobalContextProvider = ({ children }) => {
 
+  const [logoAnimation, setLogoAnimation] = useState(true);
+
   return (
-    <GlobalContext.Provider value={{}} >
+    <GlobalContext.Provider value={{logoAnimation, setLogoAnimation}} >
       {children}
     </GlobalContext.Provider>
   );

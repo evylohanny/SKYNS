@@ -84,12 +84,18 @@ function NavBar({search}) {
 
     const onSearchChange = (event) => {
 
+      if (location.pathname === '/results' && event.target.value.length === 0) {
+
+        navigate('/');
+        return;
+      };
+
       navigate(`/results?search=${encodeURIComponent(event.target.value)}`);
     };
 
   return (
-    <div className='w-full h-40'>
-      <div className='w-full h-40 fixed top-0 left-0 bg-white z-999'>
+    <div className='w-full h-30'>
+      <div className='w-full h-40 fixed top-0 left-0 bg-white z-[999]'>
 
       <CarrosselPQ />
 

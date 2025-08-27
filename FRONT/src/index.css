@@ -83,11 +83,9 @@ html, body, #root {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(0.5%);
   }
   to {
     opacity: 1;
-    transform: translateY(0.15%);
   }
 }
 

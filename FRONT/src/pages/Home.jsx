@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y, Autoplay } from "swiper/modules";
+import { GlobalContext } from "../context/GlobalContext";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useContext } from "react";
+import clsx from 'clsx';
 import "swiper/css";
 
-import NavBar from "../components/NavBar";
 import FooterCompleto from "../components/FooterCompleto";
+import NavBar from "../components/NavBar";
 
 import poster from "../assets/poster.svg";
 import poster_2 from "../assets/poster_2.svg";
@@ -130,7 +133,7 @@ function Home() {
       }
     ];
     const posters = [poster, poster_2, poster_3, poster_4];
-
+    const {logoAnimation, setLogoAnimation} = useContext(GlobalContext);
     const [mostrarLogo, setMostrarLogo] = useState(true);
     const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -142,6 +145,17 @@ function Home() {
       }, 3000);
     }, []);
 
+    useEffect(()=> {
+
+      if (!mostrarLogo) {
+
+        setTimeout(() => {
+          
+          setLogoAnimation(false);
+        }, 2000);
+      }
+    }, [mostrarLogo]);
+
   const scrollToSection = () => {
     document.getElementById("banner").scrollIntoView({ behavior: "smooth" });
   };
@@ -152,13 +166,13 @@ function Home() {
   }
   
   return (
-    mostrarLogo 
+    mostrarLogo && logoAnimation
     ?
     <div className="flex flex-col m-0 p-0 justify-center items-center w-full h-full animate-fadeOutContainer">
       <img className="w-30 animate-fadeInUp" src={logo} alt="Logo SKYNS" />
     </div>
     :
-    <div className="flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10 animate-fadeInUp">
+    <div className={clsx("flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10", logoAnimation && "animate-fadeInUp")}>
       <NavBar />
       <section className="relative w-full h-[75vh] flex items-start">
         <div className="flex items-center w-full">
