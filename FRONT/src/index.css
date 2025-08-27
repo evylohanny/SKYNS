@@ -71,3 +71,29 @@ html, body, #root {
   display: flex;
   flex-direction: column;
 }
+
+.animate-fadeInUp {
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.animate-fadeOutContainer {
+  animation: fadeOutContainer 0.5s ease-out 2s forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.5%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0.15%);
+  }
+}
+
+@keyframes fadeOutContainer {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

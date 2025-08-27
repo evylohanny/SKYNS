@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y, Autoplay } from "swiper/modules";
@@ -28,6 +28,7 @@ import image2 from "../assets/image2.svg";
 import image3 from "../assets/image3.svg";
 import image4 from "../assets/image4.svg";
 import seta_comments from "../assets/seta-comments.svg";
+import logo from "../assets/logo.svg";
 
 function Home() {
 
@@ -128,9 +129,18 @@ function Home() {
         stars: 5
       }
     ];
+    const posters = [poster, poster_2, poster_3, poster_4];
 
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const posters = [poster, poster_2, poster_3, poster_4];
+    const [mostrarLogo, setMostrarLogo] = useState(true);
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
+    useEffect(() => {
+
+      setTimeout(() => {
+
+        setMostrarLogo(false);
+      }, 3000);
+    }, []);
 
   const scrollToSection = () => {
     document.getElementById("banner").scrollIntoView({ behavior: "smooth" });
@@ -142,7 +152,13 @@ function Home() {
   }
   
   return (
-    <div className="flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10">
+    mostrarLogo 
+    ?
+    <div className="flex flex-col m-0 p-0 justify-center items-center w-full h-full animate-fadeOutContainer">
+      <img className="w-30 animate-fadeInUp" src={logo} alt="Logo SKYNS" />
+    </div>
+    :
+    <div className="flex flex-col w-full h-[1050vh] mt-[-0.9%] items-center gap-10 animate-fadeInUp">
       <NavBar />
       <section className="relative w-full h-[75vh] flex items-start">
         <div className="flex items-center w-full">

@@ -7,13 +7,15 @@ import iconCarrinho from '../assets/iconCarrinho.svg';
 import iconLupa from '../assets/iconLupa.svg';
 import iconMenu from '../assets/iconMenu.svg';
 import testFoto from '../assets/testFoto.svg'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function NavBar({search}) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate()
+  const searchInputRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
   
   const links =[
             "Promoções",
@@ -38,6 +40,14 @@ function NavBar({search}) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+
+    if (searchInputRef.current && (location.pathname === '/results' || location.pathname === '/')) {
+
+      searchInputRef.current.focus();
+    }
+  }, [location]);
   
   const caminho = (index) => {
 
@@ -91,8 +101,8 @@ function NavBar({search}) {
             <input
               type="text"
               placeholder="Buscar"
+              ref={searchInputRef}
               value={search}
-              onFocus={true}
               onChange={onSearchChange}
               className="w-full py-1 px-4 pr-10 border border-blackwhite/30 rounded-full focus:outline-none 
               focus:border-purpledark focus:border-1 placeholder-blackwhite/70 placeholder:font-medium"
@@ -102,8 +112,8 @@ function NavBar({search}) {
             </span>
           </div>
 
-          <div className='pr-5'>
-            <img src={logoNav} alt="" />
+          <div className='pr-5' onClick={() => navigate('/')}>
+            <img className='cursor-pointer' src={logoNav} alt="" />
           </div>
 
           <div className='flex justify-around w-40 items-center'>
