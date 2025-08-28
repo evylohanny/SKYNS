@@ -7,20 +7,20 @@ import iconPro from '../assets/iconPro.svg';
 import Dashboard from '../components/Dashboard';
 import FolhaA from '../components/FolhaA';
 import CadastroPro from '../components/CadastroPro';
-import Sugestão from '../components/Sugestão';
+import fundoGes from '../assets/fundoGes.svg';
 
 function Gestão() {
-  const [componenteAtivo, setComponenteAtivo] = useState('dashboard'); 
+  const [componenteAtivo, setComponenteAtivo] = useState('folha'); 
   // valores possíveis: 'dashboard', 'folha', 'cadastro'
 
   const renderComponente = () => {
     switch (componenteAtivo) {
-      case 'folha':
-        return <FolhaA />;
+      case 'dashboard':
+        return <Dashboard />;
       case 'cadastro':
         return <CadastroPro />;
       default:
-        return <Dashboard />;
+        return <FolhaA />;
     }
   };
 
@@ -65,9 +65,9 @@ function Gestão() {
           </div>
         </div>
       </div>
-      <div className='w-[82%]'>
-        {/* {renderComponente()} */}
-        <Sugestão />
+      <div className="w-[82%] h-[90vh] bg-cover bg-center flex justify-center items-center"
+       style={{ backgroundImage: `url(${fundoGes})` }}>
+        {renderComponente()}
       </div>
       </div>
     </div>
