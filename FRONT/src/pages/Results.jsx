@@ -110,7 +110,7 @@ function Results() {
           filtrados.length <= 0 || !search
           ?
           (
-            <div className="cursor-pointer p-5 opacity-70 text-gray2 text-[16px]">
+            <div className="cursor-pointer p-5 opacity-70 text-gray2 text-[20px] text-center">
               {`Não há resultados para "${search}"`}
             </div>
           )

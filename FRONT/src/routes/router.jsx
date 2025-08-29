@@ -6,6 +6,7 @@ import Produtos from "../pages/Produtos";
 import Gestão from "../pages/Gestão";
 import Pedidos from "../pages/Pedidos";
 import Results from "../pages/Results.jsx";
+import Rastreio from "../pages/Rastreio.jsx";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
     {
         path: '/results',
         element: <Results />
+    },
+    {
+        path: '/produto/progresso',
+        element: <Rastreio />
     }
 ]);
 

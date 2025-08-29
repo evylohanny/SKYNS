@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import CarrosselPQ from '../components/CarrosselPQ';
 import logoNav from '../assets/logoNav.svg';
 import iconUser from '../assets/iconUser.svg';
@@ -8,10 +8,12 @@ import iconLupa from '../assets/iconLupa.svg';
 import iconMenu from '../assets/iconMenu.svg';
 import testFoto from '../assets/testFoto.svg'
 import { useNavigate, useLocation } from "react-router-dom";
+import { GlobalContext } from '../context/GlobalContext';
 
 function NavBar({search}) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const { logoAnimation } = useContext(GlobalContext);
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
   const location = useLocation();
@@ -43,7 +45,7 @@ function NavBar({search}) {
 
   useEffect(() => {
 
-    if (searchInputRef.current && (location.pathname === '/results' || location.pathname === '/')) {
+    if (searchInputRef.current && (location.pathname === '/results' || (location.pathname === '/' && !logoAnimation))) {
 
       searchInputRef.current.focus();
     }
