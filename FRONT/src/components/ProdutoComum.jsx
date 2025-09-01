@@ -10,6 +10,7 @@ import NavBar from "../components/NavBar.jsx";
 import Sugestao from "../components/Sugestão.jsx";
 import FooterCompleto from "../components/FooterCompleto.jsx";
 import Feedback from "../components/Feedback.jsx";
+import FeedbackDeitado from "../components/FeedbackDeitado.jsx"
 
 // fotos
 import noture1 from "../assets/SKYNSNature1.svg";
@@ -22,48 +23,47 @@ import iconcheck from "../assets/iconCheck.svg";
 import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
-function ProdutoCustomizavel() {
-  const fotos = [noture3, noture1, noture2];
-  const [activeIndex, setActiveIndex] = useState(0);
-  const swiperRef = useRef(null);
+function ProdutoComum() {
 
-  const handleMiniClick = (index) => {
-    setActiveIndex(index);
-    if (swiperRef.current) {
-      swiperRef.current.slideTo(index);
-    }
-  };
-
-  const [quantidade, setQuantidade] = useState(1);
-
-  const aumentar = () => {
-    setQuantidade((prev) => prev + 1);
-  };
-
-  const diminuir = () => {
-    if (quantidade > 1) {
-      setQuantidade((prev) => prev - 1);
-    }
-  };
-
-  const [tab, setTab] = useState("funciona");
+      const fotos = [noture3, noture1, noture2];
+      const [activeIndex, setActiveIndex] = useState(0);
+      const swiperRef = useRef(null);
+    
+      const handleMiniClick = (index) => {
+        setActiveIndex(index);
+        if (swiperRef.current) {
+          swiperRef.current.slideTo(index);
+        }
+      };
+    
+      const [quantidade, setQuantidade] = useState(1);
+    
+      const aumentar = () => {
+        setQuantidade((prev) => prev + 1);
+      };
+    
+      const diminuir = () => {
+        if (quantidade > 1) {
+          setQuantidade((prev) => prev - 1);
+        }
+      };
+    
+      const [tab, setTab] = useState("funciona");
 
   return (
     <div>
       <NavBar />
 
-      {/* primeira parte(filtro,fotos e descrição) */}
+      {/* primeira parte(fotos e descrição) */}
       <div className="flex pt-18 p-10 gap-8">
-        <Filtro />
-
         {/* 2 - Fotos */}
-        <div className="flex gap-6">
+        <div className="flex gap-6 p-4 pl-25">
           {/* Coluna de miniaturas */}
           <div className="flex flex-col gap-4">
             {fotos.map((foto, index) => (
               <img
                 key={index}
-                className={`w-[80px] cursor-pointer border-2 ${
+                className={`w-[100px] cursor-pointer border-2 ${
                   activeIndex === index
                     ? "border-purpledark"
                     : "border-transparent"
@@ -74,7 +74,7 @@ function ProdutoCustomizavel() {
               />
             ))}
           </div>
-          <div className="w-[450px] h-[550px] relative">
+          <div className="w-[450px] h-[580px] relative">
             <button className="custom-prev absolute top-1/2 left-2 -translate-y-1/2 z-10">
               <img src={setaEsquerda} alt="anterior" className="w-8 h-8" />
             </button>
@@ -104,7 +104,7 @@ function ProdutoCustomizavel() {
             </Swiper>
           </div>
         </div>
-        <div className="p-4 flex flex-col">
+        <div className="p-7 flex flex-col pl-10">
           <div className="flex items-center gap-4">
             <p className="bg-lightgreen p-0.5 px-1 text-purpledark font-bold rounded-[7px]">
               10% OFF
@@ -114,18 +114,18 @@ function ProdutoCustomizavel() {
           <p className="pt-6 font-medium text-[25px] text-gray2">
             Sérum Rejuvenescedor Nocturne 45+
           </p>
-          <div className="flex justify-end ">
-            <p className="mt-4 bg-blackwhite/20 w-fit px-2 py-0.5 rounded">
+          <div className="flex justify-end w-[70%]">
+            <p className="mt-4  bg-blackwhite/20 w-fit px-2 py-0.5 rounded-sm">
               300g
             </p>
           </div>
 
-          <div className="pt-6 flex gap-3 items-center">
+          <div className="pt-2 flex gap-3 items-center">
             <p className="line-through text-black/40 font-bold">R$89,90</p>{" "}
             <p className=" text-purpledark font-bold text-[25px]">R$59,90</p>
           </div>
           <div>
-            <p className="w-120 text-[16px] mt-2 text-blackwhite/95">
+            <p className="w-150 text-[17px] mt-2 text-blackwhite/95">
               Pele renovada e protegida, até nos dias mais ensolarados! Prepare
               sua pele para brilhar com segurança! O Esfoliante Solar Ultra UV
               Apripeiadi foi desenvolvido especialmente para quem quer cuidar
@@ -186,7 +186,7 @@ function ProdutoCustomizavel() {
 
       {/* segunda parte(descrição) */}
       <div className="w-[80%] mx-auto pl-54">
-        {/* Abas */}
+       {/* <FeedbackDeitado/> */}
         <div className="flex border-b-2 border-b-blackwhite/50 gap-6 ">
           <button
             className={`pb-2 ${
@@ -275,4 +275,4 @@ function ProdutoCustomizavel() {
   );
 }
 
-export default ProdutoCustomizavel;
+export default ProdutoComum
