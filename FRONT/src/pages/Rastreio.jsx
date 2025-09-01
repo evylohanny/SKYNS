@@ -25,7 +25,7 @@ function Rastreio() {
                     <div></div>
                 </div>
                 <div>
-                    <progress className='border' value={15}></progress>
+                    <progress className='border' value={50} max={100}></progress>
                 </div>
             </div>
             <div>
