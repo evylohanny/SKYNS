@@ -24,31 +24,30 @@ import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
 function ProdutoComum() {
+  const fotos = [noture3, noture1, noture2];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
 
-      const fotos = [noture3, noture1, noture2];
-      const [activeIndex, setActiveIndex] = useState(0);
-      const swiperRef = useRef(null);
-    
-      const handleMiniClick = (index) => {
-        setActiveIndex(index);
-        if (swiperRef.current) {
-          swiperRef.current.slideTo(index);
-        }
-      };
-    
-      const [quantidade, setQuantidade] = useState(1);
-    
-      const aumentar = () => {
-        setQuantidade((prev) => prev + 1);
-      };
-    
-      const diminuir = () => {
-        if (quantidade > 1) {
-          setQuantidade((prev) => prev - 1);
-        }
-      };
-    
-      const [tab, setTab] = useState("funciona");
+  const handleMiniClick = (index) => {
+    setActiveIndex(index);
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(index);
+    }
+  };
+
+  const [quantidade, setQuantidade] = useState(1);
+
+  const aumentar = () => {
+    setQuantidade((prev) => prev + 1);
+  };
+
+  const diminuir = () => {
+    if (quantidade > 1) {
+      setQuantidade((prev) => prev - 1);
+    }
+  };
+
+  const [tab, setTab] = useState("funciona");
 
   return (
     <div>
@@ -131,27 +130,27 @@ function ProdutoComum() {
               Apripeiadi foi desenvolvido especialmente para quem quer cuidar
               das manchas e renovar a pele sem abrir mão da proteção solar.
             </p>
-            <p class="mt-3 font-semibold text-[18px] text-blackwhite/80">
+            <p className="mt-3 font-semibold text-[18px] text-blackwhite/80">
               O que ele faz?
             </p>
-            <ul class="mt-2 ">
-              <li class="flex gap-1 text-blackwhite/90">
+            <ul className="mt-2 ">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Remove impurezas e células mortas{" "}
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Protege contra os radicais livres
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Uniformiza o tom da pele{" "}
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Hidrata profundamente{" "}
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Estimula a renovação celular{" "}
               </li>
@@ -176,7 +175,6 @@ function ProdutoComum() {
                 +
               </button>
             </div>
-            {/* Botão Comprar */}
             <button className="bg-blue text-purpledark font-semibold px-7 py-2 rounded-lg">
               COMPRAR
             </button>
@@ -184,95 +182,85 @@ function ProdutoComum() {
         </div>
       </div>
 
-      {/* segunda parte(descrição) */}
-      <div className="w-[80%] mx-auto pl-54">
-       {/* <FeedbackDeitado/> */}
-        <div className="flex border-b-2 border-b-blackwhite/50 gap-6 ">
-          <button
-            className={`pb-2 ${
-              tab === "funciona"
-                ? "border-b-2 border-purpledark font-semibold"
-                : "text-blackwhite/70"
-            }`}
-            onClick={() => setTab("funciona")}
-          >
-            Como funciona
-          </button>
-          <button
-            className={`pb-2 ${
-              tab === "composicao"
-                ? "border-b-2 border-purpledark font-semibold"
-                : "text-blackwhite/70"
-            }`}
-            onClick={() => setTab("composicao")}
-          >
-            Composição especificada
-          </button>
+      <div className="w-[80%] mx-auto  mt-16">
+        <div className="flex items-start gap-10">
+          {/* Feedback  */}
+          <div className="w-1/3">
+            <FeedbackDeitado />
+          </div>
+
+          {/* Abas + Conteúdo */}
+          <div className="w-2/3">
+            {/* Abas */}
+            <div className="flex border-b-2 border-b-blackwhite/50 gap-6">
+              <button
+                className={`pb-2 ${
+                  tab === "funciona"
+                    ? "border-b-2 border-purpledark font-semibold"
+                    : "text-blackwhite/70"
+                }`}
+                onClick={() => setTab("funciona")}
+              >
+                Como funciona
+              </button>
+              <button
+                className={`pb-2 ${
+                  tab === "composicao"
+                    ? "border-b-2 border-purpledark font-semibold"
+                    : "text-blackwhite/70"
+                }`}
+                onClick={() => setTab("composicao")}
+              >
+                Composição especificada
+              </button>
+            </div>
+            <div className="mt-6">
+              {tab === "funciona" && (
+                <div>
+                  <p className="mt-6">
+                    ativo hidratante que carrega até mais de mil vezes o seu peso em
+                    água, nutre e hidrata a pele, além de prevenir e suavizar os sinais
+                    do tempo. nossa fórmula conta com oitos formas e três pesos
+                    moleculares distintos desse ativo, o que proporciona sua penetração
+                    em diferentes camadas da pele.
+                  </p>
+                  <p className="mt-6">
+                    também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
+                    hidratante devido sua capacidade de atrair e reter umidade. além
+                    disso, promove ação calmante, suavizante e anti-inflamatória.
+                  </p>
+                  <p className="mt-6">
+                    comum no hemisfério norte, esse ingrediente era usado desde a China
+                    Imperial para manter a pele limpa e luminosa e diminuir a aparência
+                    dos sinais do tempo. na nossa fórmula, ele age na recuperação da
+                    luminosidade da pele, estimula a firmeza e contribui para suavizar
+                    linhas finas.
+                  </p>
+                </div>
+              )}
+
+              {tab === "composicao" && (
+                <div>
+                  <p className="mt-6"> ... </p>
+                  <p className="mt-6"> ... </p>
+                  <p className="mt-6"> ... </p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Conteúdo das abas */}
-        <div className="mt-4">
-          {tab === "funciona" && (
-            <div>
-              <p class="mt-15">
-                ativo hidratante que carrega até mais de mil vezes o seu peso em
-                água, nutre e hidrata a pele, além de prevenir e suavizar os
-                sinais do tempo. nossa fórmula conta com oitos formas e três
-                pesos moleculares distintos desse ativo, o que proporciona sua
-                penetração em diferentes camadas da pele.
-              </p>
-              <p class="mt-15">
-                também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
-                hidratante devido sua capacidade de atrair e reter umidade. além
-                disso, promove ação calmante, suavizante e anti-inflamatória.
-              </p>
-              <p class="mt-15">
-                comum no hemisfério norte, esse ingrediente era usado desde a
-                China Imperial para manter a pele limpa e luminosa e diminuir a
-                aparência dos sinais do tempo. na nossa fórmula, ele age na
-                recuperação da luminosidade da pele, estimula a firmeza e
-                contribui para suavizar linhas finas.
-              </p>
-            </div>
-          )}
-
-          {tab === "composicao" && (
-            <div>
-              <p class="mt-15">
-                ativo hidratante que carrega até mais de mil vezes o seu peso em
-                água, nutre e hidrata a pele, além de prevenir e suavizar os
-                sinais do tempo. nossa fórmula conta com oitos formas e três
-                pesos moleculares distintos desse ativo, o que proporciona sua
-                penetração em diferentes camadas da pele.
-              </p>
-              <p class="mt-15">
-                também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
-                hidratante devido sua capacidade de atrair e reter umidade. além
-                disso, promove ação calmante, suavizante e anti-inflamatória.
-              </p>
-              <p class="mt-15">
-                comum no hemisfério norte, esse ingrediente era usado desde a
-                China Imperial para manter a pele limpa e luminosa e diminuir a
-                aparência dos sinais do tempo. na nossa fórmula, ele age na
-                recuperação da luminosidade da pele, estimula a firmeza e
-                contribui para suavizar linhas finas.
-              </p>
-            </div>
-          )}
-        </div>
-        <div class="mt-30">
+        {/* Sugestões */}
+        <div className="mt-30 ">
           <Sugestao />
-        </div>
-        <div class="mt-10">
-          <Feedback />
         </div>
       </div>
 
-      <div class="mt-30">
+      <div className="mt-30">
         <FooterCompleto />
       </div>
     </div>
   );
 }
 
-export default ProdutoComum
+export default ProdutoComum;

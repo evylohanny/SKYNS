@@ -12,20 +12,44 @@ import foto5Su from "../assets/foto5Su.svg";
 import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
-function Sugestão() {
+function Sugestao() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
   const produtos = [
-    { img: foto1Su, nome: "Protetor labial sabor cereja do amor", preco: "R$ 59,90" },
+    {
+      img: foto1Su,
+      nome: "Protetor labial sabor cereja do amor",
+      preco: "R$ 59,90",
+    },
     { img: foto2Su, nome: "Ativo labial cereja do amor", preco: "R$ 59,90" },
-    { img: foto3Su, nome: "Ativo labial laranja vern de verão", preco: "R$ 59,90" },
-    { img: foto4Su, nome: "Protetor labial sabor cereja do amor", preco: "R$ 59,90" },
+    {
+      img: foto3Su,
+      nome: "Ativo labial laranja vern de verão",
+      preco: "R$ 59,90",
+    },
+    {
+      img: foto4Su,
+      nome: "Protetor labial sabor cereja do amor",
+      preco: "R$ 59,90",
+    },
     { img: foto5Su, nome: "Ativo labial cereja do amor", preco: "R$ 59,90" },
-    { img: foto1Su, nome: "Protetor labial sabor cereja do amor", preco: "R$ 59,90" },
+    {
+      img: foto1Su,
+      nome: "Protetor labial sabor cereja do amor",
+      preco: "R$ 59,90",
+    },
     { img: foto2Su, nome: "Ativo labial cereja do amor", preco: "R$ 59,90" },
-    { img: foto3Su, nome: "Ativo labial laranja vern de verão", preco: "R$ 59,90" },
-    { img: foto4Su, nome: "Protetor labial sabor cereja do amor", preco: "R$ 59,90" },
+    {
+      img: foto3Su,
+      nome: "Ativo labial laranja vern de verão",
+      preco: "R$ 59,90",
+    },
+    {
+      img: foto4Su,
+      nome: "Protetor labial sabor cereja do amor",
+      preco: "R$ 59,90",
+    },
     { img: foto5Su, nome: "Ativo labial cereja do amor", preco: "R$ 59,90" },
   ];
 
@@ -42,12 +66,12 @@ function Sugestão() {
   const slides = chunkArray(produtos, produtosPorSlide);
 
   return (
-    <div className="relative bg-graymedium p-6 rounded-lg">
-      <div className="flex flex-col px-20">
+    <div className="relative bg-graymedium p-4 rounded-lg max-w-[80%] mx-auto">
+      <div className="flex flex-col px-6">
         <h2 className="text-lg font-semibold text-gray2">
           Aproveite as promoções e complete sua rotina
         </h2>
-        <p className="text-gray2 text-sm mb-6">
+        <p className="text-gray2 text-sm mb-4">
           Até 10% OFF na compra de 3 unidades
         </p>
       </div>
@@ -62,28 +86,36 @@ function Sugestão() {
           swiper.navigation.init();
           swiper.navigation.update();
         }}
-        className="pb-6"
+        className="pb-4"
       >
         {slides.map((grupo, index) => (
           <SwiperSlide
             key={index}
-            className="!flex !flex-row px-20 text-center justify-center items-center !h-[350px]"
+            className="!flex !flex-row px-6 text-center justify-end items-center !h-[350px]"
           >
             {grupo.map((item, i) => (
               <div
                 key={i}
-                className="flex flex-col w-[20%] h-[500px] justify-center items-start
-                 transform transition duration-300 hover:scale-103 cursor-pointer"
+                className="flex flex-col w-[22%] h-[500px] justify-center items-start
+             transform transition duration-300 hover:scale-105 cursor-pointer"
               >
-                <img src={item.img} alt={item.nome} className="object-cover w-[80%]" />
-                <div className="!flex flex-col w-[70%] !items-start gap-3 text-start pb-2">
+                <img
+                  src={item.img}
+                  alt={item.nome}
+                  className="object-cover w-[90%]"
+                />
+                <div className="!flex flex-col w-[80%] !items-start gap-3 text-start pb-2">
                   <p className="text-sm font-medium mt-3 line-clamp-2 text-black/70">
                     {item.nome}
                   </p>
-                  <p className="text-purpledark/75 font-semibold">{item.preco}</p>
+                  <p className="text-purpledark/75 font-semibold text-base">
+                    {item.preco}
+                  </p>
                 </div>
-                <button className="bg-purpledark text-white px-10 py-2 mt-3 rounded-full font-semibold 
-                 hover:bg-blue hover:text-purpledark transition">
+                <button
+                  className="bg-purpledark text-white px-10 py-2 mt-3 rounded-full font-semibold 
+             hover:bg-blue hover:text-purpledark transition text-sm"
+                >
                   LEVAR
                 </button>
               </div>
@@ -91,17 +123,22 @@ function Sugestão() {
           </SwiperSlide>
         ))}
 
-        {/* Botões com ref */}
-        <button ref={prevRef} className="absolute left-9 top-36 -translate-y-1/2 z-10 cursor-pointer">
-          <img src={setaEsquerda} alt="Anterior" className="w-8 h-8" />
+        <button
+          ref={prevRef}
+          className="absolute left-5 top-36 -translate-y-1/2 z-10 cursor-pointer"
+        >
+          <img src={setaEsquerda} alt="Anterior" className="w-7 h-7" />
         </button>
 
-        <button ref={nextRef} className="absolute right-20 top-36 -translate-y-1/2 z-10 cursor-pointer">
-          <img src={setaDireita} alt="Próximo" className="w-8 h-8" />
+        <button
+          ref={nextRef}
+          className="absolute right-12 top-36 -translate-y-1/2 z-10 cursor-pointer"
+        >
+          <img src={setaDireita} alt="Próximo" className="w-7 h-7" />
         </button>
       </Swiper>
     </div>
   );
 }
 
-export default Sugestão;
+export default Sugestao;
