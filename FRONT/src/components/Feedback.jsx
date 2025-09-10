@@ -18,7 +18,7 @@ function Feedback() {
         {/* Cards de feedback */}
         <div className='flex flex-col sm:flex-row lg:w-2/3 gap-4 flex-wrap justify-center'>
           {/* Card 1 */}
-          <div className='flex flex-col w-full sm:w-[48%] lg:w-[45%] p-3 gap-1 border-4 border-purpleborde/40 rounded-xl max-h-[180px]'>
+          <div className='flex flex-col w-full sm:w-[48%] lg:w-[45%] p-3 gap-1 border-3 border-purpleborde/40 rounded-xl max-h-[180px]'>
             <img src={estrelas} alt="Estrelas" className='w-20 md:w-24'/>
             <div className='flex flex-col gap-1 overflow-hidden'>
               <h2 className='text-base font-semibold text-extradarkpurple truncate'>Sabonete incrível</h2>
@@ -31,7 +31,7 @@ function Feedback() {
           </div>
 
           {/* Card 2 */}
-          <div className='flex flex-col w-full sm:w-[48%] lg:w-[45%] p-3 gap-1 border-4 border-purpleborde/40 rounded-xl max-h-[180px]'>
+          <div className='flex flex-col w-full sm:w-[48%] lg:w-[45%] p-3 gap-1 border-3 border-purpleborde/40 rounded-xl max-h-[180px]'>
             <img src={estrelas} alt="Estrelas" className='w-20 md:w-24'/>
             <div className='flex flex-col gap-1 overflow-hidden'>
               <h2 className='text-base font-semibold text-extradarkpurple truncate'>Sérum com Ácido Hialurônico</h2>

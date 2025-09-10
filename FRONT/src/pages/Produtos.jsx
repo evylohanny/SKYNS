@@ -5,8 +5,8 @@ import ProdutoComum from '../components/ProdutoComum'
 function Produtos() {
   return (
     <div>
-      {/* <ProdutoCustomizavel/> */}
-      <ProdutoComum />
+      <ProdutoCustomizavel/>
+      {/* <ProdutoComum /> */}
     </div>
   )
 }

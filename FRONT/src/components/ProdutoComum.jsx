@@ -182,7 +182,7 @@ function ProdutoComum() {
         </div>
       </div>
 
-      <div className="w-[80%] mx-auto  mt-16">
+      <div className="w-[80%] mx-auto  mt-10">
         <div className="flex items-start gap-10">
           {/* Feedback  */}
           <div className="w-1/3">
@@ -193,16 +193,7 @@ function ProdutoComum() {
           <div className="w-2/3">
             {/* Abas */}
             <div className="flex border-b-2 border-b-blackwhite/50 gap-6">
-              <button
-                className={`pb-2 ${
-                  tab === "funciona"
-                    ? "border-b-2 border-purpledark font-semibold"
-                    : "text-blackwhite/70"
-                }`}
-                onClick={() => setTab("funciona")}
-              >
-                Como funciona
-              </button>
+
               <button
                 className={`pb-2 ${
                   tab === "composicao"
@@ -215,45 +206,33 @@ function ProdutoComum() {
               </button>
             </div>
             <div className="mt-6">
-              {tab === "funciona" && (
-                <div>
-                  <p className="mt-6">
-                    ativo hidratante que carrega até mais de mil vezes o seu peso em
-                    água, nutre e hidrata a pele, além de prevenir e suavizar os sinais
-                    do tempo. nossa fórmula conta com oitos formas e três pesos
-                    moleculares distintos desse ativo, o que proporciona sua penetração
-                    em diferentes camadas da pele.
-                  </p>
-                  <p className="mt-6">
-                    também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
-                    hidratante devido sua capacidade de atrair e reter umidade. além
-                    disso, promove ação calmante, suavizante e anti-inflamatória.
-                  </p>
-                  <p className="mt-6">
-                    comum no hemisfério norte, esse ingrediente era usado desde a China
-                    Imperial para manter a pele limpa e luminosa e diminuir a aparência
-                    dos sinais do tempo. na nossa fórmula, ele age na recuperação da
-                    luminosidade da pele, estimula a firmeza e contribui para suavizar
-                    linhas finas.
-                  </p>
-                </div>
-              )}
 
               {tab === "composicao" && (
-                <div>
-                  <p className="mt-6"> ... </p>
-                  <p className="mt-6"> ... </p>
-                  <p className="mt-6"> ... </p>
+                <div class='font-secondary'>
+                  <p className="mt-6 text-[16px]"> 
+                  ativo hidratante que carrega até mais de mil vezes o seu peso em água, nutre e hidrata a pele, além de prevenir e 
+                  suavizar os sinais do tempo. nossa fórmula conta com oitos formas e três pesos moleculares distintos desse ativo, 
+                  o que proporciona sua penetração em diferentes camadas da pele. 
+                  </p>
+                  <p className="mt-12 text-[16px]"> 
+                  também conhecido como Pro-Vitamina B5, o pantenol tem alto poder hidratante devido sua capacidade de atrair e reter 
+                  umidade. além disso, promove ação calmante, suavizante e anti-inflamatória. 
+                  </p>
+                  <p className="mt-12 text-[16px]"> 
+                  comum no hemisfério norte, esse ingrediente era usado desde a China Imperial para manter a pele limpa e luminosa e 
+                  diminuir a aparência dos sinais do tempo. na nossa fórmula, ele age na recuperação da luminosidade da pele, 
+                  estimula a firmeza e contribui para suavizar linhas finas. 
+                  </p>
                 </div>
               )}
             </div>
+        {/* Sugestões */}
+        <div className="mt-25">
+          <Sugestao />
+        </div>
           </div>
         </div>
 
-        {/* Sugestões */}
-        <div className="mt-30 ">
-          <Sugestao />
-        </div>
       </div>
 
       <div className="mt-30">

@@ -23,7 +23,7 @@ function FeedbackDeitado() {
       {/* Cards em coluna */}
       <div className="flex flex-col w-85 max-w-[400px] mt-8 gap-6">
         {/* Card 1 */}
-        <div className="flex flex-col p-4 gap-2 border-4 border-purpleborde/40 rounded-xl w-70">
+        <div className="flex flex-col p-4 gap-2 border-3 border-purpleborde/40 rounded-xl w-70">
           <img src={estrelas} alt="Estrelas" className="w-20 md:w-24" />
           <div className="flex flex-col gap-2">
             <h2 className="text-base font-semibold text-extradarkpurple">
@@ -38,7 +38,7 @@ function FeedbackDeitado() {
         </div>
 
         {/* Card 2 */}
-        <div className="flex flex-col p-4 gap-2 border-4 border-purpleborde/40 rounded-xl w-70">
+        <div className="flex flex-col p-4 gap-2 border-3 border-purpleborde/40 rounded-xl w-70">
           <img src={estrelas} alt="Estrelas" className="w-20 md:w-24" />
           <div className="flex flex-col gap-2">
             <h2 className="text-base font-semibold text-extradarkpurple">
