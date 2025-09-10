@@ -66,12 +66,12 @@ function Sugestao() {
   const slides = chunkArray(produtos, produtosPorSlide);
 
   return (
-    <div className="relative bg-graymedium p-4 rounded-lg max-w-[80%] mx-auto">
+    <div className="relative bg-graymedium p-4 rounded-lg w-[100%] ml-auto mr-0 ">
       <div className="flex flex-col px-6">
-        <h2 className="text-lg font-semibold text-gray2">
+        <h2 className="text-lg font-semibold text-gray2 pl-4">
           Aproveite as promoções e complete sua rotina
         </h2>
-        <p className="text-gray2 text-sm mb-4">
+        <p className="text-gray2 text-sm mb-4 pl-4">
           Até 10% OFF na compra de 3 unidades
         </p>
       </div>
@@ -86,7 +86,7 @@ function Sugestao() {
           swiper.navigation.init();
           swiper.navigation.update();
         }}
-        className="pb-4"
+        className="!pl-4"
       >
         {slides.map((grupo, index) => (
           <SwiperSlide
@@ -125,14 +125,14 @@ function Sugestao() {
 
         <button
           ref={prevRef}
-          className="absolute left-5 top-36 -translate-y-1/2 z-10 cursor-pointer"
+          className="absolute left-1 top-36 -translate-y-1/2 z-10 cursor-pointer"
         >
           <img src={setaEsquerda} alt="Anterior" className="w-7 h-7" />
         </button>
 
         <button
           ref={nextRef}
-          className="absolute right-12 top-36 -translate-y-1/2 z-10 cursor-pointer"
+          className="absolute right-1 top-36 -translate-y-1/2 z-10 cursor-pointer"
         >
           <img src={setaDireita} alt="Próximo" className="w-7 h-7" />
         </button>
