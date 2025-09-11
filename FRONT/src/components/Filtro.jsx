@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-function Filtro({ limiteRef }) {
+function Filtro({ limiteRef, selecionados, toggleComponente }) {
   const filtroRef = useRef(null);
   const [top, setTop] = useState(50);
 
@@ -21,6 +21,14 @@ function Filtro({ limiteRef }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [limiteRef]);
 
+  const componentes = [
+    "Retinol",
+    "Ácido Glicólico",
+    "Vitamina C",
+    "Ácido Mandélico",
+    "Ácido Lático",
+  ];
+
   return (
     <div
       ref={filtroRef}
@@ -40,15 +48,18 @@ function Filtro({ limiteRef }) {
         <div className="border-2 border-blue p-2 w-60 rounded-full">
           <h1 className="font-semibold text-sm text-blackwhite/80 pl-2">Componentes</h1>
         </div>
-        {["Retinol", "Ácido Glicólico", "Vitamina C", "Ácido Mandélico", "Ácido Lático"].map(
-          (item, index) => (
-            <label key={index} className="flex items-center pl-5 gap-2 cursor-pointer">
-              <input type="checkbox" className="peer hidden" id={`checkbox-${index}`} />
-              <div className="w-4 h-4 rounded-sm border-2 border-black/30 peer-checked:bg-purpledark peer-checked:border-none flex items-center justify-center"></div>
-              <p>{item}</p>
-            </label>
-          )
-        )}
+        {componentes.map((item, index) => (
+          <label key={index} className="flex items-center pl-5 gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="peer hidden"
+              checked={selecionados.includes(item)}
+              onChange={() => toggleComponente(item)}
+            />
+            <div className="w-4 h-4 rounded-sm border-2 border-black/30 peer-checked:bg-purpledark peer-checked:border-none flex items-center justify-center"></div>
+            <p>{item}</p>
+          </label>
+        ))}
       </div>
     </div>
   );
