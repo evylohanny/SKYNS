@@ -11,6 +11,7 @@ import montagem from '../assets/montagem.svg';
 import montagemConcluido from '../assets/montagem2.svg';
 import expedicao from '../assets/expedicao.svg';
 import expedicaoConcluido from '../assets/expedicao2.svg';
+import completed from '../assets/completed.svg';
 
 function Rastreio() {
 
@@ -28,9 +29,22 @@ function Rastreio() {
             </div>
         </div>
         <div className='w-295 mt-20 h-full flex flex-col'>
-            <div className='w-full h-10 flex items-center justify-center gap-[57%]'>
-                <div className='font-secondary font-medium text-gray2 text-3xl opacity-66 text-start'>Andamento</div>
-                <div className='font-semibold flex gap-1 text-purpledark text-[1.3rem] text-end'><img src={pendentIcon} alt='Ícone de pendente' />Pendente</div>
+            <div className='w-full h-10 flex items-center justify-center gap-[60%]'>
+                <div className='font-secondary font-medium text-gray2 text-3xl opacity-66 text-start'>Processo</div>
+                <div className={clsx('font-semibold flex items-center justify-center gap-1 text-[1.3rem] text-end', currentPhase !== 'Completed' ? 'text-purpledark' : 'text-greendark')}>
+                    <img className='w-7 h-7' src={currentPhase === 'Completed' ? completed : pendentIcon} alt='Ícone de pendente' />
+                    {
+                        currentPhase === 'Completed'
+                        ?
+                        <>
+                        Concluído
+                        </>
+                        :
+                        <>
+                        Pendente
+                        </>
+                    }
+                </div>
             </div>
             <div>
                 <div className='flex gap-[7%] w-full h-30 items-center justify-center mt-25'>
@@ -47,7 +61,7 @@ function Rastreio() {
                         <p className={clsx('text-center font-semibold text-[1rem]', currentPhase !== 'Estoque' && currentPhase !== 'Processo' ? 'text-purpledark' : 'text-gray2 opacity-66')}>Montagem</p>
                     </div>
                     <div className='w-30 h-30 flex flex-col justify-end items-center'>
-                        <img className='w-[125px] h-[125px]' onClick={() => changePhase('Expedição')} src={currentPhase === 'Expedição' ? expedicaoConcluido : currentPhase === 'Completed' ? concluido : expedicao} />
+                        <img className='w-[125px] h-[125px]' onClick={() => changePhase('Completed')} src={currentPhase === 'Expedição' ? expedicaoConcluido : currentPhase === 'Completed' ? concluido : expedicao} />
                         <p className={clsx('text-center font-semibold text-[1rem]', currentPhase === 'Expedição' || currentPhase === 'Completed' ? 'text-purpledark' : 'text-gray2 opacity-66')}>Expedição</p>
                     </div>
                 </div>
@@ -65,7 +79,7 @@ function Rastreio() {
                     </p>
                 </div>
             </div>
-            <div className='w-full flex items-center justify-center mt-18'>
+            <div className='w-full h-30 flex items-end justify-center'>
                 <div className='flex flex-col text-xl font-semibold w-[40%] text-start'>
                     <div className='flex text-gray2 opacity-66 gap-3'>
                         Tempo de produção:
@@ -80,8 +94,8 @@ function Rastreio() {
                         </h1>
                     </div>
                 </div>
-                <div className='flex w-[40%] items-center justify-end'>
-                    <div className='text-purpledark text-2xl font-semibold border-2 border-purpledark rounded-xl pt-2 pb-2 pl-2 pr-2'>
+                <div className='flex w-[40%] items-end justify-end cursor-pointer'>
+                    <div className='text-purpledark text-[1.1rem] font-semibold border-2 border-purpledark rounded-xl pt-2 pb-2 pl-10 pr-10 hover:text-white hover:bg-purpledark transition 5s'>
                         FECHAR
                     </div>
                 </div>
