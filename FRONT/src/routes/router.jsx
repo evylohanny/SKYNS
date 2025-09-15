@@ -7,6 +7,7 @@ import Gestão from "../pages/Gestão";
 import Pedidos from "../pages/Pedidos";
 import Results from "../pages/Results.jsx";
 import Rastreio from "../pages/Rastreio.jsx";
+import Pagamento from "../pages/Pagamento.jsx"
 
 const router = createBrowserRouter([
     {
@@ -22,8 +23,12 @@ const router = createBrowserRouter([
         element: <Perfil/>
     },
     {
-        path: '/produtos',
-        element: <Produtos />
+        path: '/produtocustomizavel',
+        element: <Produtos tipo="customizavel" />
+    },
+    {
+        path: '/produtocomum',
+        element: <Produtos tipo="comum" />
     },
     {
         path: '/gestao',
@@ -41,7 +46,11 @@ const router = createBrowserRouter([
     {
         path: '/produto/progresso',
         element: <Rastreio />
-    }
+    },
+    {
+        path: '/pagamento',
+        element: <Pagamento />
+    },
 ]);
 
 export default router;

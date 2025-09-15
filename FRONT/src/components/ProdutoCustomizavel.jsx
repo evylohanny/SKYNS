@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef,useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -22,13 +22,11 @@ import iconcheck from "../assets/iconCheck.svg";
 import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
-
 function ProdutoCustomizavel() {
   const limiteRef = useRef(null);
   const fotos = [noture3, noture1, noture2];
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
-  
 
   const handleMiniClick = (index) => {
     setActiveIndex(index);
@@ -46,44 +44,90 @@ function ProdutoCustomizavel() {
 
   const [tab, setTab] = useState("funciona");
 
-  //  lista de componentes disponíveis e selecionados ---
+  const combinacoesToxicas = {
+    Retinol: [
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+      "Vitamina C",
+    ],
+    "Ácido Glicólico": ["Retinol", "Vitamina C"],
+    "Ácido Mandélico": ["Retinol", "Vitamina C"],
+    "Ácido Lático": ["Retinol", "Vitamina C"],
+    "Vitamina C": [
+      "Retinol",
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+    ],
+  };
+
   const componentesDisponiveis = [
     {
       nome: "Retinol",
-      descricao: "Estimula a renovação celular e reduz linhas finas.",
+      descricao:
+        "É um dos ativos mais estudados em dermatologia. Estimula a renovação celular, aumenta a produção de colágeno e melhora linhas finas, manchas e textura da pele. Pode causar irritação inicial, por isso costuma ser introduzido aos poucos.",
     },
     {
       nome: "Ácido Glicólico",
-      descricao: "Faz esfoliação química suave e melhora a textura da pele.",
+      descricao:
+        "Faz uma esfoliação química suave, removendo células mortas, clareando manchas e ajudando na luminosidade. Também prepara a pele para absorver melhor outros ativos.",
     },
     {
       nome: "Vitamina C",
-      descricao: "Ajuda na produção de colágeno e dá luminosidade.",
+      descricao:
+        "Potente antioxidante que combate os radicais livres, previne envelhecimento precoce e auxilia na produção de colágeno. Também uniformiza o tom da pele, reduzindo manchas e dando mais viço.",
     },
     {
       nome: "Ácido Mandélico",
-      descricao: "Clareia manchas e combate a acne sem irritar.",
+      descricao:
+        "AHA derivado das amêndoas amargas, é mais suave que o glicólico. Tem ação esfoliante, antimicrobiana e clareadora, sendo indicado até para peles sensíveis e com acne.",
     },
     {
       nome: "Ácido Lático",
-      descricao: "Hidrata e melhora a elasticidade da pele.",
+      descricao:
+        "Hidrata ao mesmo tempo em que esfolia, ajudando a uniformizar o tom e a textura da pele sem agredir tanto..",
     },
   ];
 
   const [selecionados, setSelecionados] = useState([]);
 
-const toggleComponente = (nome) => {
-  setSelecionados((prev) => {
-    if (prev.includes(nome)) {
-      // se já estava selecionado, remove
-      return prev.filter((item) => item !== nome);
-    } else {
-      // se ainda não está e já tem 3, não adiciona
-      if (prev.length >= 3) return prev;
+  // estado do toast
+  const [mensagem, setMensagem] = useState(null);
+
+  const mostrarMensagem = (texto) => {
+    setMensagem(texto);
+    setTimeout(() => setMensagem(null), 5000); // some em 5s
+  };
+
+  const toggleComponente = (nome) => {
+    setSelecionados((prev) => {
+      if (prev.includes(nome)) {
+        return prev.filter((item) => item !== nome);
+      }
+
+      if (prev.length >= 3) {
+        mostrarMensagem("⚠️ Você só pode selecionar até 3 componentes.");
+        return prev;
+      }
+
+      const conflitos = combinacoesToxicas[nome] || [];
+      const conflitoAtivo = prev.some((item) => conflitos.includes(item));
+
+      if (conflitoAtivo) {
+        mostrarMensagem(
+          `⚠️ Você não pode combinar ${nome} com ${conflitos.join(", ")}.`
+        );
+        return prev;
+      }
+
       return [...prev, nome];
-    }
-  });
-};
+    });
+  };
+
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
 
   return (
@@ -257,7 +301,6 @@ const toggleComponente = (nome) => {
           </button>
         </div>
 
-        {/* Conteúdo das abas */}
         <div className="mt-4">
           {tab === "funciona" && (
             <div className="font-secondary">
@@ -296,12 +339,11 @@ const toggleComponente = (nome) => {
                   (c) => c.nome === nome
                 );
                 return (
-                  <div
-                    key={nome}
-                    className="border border-purpledark rounded-xl p-4 w-fit"
-                  >
-                    <p className="font-semibold text-purpledark">{comp.nome}</p>
-                    <p className="text-blackwhite/80 mt-1">{comp.descricao}</p>
+                  <div key={nome} className="p-2 w-fit">
+                    <p className="font-bold text-purpledark rounded-xl p-1 px-4 w-fit  border-1 border-purpledark ">
+                      {comp.nome}
+                    </p>
+                    <p className="text-blackwhite/90 mt-2">{comp.descricao}</p>
                   </div>
                 );
               })}
@@ -320,6 +362,25 @@ const toggleComponente = (nome) => {
       <div className="mt-30">
         <FooterCompleto />
       </div>
+
+      {/* TOAST */}
+      {mensagem && (
+        <div
+          className="fixed bottom-10 right-10 bg-purpledark text-white px-4 py-3 rounded-xl shadow-lg 
+                     transition-all duration-500 ease-out animate-[fadeIn_0.5s_ease-out]"
+          style={{
+            animation: "fadeIn 0.5s ease-out",
+          }}
+        >
+          {mensagem}
+        </div>
+      )}
+      <style>{`
+        @keyframes fadeIn {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
