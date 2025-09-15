@@ -4,7 +4,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-//components importados
+// components importados
 import Filtro from "../components/Filtro.jsx";
 import NavBar from "../components/NavBar.jsx";
 import Sugestao from "../components/Sugestão.jsx";
@@ -22,10 +22,13 @@ import iconcheck from "../assets/iconCheck.svg";
 import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
+
 function ProdutoCustomizavel() {
+  const limiteRef = useRef(null);
   const fotos = [noture3, noture1, noture2];
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
+  
 
   const handleMiniClick = (index) => {
     setActiveIndex(index);
@@ -36,26 +39,67 @@ function ProdutoCustomizavel() {
 
   const [quantidade, setQuantidade] = useState(1);
 
-  const aumentar = () => {
-    setQuantidade((prev) => prev + 1);
-  };
-
+  const aumentar = () => setQuantidade((prev) => prev + 1);
   const diminuir = () => {
-    if (quantidade > 1) {
-      setQuantidade((prev) => prev - 1);
-    }
+    if (quantidade > 1) setQuantidade((prev) => prev - 1);
   };
 
   const [tab, setTab] = useState("funciona");
 
+  //  lista de componentes disponíveis e selecionados ---
+  const componentesDisponiveis = [
+    {
+      nome: "Retinol",
+      descricao: "Estimula a renovação celular e reduz linhas finas.",
+    },
+    {
+      nome: "Ácido Glicólico",
+      descricao: "Faz esfoliação química suave e melhora a textura da pele.",
+    },
+    {
+      nome: "Vitamina C",
+      descricao: "Ajuda na produção de colágeno e dá luminosidade.",
+    },
+    {
+      nome: "Ácido Mandélico",
+      descricao: "Clareia manchas e combate a acne sem irritar.",
+    },
+    {
+      nome: "Ácido Lático",
+      descricao: "Hidrata e melhora a elasticidade da pele.",
+    },
+  ];
+
+  const [selecionados, setSelecionados] = useState([]);
+
+const toggleComponente = (nome) => {
+  setSelecionados((prev) => {
+    if (prev.includes(nome)) {
+      // se já estava selecionado, remove
+      return prev.filter((item) => item !== nome);
+    } else {
+      // se ainda não está e já tem 3, não adiciona
+      if (prev.length >= 3) return prev;
+      return [...prev, nome];
+    }
+  });
+};
+
+
   return (
-    <div>
+    <div className="min-h-screen">
       <NavBar />
 
-      {/* primeira parte(filtro,fotos e descrição) */}
-      <div className="flex pt-18 p-10 gap-8">
-        <Filtro />
+      {/* primeira parte (filtro, fotos e descrição) */}
+      <div className="pl-5">
+        <Filtro
+          limiteRef={limiteRef}
+          selecionados={selecionados}
+          toggleComponente={toggleComponente}
+        />
+      </div>
 
+      <div className="flex pt-18 gap-10 items-start justify-center pl-68">
         {/* 2 - Fotos */}
         <div className="flex gap-6">
           {/* Coluna de miniaturas */}
@@ -74,6 +118,8 @@ function ProdutoCustomizavel() {
               />
             ))}
           </div>
+
+          {/* Foto principal */}
           <div className="w-[450px] h-[550px] relative">
             <button className="custom-prev absolute top-1/2 left-2 -translate-y-1/2 z-10">
               <img src={setaEsquerda} alt="anterior" className="w-8 h-8" />
@@ -104,7 +150,9 @@ function ProdutoCustomizavel() {
             </Swiper>
           </div>
         </div>
-        <div className="p-4 flex flex-col">
+
+        {/* descrição do produto */}
+        <div className="p-4 flex flex-col ">
           <div className="flex items-center gap-4">
             <p className="bg-lightgreen p-0.5 px-1 text-purpledark font-bold rounded-[7px]">
               10% OFF
@@ -121,7 +169,7 @@ function ProdutoCustomizavel() {
           </div>
 
           <div className="pt-6 flex gap-3 items-center">
-            <p className="line-through text-black/40 font-bold">R$89,90</p>{" "}
+            <p className="line-through text-black/40 font-bold">R$89,90</p>
             <p className=" text-purpledark font-bold text-[25px]">R$59,90</p>
           </div>
           <div>
@@ -131,32 +179,33 @@ function ProdutoCustomizavel() {
               Apripeiadi foi desenvolvido especialmente para quem quer cuidar
               das manchas e renovar a pele sem abrir mão da proteção solar.
             </p>
-            <p class="mt-3 font-semibold text-[18px] text-blackwhite/80">
+            <p className="mt-3 font-semibold text-[18px] text-blackwhite/80">
               O que ele faz?
             </p>
-            <ul class="mt-2 ">
-              <li class="flex gap-1 text-blackwhite/90">
+            <ul className="mt-2 ">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
-                Remove impurezas e células mortas{" "}
+                Remove impurezas e células mortas
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
                 Protege contra os radicais livres
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
-                Uniformiza o tom da pele{" "}
+                Uniformiza o tom da pele
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
-                Hidrata profundamente{" "}
+                Hidrata profundamente
               </li>
-              <li class="flex gap-1 text-blackwhite/90">
+              <li className="flex gap-1 text-blackwhite/90">
                 <img src={iconcheck} alt="" />
-                Estimula a renovação celular{" "}
+                Estimula a renovação celular
               </li>
             </ul>
           </div>
+
           {/* botao de quantidade */}
           <div className="flex items-center gap-4 mt-7">
             <div className="flex items-center border-2 border-purpledark rounded-lg w-30 p-6 py-1">
@@ -176,7 +225,6 @@ function ProdutoCustomizavel() {
                 +
               </button>
             </div>
-            {/* Botão Comprar */}
             <button className="bg-blue text-purpledark font-semibold px-7 py-2 rounded-lg">
               COMPRAR
             </button>
@@ -184,9 +232,8 @@ function ProdutoCustomizavel() {
         </div>
       </div>
 
-      {/* segunda parte(descrição) */}
+      {/* segunda parte (descrição) */}
       <div className="w-[80%] mx-auto pl-54">
-        {/* Abas */}
         <div className="flex border-b-2 border-b-blackwhite/50 gap-6 ">
           <button
             className={`pb-2 ${
@@ -213,62 +260,64 @@ function ProdutoCustomizavel() {
         {/* Conteúdo das abas */}
         <div className="mt-4">
           {tab === "funciona" && (
-            <div>
-              <p class="mt-15">
-                ativo hidratante que carrega até mais de mil vezes o seu peso em
-                água, nutre e hidrata a pele, além de prevenir e suavizar os
-                sinais do tempo. nossa fórmula conta com oitos formas e três
-                pesos moleculares distintos desse ativo, o que proporciona sua
-                penetração em diferentes camadas da pele.
+            <div className="font-secondary">
+              <p className="mt-5 text-purpledark w-200 text-[18px]">
+                Nosso sistema de filtros foi desenvolvido para facilitar sua
+                experiência e ajudar você a encontrar o produto ideal para a sua
+                pele.
               </p>
-              <p class="mt-15">
-                também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
-                hidratante devido sua capacidade de atrair e reter umidade. além
-                disso, promove ação calmante, suavizante e anti-inflamatória.
+              <p className="mt-10">
+                1- Escolha do produto: cada produto já é desenvolvido para um
+                tipo específico de pele (acneica, madura, oleosa ou seca).
               </p>
-              <p class="mt-15">
-                comum no hemisfério norte, esse ingrediente era usado desde a
-                China Imperial para manter a pele limpa e luminosa e diminuir a
-                aparência dos sinais do tempo. na nossa fórmula, ele age na
-                recuperação da luminosidade da pele, estimula a firmeza e
-                contribui para suavizar linhas finas.
+              <p className="mt-10">
+                2- Personalize com os componentes: dentro da linha escolhida,
+                você pode selecionar até 3 componentes ativos. Esses ativos têm
+                diferentes propriedades alinhadas com o seu desejo de
+                tratamento. Confira no campo composição especificada.
+              </p>
+              <p className="mt-10">
+                3- Resultado garantido: mesmo escolhendo combinações diferentes,
+                todos os caminhos levam ao mesmo objetivo final - tratar o
+                problema principal da sua pele.
               </p>
             </div>
           )}
 
           {tab === "composicao" && (
-            <div>
-              <p class="mt-15">
-                ativo hidratante que carrega até mais de mil vezes o seu peso em
-                água, nutre e hidrata a pele, além de prevenir e suavizar os
-                sinais do tempo. nossa fórmula conta com oitos formas e três
-                pesos moleculares distintos desse ativo, o que proporciona sua
-                penetração em diferentes camadas da pele.
-              </p>
-              <p class="mt-15">
-                também conhecido como Pro-Vitamina B5, o pantenol tem alto poder
-                hidratante devido sua capacidade de atrair e reter umidade. além
-                disso, promove ação calmante, suavizante e anti-inflamatória.
-              </p>
-              <p class="mt-15">
-                comum no hemisfério norte, esse ingrediente era usado desde a
-                China Imperial para manter a pele limpa e luminosa e diminuir a
-                aparência dos sinais do tempo. na nossa fórmula, ele age na
-                recuperação da luminosidade da pele, estimula a firmeza e
-                contribui para suavizar linhas finas.
-              </p>
+            <div className="font-secondary mt-6 space-y-5">
+              {selecionados.length === 0 && (
+                <p className="text-blackwhite/70">
+                  Nenhum componente selecionado.
+                </p>
+              )}
+              {selecionados.map((nome) => {
+                const comp = componentesDisponiveis.find(
+                  (c) => c.nome === nome
+                );
+                return (
+                  <div
+                    key={nome}
+                    className="border border-purpledark rounded-xl p-4 w-fit"
+                  >
+                    <p className="font-semibold text-purpledark">{comp.nome}</p>
+                    <p className="text-blackwhite/80 mt-1">{comp.descricao}</p>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
-        <div class="mt-30">
+
+        <div ref={limiteRef} className="mt-30">
           <Sugestao />
-        </div>
-        <div class="mt-10">
           <Feedback />
         </div>
+
+        <div className="mt-10"></div>
       </div>
 
-      <div class="mt-30">
+      <div className="mt-30">
         <FooterCompleto />
       </div>
     </div>
