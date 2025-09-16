@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import CarrosselPQ from '../components/CarrosselPQ';
 
@@ -17,6 +18,7 @@ function Rastreio() {
 
     const [currentPhase, setCurrentPhase] = useState('Estoque');
     const phases = ['Estoque', 'Processo', 'Montagem', 'Expedição'];
+    const navigate = useNavigate();
 
     const changePhase = (phase) => setCurrentPhase(phase);
 
@@ -69,7 +71,7 @@ function Rastreio() {
                     <progress className='w-[80%] h-1.5 border-0 rounded-full 
          [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-gray 
          [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-purpledark from-purple to-purpledark 
-         [&::-moz-progress-bar]:bg-purpledark' value={25} max={100}></progress>
+         [&::-moz-progress-bar]:bg-purpledark' value={currentPhase === 'Estoque' ? 25 : currentPhase === 'Processo' ? 50 : currentPhase === 'Montagem' ? 75 : 100} max={100}></progress>
                 </div>
             </div>
             <div className='w-full flex flex-col items-center'>
@@ -95,7 +97,7 @@ function Rastreio() {
                     </div>
                 </div>
                 <div className='flex w-[40%] items-end justify-end cursor-pointer'>
-                    <div className='text-purpledark text-[1.1rem] font-semibold border-2 border-purpledark rounded-xl pt-2 pb-2 pl-10 pr-10 hover:text-white hover:bg-purpledark transition 5s'>
+                    <div onClick={() => navigate(-1)} className='text-purpledark text-[1.1rem] font-semibold border-2 border-purpledark rounded-xl pt-2 pb-2 pl-10 pr-10 hover:text-white hover:bg-purpledark transition 5s'>
                         FECHAR
                     </div>
                 </div>
