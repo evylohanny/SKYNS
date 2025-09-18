@@ -25,7 +25,7 @@ function Gestão() {
   };
 
   return (
-    <div>
+    <div className=''>
       <div className='flex flex-row justify-between font-tertiary p-5 px-18 w-full shadow-md'>
         <img src={iconLogoG} alt="" />
         <div className='flex flex-row justify-center items-center gap-1.5'>
