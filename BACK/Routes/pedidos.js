@@ -25,13 +25,17 @@ router.post('/pedidos', async(req, res) => {
 
 async function filaDeEspera(pedido) {
 
+    console.log('Entrou na fila');
+
     if (!pedido) return;
 
-    for (const produto of pedido) {
-       await traduzProduto(produto);
-    };
+    for (const produto of pedido) {    
 
-    console.log('Entrou na fila');
+        for (let i=0; i < produto.qtde; i++) {
+
+            await traduzProduto(produto);
+        };
+    };
 };
 
 async function traduzProduto(produto) {
@@ -107,7 +111,7 @@ async function produzProduto(produto) {
             console.log('Chegou prestes á produção!', body);
             const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 10000 });
             
-            if (response.status === 200) {
+            if (response.status === 201) {
                 console.log(response.data);
             } else {
 

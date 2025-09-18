@@ -1,0 +1,12 @@
+{
+  "name": "skyns",
+  "type": "module",
+  "scripts": {
+    "server": "cd BACK && npm start",
+    "client": "cd FRONT && npm start",
+    "start": "concurrently \"cd BACK && npm start\" \"cd FRONT && npm start\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
