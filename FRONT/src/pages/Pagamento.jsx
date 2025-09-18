@@ -118,7 +118,7 @@ function Pagamento() {
             </div>
 
             <div>
-              <button class="bg-purpledark w-85 p-2 rounded-[5px] cursor-pointer text-white text-[17px] font-medium">
+              <button class="bg-purpledark w-85 p-2 rounded-[5px] cursor-pointer text-white text-[17px] font-medium transition- hover:bg-blue hover:text-purpledark">
                 Pagar
               </button>
             </div>
