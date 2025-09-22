@@ -338,7 +338,9 @@ function Home() {
       {products?.map((item, index) => (
         <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
         <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
-         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
+          onClick={() => handleProductClick(item.tipo)}
+         >
           <img className="w-full h-full object-cover" src={item.image} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
@@ -356,6 +358,7 @@ function Home() {
           <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
            onMouseEnter={() => setHoveredIndex(index)}
            onMouseLeave={() => setHoveredIndex(null)}
+           onClick={() => handleProductClick(item.tipo)}
           >
             <img className="w-5" src={hoveredIndex === index ? carrinho_branco : carrinho_roxo} alt="" />
           </div>
@@ -493,7 +496,9 @@ function Home() {
       {products?.map((item, index) => (
         <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
         <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
-         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative">
+         <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
+         onClick={() => handleProductClick(item.tipo)}
+         >
           <img className="w-full h-full object-cover" src={item.image} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
@@ -511,6 +516,7 @@ function Home() {
           <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
            onMouseEnter={() => setHoveredIndex(index)}
            onMouseLeave={() => setHoveredIndex(null)}
+           onClick={() => handleProductClick(item.tipo)}
           >
             <img className="w-5" src={hoveredIndex === index ? carrinho_branco : carrinho_roxo} alt="" />
           </div>
