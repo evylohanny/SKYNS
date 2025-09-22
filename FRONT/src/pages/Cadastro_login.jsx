@@ -59,18 +59,18 @@ function Login() {
         <div className="w-1/2 h-full flex flex-col items-center justify-center">
           <div className=" flex w-100/100  items-center justify-center">
             <div className="flex w-4/6 space-x-8 border-b border-gray ">
-              <button
+              <buttonnp
                 onClick={() => {
                   setAbaAtiva("cadastro");
                 }}
                 className={`pb-2 transition-all ${
                   abaAtiva === "cadastro"
-                    ? "text-purpledark border-b-3 border-purpledark font-bold"
-                    : "text-gray border-b-3 border-transparent"
+                    ? "text-purpledark border-b-3 border-purpledark font-bold cursor-pointer"
+                    : "text-gray border-b-3 border-transparent cursor-pointer"
                 }`}
               >
                 Cadastro
-              </button>
+              </buttonnp>
 
               <button
                 onClick={() => {
@@ -78,8 +78,8 @@ function Login() {
                 }}
                 className={`pb-2 transition-all ${
                   abaAtiva === "login"
-                    ? "text-purpledark border-b-3 border-purpledark font-bold"
-                    : "text-gray border-b-3 border-transparent"
+                    ? "text-purpledark border-b-3 border-purpledark font-bold cursor-pointer"
+                    : "text-gray border-b-3 border-transparent cursor-pointer"
                 }`}
               >
                 Login

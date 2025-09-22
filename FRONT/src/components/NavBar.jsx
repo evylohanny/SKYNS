@@ -150,7 +150,7 @@ function NavBar({ search }) {
                     </h1>
                   </div>
                   <div className="w-15">
-                    <img src="x_carrinho.svg" alt="" />
+                    <img className="cursor-pointer" onClick={fechar} src="x_carrinho.svg" alt="" />
                   </div>
                 </div>
                 <div className=" border-b-1 border-[#d6d2d2] flex flex-col justify-center items-center w-full h-60/100 ">
@@ -172,8 +172,8 @@ function NavBar({ search }) {
                     </div>
                   </div>
                 </div>
-                <div>
-                   <button>ADICIONAR PRODUTOS</button>
+                <div className="w-full mt-5 h-12 flex justify-center rounded-lg items-center">
+                   <button className="w-90/100 h-full font-bold rounded-lg bg-purpledark text-white">ADICIONAR PRODUTOS</button>
                 </div>
               </div>
             </div>
