@@ -1,8 +1,7 @@
-//imagens
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // redirecionamento
 import Logo from "../assets/logo.svg";
 import foto1 from "../assets/SKYNSNature1.svg";
-//componentes
 import CarrosselPQ from "../components/CarrosselPQ";
 
 function Pagamento() {
@@ -11,8 +10,13 @@ function Pagamento() {
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
   const [cardName, setCardName] = useState("");
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
 
-  // input mascara
+  // máscaras
   const cepMascara = (e) => {
     let value = e.target.value.replace(/\D/g, "");
     if (value.length > 8) value = value.slice(0, 8);
@@ -44,6 +48,70 @@ function Pagamento() {
     setCardName(e.target.value);
   };
 
+  // validações
+  const validate = () => {
+    const newErrors = {};
+    if (!/^\d{5}-\d{3}$/.test(cep)) {
+      newErrors.cep = "CEP inválido. Ex: 88010-120";
+    }
+    if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber)) {
+      newErrors.cardNumber = "Número do cartão inválido";
+    }
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+      newErrors.expiry = "Data inválida. Ex: 10/30";
+    }
+    if (!/^\d{3}$/.test(cvc)) {
+      newErrors.cvc = "CVC deve ter 3 dígitos";
+    }
+    if (cardName.trim().length < 3) {
+      newErrors.cardName = "Nome do titular obrigatório";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        setSuccess(true);
+      }, 2000); // simula tempo de processamento
+    }
+  };
+
+  // quando sucesso -> mostra bolinha e redireciona em 1s
+  useEffect(() => {
+    if (success) {
+      setRedirecting(true);
+      const timer = setTimeout(() => {
+        navigate("/"); // vai pra home
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, navigate]);
+
+  // componente auxiliar para mensagens
+  const InputError = ({ msg }) =>
+    msg ? <p className="text-red-500 text-xs mt-1">{msg}</p> : null;
+
+  // tela de sucesso com bolinha
+  if (success) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-blackwhite/2">
+        {redirecting ? (
+          <div className="flex flex-col justify-center items-center">
+            <span className="w-10 h-10 border-4 border-purpledark border-t-transparent rounded-full animate-spin"></span>
+            <p className="mt-4 text-purpledark font-medium">
+              Redirecionando...
+            </p>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div>
       <CarrosselPQ />
@@ -51,7 +119,7 @@ function Pagamento() {
         <img className="w-30" src={Logo} alt="" />
       </div>
 
-      <div className="flex">
+      <form onSubmit={handleSubmit} className="flex">
         {/* lado esquerdo */}
         <div className="w-[60%] p-5 mr-[40%]">
           {/* Entrega */}
@@ -59,23 +127,29 @@ function Pagamento() {
             <p className="text-2xl font-secondary text-blackwhite/80">Entrega</p>
             <label className="mt-3 text-blackwhite/80 font-semibold">CEP</label>
             <input
-              className="text-sm p-2 mt-1 border-1 px-2 border-blackwhite/60 w-85 rounded-[5px] focus:border-purpledark"
+              className={`text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] focus:border-purpledark ${
+                errors.cep ? "border-red-500" : "border-blackwhite/60"
+              }`}
               type="text"
               value={cep}
               onChange={cepMascara}
               placeholder="ex: 88010-120"
             />
+            <InputError msg={errors.cep} />
           </div>
+
           <div className="flex flex-col justify-center pl-[40%]">
-            <label className=" text-blackwhite/80 font-semibold">
+            <label className="text-blackwhite/80 font-semibold">
               Cupom de desconto
             </label>
             <input
-              className="text-sm p-2 mt-3 border-1 px-2 border-blackwhite/60 w-85 rounded-[5px] focus:border-purpledark"
+              className="text-sm p-2 mt-3 border px-2 border-blackwhite/60 w-85 rounded-[5px] focus:border-purpledark"
               type="text"
               placeholder="ex: desconto10"
             />
           </div>
+
+          {/* Resumo */}
           <div className="flex flex-col p-10 justify-center pl-[40%] ">
             <p className="text-1xl font-secondary text-blackwhite/80 font-bold">
               Resumo
@@ -83,13 +157,13 @@ function Pagamento() {
             <div className="flex justify-between w-79 items-center">
               <label className="mt-3 text-blackwhite/80 text-[13px]">
                 ENTREGA
-              </label>{" "}
+              </label>
               <p className="mt-3 font-medium"> R$16,90</p>
             </div>
-            <div className="flex justify-between w-79 items-center border-b-1 border-b-blackwhite/20 pb-10">
+            <div className="flex justify-between w-79 items-center border-b pb-10 border-b-blackwhite/20">
               <label className="mt-3 text-blackwhite/80 font-bold text-[20px]">
                 Subtotal
-              </label>{" "}
+              </label>
               <p className="mt-3 font-medium text-2xl text-purpledark">
                 R$290,90
               </p>
@@ -105,50 +179,64 @@ function Pagamento() {
               Número do Cartão
             </label>
             <input
-              className="text-sm p-2 mt-1 border-1 px-2 border-blackwhite/60 w-85 rounded-[5px] focus:border-purpledark"
+              className={`text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] focus:border-purpledark ${
+                errors.cardNumber ? "border-red-500" : "border-blackwhite/60"
+              }`}
               type="text"
               value={cardNumber}
               onChange={numerocartaoMasck}
               placeholder="ex: 1234 5678 9012 3456"
             />
+            <InputError msg={errors.cardNumber} />
           </div>
+
           <div className="flex justify-center gap-5 pl-[17%]">
             <div className="flex flex-col">
               <label className="text-blackwhite/80 font-semibold">
                 Data de expiração
               </label>
               <input
-                className="text-sm p-2 mt-1 border-1 px-2 border-blackwhite/60 w-40 rounded-[5px] focus:border-purpledark"
+                className={`text-sm p-2 mt-1 border px-2 w-40 rounded-[5px] focus:border-purpledark ${
+                  errors.expiry ? "border-red-500" : "border-blackwhite/60"
+                }`}
                 type="text"
                 value={expiry}
                 onChange={dataMascara}
                 placeholder="ex: 10/30"
               />
+              <InputError msg={errors.expiry} />
             </div>
             <div className="flex flex-col">
               <label className="text-blackwhite/80 font-semibold">
                 Código de segurança
               </label>
               <input
-                className="text-sm p-2 mt-1 border-1 px-2 border-blackwhite/60 w-40 rounded-[5px] focus:border-purpledark"
+                className={`text-sm p-2 mt-1 border px-2 w-40 rounded-[5px] focus:border-purpledark ${
+                  errors.cvc ? "border-red-500" : "border-blackwhite/60"
+                }`}
                 type="text"
                 value={cvc}
                 onChange={CVCmascara}
                 placeholder="ex: 975"
               />
+              <InputError msg={errors.cvc} />
             </div>
           </div>
+
           <div className="flex flex-col p-6 justify-center pl-[40%]">
             <label className="mt-3 text-blackwhite/80 font-semibold">
               Titular do Cartão
             </label>
             <input
-              className="text-sm p-2 mt-1 border-1 px-2 border-blackwhite/60 w-85 rounded-[5px] focus:border-purpledark"
+              className={`text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] focus:border-purpledark ${
+                errors.cardName ? "border-red-500" : "border-blackwhite/60"
+              }`}
               type="text"
               value={cardName}
               onChange={nomeMascara}
               placeholder="ex: Manassés Marcelino"
             />
+            <InputError msg={errors.cardName} />
           </div>
 
           <div className="flex gap-2 justify-center items-center pl-[10%]">
@@ -165,15 +253,23 @@ function Pagamento() {
             <div className="flex justify-between w-79 items-center pb-10">
               <label className="mt-3 text-blackwhite/90 font-bold text-[22px]">
                 Valor Total
-              </label>{" "}
+              </label>
               <p className="mt-3 font-medium text-2xl text-purpledark">
                 R$290,90
               </p>
             </div>
 
             <div>
-              <button className="bg-purpledark w-85 p-2 rounded-[5px] cursor-pointer text-white text-[17px] font-medium transition- hover:bg-blue hover:text-purpledark">
-                Pagar
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-purpledark w-85 p-2 rounded-[5px] cursor-pointer text-white text-[17px] font-medium transition hover:bg-blue hover:text-purpledark flex justify-center items-center"
+              >
+                {loading ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  "Pagar"
+                )}
               </button>
             </div>
           </div>
@@ -222,7 +318,7 @@ function Pagamento() {
               <div className="flex gap-5 mt-6">
                 <button className="cursor-pointer border font-semibold border-purpledark p-1 px-5 text-purpledark rounded-[5px]">
                   Limpar Pedido
-                </button>{" "}
+                </button>
                 <button className="bg-purpledark rounded-[5px] p-1 px-7 cursor-pointer text-white">
                   Escolher Mais Produtos
                 </button>
@@ -230,7 +326,7 @@ function Pagamento() {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
