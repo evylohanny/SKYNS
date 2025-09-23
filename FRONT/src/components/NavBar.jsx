@@ -100,7 +100,51 @@ function NavBar({ search }) {
     navigate(`/results?search=${encodeURIComponent(event.target.value)}`);
   };
 
-  const mostrar_carrinho = () => {};
+  const [itensCarrinho, setItensCarrinho] = useState([
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+    {
+      img: "img_pedidos.svg",
+      nome: "Esfiliante solar ultra UV - 300G colectins verao",
+      quantidade: "4",
+      preco: "89,90",
+      excluir: "lixo_pedido.svg",
+    },
+  ]);
+
   return (
     <div className="w-full h-30">
       <div className="w-full h-40 fixed top-0 left-0 bg-white z-[999]">
@@ -145,36 +189,117 @@ function NavBar({ search }) {
               <div className="bg-white w-30/100 h-full">
                 <div className="flex items-center h-16/100">
                   <div className="w-85/100">
-                    <h1 className="text-2xl pl-10 font-semibold">
+                    <h1 className="text-2xl pl-6 font-semibold">
                       Meu carrinho
                     </h1>
                   </div>
                   <div className="w-15">
-                    <img className="cursor-pointer" onClick={fechar} src="x_carrinho.svg" alt="" />
+                    <img
+                      className="cursor-pointer"
+                      onClick={fechar}
+                      src="x_carrinho.svg"
+                      alt=""
+                    />
                   </div>
                 </div>
-                <div className=" border-b-1 border-[#d6d2d2] flex flex-col justify-center items-center w-full h-60/100 ">
-                  <div className="w-50/100">
-                    <img src="erro_carrinho.svg" alt="" />
-                  </div>
-                  <div className="pt-10 ">
-                    <h1 className="text-2xl font-bold text-[#737272]">
-                      Seu carrinho esta vazio.
-                    </h1>
-                  </div>
-                </div>
-                <div className="w-full h-10/100 flex justify-center items-center">
-                  <div className="w-90/100 flex justify-center border-b-1  border-[#d6d2d2] items-center h-full">
-                    <div className="flex bg-[#C2E9F9] h-60/100  w-full items-center justify-center">
-                      <p className="text-purpledark font-semibold">
-                        Ganhe 10,00% de desconto no seu primeiro pedido.
-                      </p>
+                {itensCarrinho.length < 0 && (
+                  <>
+                    <div className=" border-b-1 border-[#d6d2d2] flex flex-col justify-center items-center w-full h-60/100 ">
+                      <div className="w-50/100">
+                        <img src="erro_carrinho.svg" alt="" />
+                      </div>
+                      <div className="pt-10 ">
+                        <h1 className="text-2xl font-bold text-[#737272]">
+                          Seu carrinho esta vazio.
+                        </h1>
+                      </div>
+                    </div>
+                    <div className="w-full h-10/100 flex justify-center items-center">
+                      <div className="w-90/100 flex justify-center border-b-1  border-[#d6d2d2] items-center h-full">
+                        <div className="flex bg-[#C2E9F9] h-60/100  w-full items-center justify-center">
+                          <p className="text-purpledark font-semibold">
+                            Ganhe 10,00% de desconto no seu primeiro pedido.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full mt-5 h-12 flex justify-center rounded-lg items-center">
+                      <button className="w-90/100 h-full font-bold rounded-lg bg-purpledark text-white">
+                        ADICIONAR PRODUTOS
+                      </button>
+                    </div>
+                  </>
+                )}
+                {itensCarrinho.length > 0 && (
+                  <div className="w-full h-full ">
+                    <div className="w-full h-70  overflow-y-auto">
+                    {itensCarrinho.map((item, index) => (
+                      <div className="w-full pb-4 flex justify-center">
+                        <div className="w-30/100">
+                          <img className="w-65/100" src={item.img} alt="" />
+                        </div>
+                        <div className="w-60/100 flex flex-col  ">
+                          <div className="flex h-15 w-full ">
+                            <div className="h-2 w-70/100">
+                              <p>{item.nome}</p>
+                            </div>
+                            <div className="h-full ml-12 w-10/100">
+                              <img src={item.excluir} alt="" />
+                            </div>
+                          </div>
+                          <div className="h-10 flex justify-cente items-center ">
+                            <div className="flex border-2 gap-3 rounded-lg border-[#97989C] w-25 h-8 justify-center items-center">
+                              <p className="text-[#97989C] text-3xl">-</p>
+                              <p className="text-[#97989C] text-2xl">
+                                {item.quantidade}
+                              </p>
+                              <p className="text-[#97989C] text-2xl">+</p>
+                            </div>
+                            <div>
+                              <h1 className="text-2xl ml-16 text-purpledark font-bold">
+                                R${item.preco}
+                              </h1>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                     </div>
+                    <div className=" w-full border-b-1 border-[#d6d2d2]"></div>
+                    <div className="w-full h-10/100 flex justify-center items-center">
+                      <div className="w-90/100 flex justify-center border-b-1  border-[#d6d2d2] items-center h-full">
+                        <div className="flex bg-[#C2E9F9] h-60/100  w-full items-center justify-center">
+                          <p className="text-purpledark font-semibold">
+                            Ganhe 10,00% de desconto no seu primeiro pedido.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full flex gap-2 flex-col items-center">
+                      <div className="w-90/100 mt-3 flex justify-between">
+                        <p className="text-[#abaaaa]">SUBTOTAL</p>
+                        <p className="font-semibold">R$ 89,90</p>
+                      </div>
+                       <div className="w-90/100 flex justify-between">
+                        <p className="text-[#abaaaa]">FRETE</p>
+                        <p className="font-semibold">A calcular</p>
+                      </div>
+                       <div className="w-90/100 pb-4 flex justify-between">
+                        <p className="text-[#abaaaa]">TOTAL</p>
+                        <p className="font-semibold">R$ 89,90</p>
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-center">
+                      <div className=" w-90/100 border-b-1 border-[#d6d2d2]"></div>
+                    </div>
+                    <div className="w-full  pt-5 flex justify-center items-center ">
+                      <button className=" w-90/100 p-2 rounded-lg bg-purpledark font-semibold text-white">FINALIZAR COMPRA</button>
+                    </div>
+                    <div className="w-full  pt-5 flex justify-center items-center ">
+                      <button className=" w-90/100 p-2 rounded-lg bg-white border-2 font-semibold border-purpledark text-purpledark">CONTINUAR COMPRANDO</button>
                     </div>
                   </div>
-                </div>
-                <div className="w-full mt-5 h-12 flex justify-center rounded-lg items-center">
-                   <button className="w-90/100 h-full font-bold rounded-lg bg-purpledark text-white">ADICIONAR PRODUTOS</button>
-                </div>
+                )}
               </div>
             </div>
           </Modal>
