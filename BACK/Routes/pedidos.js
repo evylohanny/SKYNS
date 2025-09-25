@@ -4,9 +4,16 @@ const router = express.Router();
 
 router.get('/pedidos', async(req, res) => {
 
-    const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 10000 });
+    try {
+        
+        const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 10000 });
+    
+        res.json(response.data);
+    } catch (error) {
+        
+        res.json({ message: error });
+    }
 
-    res.json(response.data);
 });
 
 router.post('/pedidos', async(req, res) => {
@@ -15,12 +22,7 @@ router.post('/pedidos', async(req, res) => {
 
     filaDeEspera(pedido);
 
-    const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 10000 });
-
-    if (response.status === 200) {
-
-        res.json(response.data[0]);
-    };
+    res.json({ message: 'Pedido recebido com sucesso!'});
 });
 
 async function filaDeEspera(pedido) {
@@ -109,7 +111,7 @@ async function produzProduto(produto) {
             };
 
             console.log('Chegou prestes á produção!', body);
-            const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 10000 });
+            const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 100000 });
             
             if (response.status === 201) {
                 console.log(response.data);
