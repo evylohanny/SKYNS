@@ -11,6 +11,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalContext";
 import { Modal } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+
 
 function NavBar({ search }) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
@@ -24,8 +28,9 @@ function NavBar({ search }) {
   const abrir = () => setAberto(true);
   const fechar = () => {
     setAberto(false);
-    setErroExcluir(false);
+    
   };
+  
   const links = [
     "Promoções",
     "Pedidos",
@@ -102,6 +107,7 @@ function NavBar({ search }) {
 
   const [itensCarrinho, setItensCarrinho] = useState([
     {
+      id:1,
       img: "img_pedidos.svg",
       nome: "Esfiliante solar ultra UV - 300G colectins verao",
       quantidade: "4",
@@ -109,42 +115,26 @@ function NavBar({ search }) {
       excluir: "lixo_pedido.svg",
     },
     {
+      id:2,
       img: "img_pedidos.svg",
       nome: "Esfiliante solar ultra UV - 300G colectins verao",
       quantidade: "4",
       preco: "89,90",
       excluir: "lixo_pedido.svg",
     },
-    {
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
-    {
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
-    {
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
-    {
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
+    
+   
   ]);
+ 
+  const removerItemCarrinho = (id) => {
+   setItensCarrinho(prevItens => prevItens.filter(item => item.id !== id));
+  };
 
+  const add_produtos = () => {
+
+    navigate('/')
+    setAberto(false);
+  }
   return (
     <div className="w-full h-30">
       <div className="w-full h-40 fixed top-0 left-0 bg-white z-[999]">
@@ -186,14 +176,14 @@ function NavBar({ search }) {
           </div>
           <Modal open={aberto} onClose={fechar}>
             <div className=" w-full h-full flex justify-end">
-              <div className="bg-white w-30/100 h-full">
+              <div className="bg-white w-26/100 h-full">
                 <div className="flex items-center h-16/100">
                   <div className="w-85/100">
-                    <h1 className="text-2xl pl-6 font-semibold">
+                    <h1 className="text-[1.5rem] pl-6 font-semibold">
                       Meu carrinho
                     </h1>
                   </div>
-                  <div className="w-15">
+                  <div className="w-8">
                     <img
                       className="cursor-pointer"
                       onClick={fechar}
@@ -202,7 +192,7 @@ function NavBar({ search }) {
                     />
                   </div>
                 </div>
-                {itensCarrinho.length < 0 && (
+                {itensCarrinho.length === 0 && (
                   <>
                     <div className=" border-b-1 border-[#d6d2d2] flex flex-col justify-center items-center w-full h-60/100 ">
                       <div className="w-50/100">
@@ -214,17 +204,42 @@ function NavBar({ search }) {
                         </h1>
                       </div>
                     </div>
-                    <div className="w-full h-10/100 flex justify-center items-center">
-                      <div className="w-90/100 flex justify-center border-b-1  border-[#d6d2d2] items-center h-full">
-                        <div className="flex bg-[#C2E9F9] h-60/100  w-full items-center justify-center">
-                          <p className="text-purpledark font-semibold">
-                            Ganhe 10,00% de desconto no seu primeiro pedido.
-                          </p>
-                        </div>
+                    <div className="w-full flex items-center justify-center pt-5">
+                      <div className="bg-blue w-90/100 flex items-center justify-center rounded-md h-10  font-primary">
+                        <Swiper
+                          modules={[Autoplay]}
+                          autoplay={{
+                            delay: 3000,
+                            disableOnInteraction: false,
+                          }}
+                          loop={true}
+                          speed={2000}
+                          spaceBetween={20}
+                          slidesPerView={1}
+                        >
+                          <SwiperSlide>
+                            <div className="flex gap-1.5 items-center justify-center">
+                              <h1 className="text-purpledark text-sm font-semibold">
+                                Ganhe 10% de desconto no seu primeiro pedido.
+                              </h1>
+                            </div>
+                          </SwiperSlide>
+                          <SwiperSlide>
+                            <div className="flex gap-1.5 items-center justify-center">
+                              <h1 className="text-purpledark text-sm font-semibold">
+                                Utilize o cupom DESCONTO10
+                              </h1>
+                            </div>
+                          </SwiperSlide>
+                        </Swiper>
                       </div>
                     </div>
+                    <div className="w-full pt-5 flex justify-center items-center">
+                       <div className=" w-90/100  border-b-1 border-[#d6d2d2]"></div>
+                    </div>
                     <div className="w-full mt-5 h-12 flex justify-center rounded-lg items-center">
-                      <button className="w-90/100 h-full font-bold rounded-lg bg-purpledark text-white">
+                      <button className="w-90/100  h-full font-bold rounded-lg cursor-pointer bg-purpledark text-white"
+                      onClick={add_produtos}>
                         ADICIONAR PRODUTOS
                       </button>
                     </div>
@@ -233,58 +248,85 @@ function NavBar({ search }) {
                 {itensCarrinho.length > 0 && (
                   <div className="w-full h-full ">
                     <div className="w-full h-70  overflow-y-auto">
-                    {itensCarrinho.map((item, index) => (
-                      <div className="w-full pb-4 flex justify-center">
-                        <div className="w-30/100">
-                          <img className="w-65/100" src={item.img} alt="" />
-                        </div>
-                        <div className="w-60/100 flex flex-col  ">
-                          <div className="flex h-15 w-full ">
-                            <div className="h-2 w-70/100">
-                              <p>{item.nome}</p>
+                      {itensCarrinho.map((item, index) => (
+                        <div className="w-full pb-4 flex justify-center">
+                          <div className="w-30/100">
+                            <img className="w-65/100" src={item.img} alt="" />
+                          </div>
+                          <div className="w-60/100 flex flex-col  ">
+                            <div className="flex h-12 w-full ">
+                              <div className=" w-full">
+                                <p>{item.nome}</p>
+                              </div>
+                              <div className="h-full ml-12 w-12/100 cursor-pointer"
+                              onClick={() => removerItemCarrinho(item.id)}
+                              >
+                                <img src={item.excluir} alt="" />
+                              </div>
                             </div>
-                            <div className="h-full ml-12 w-10/100">
-                              <img src={item.excluir} alt="" />
+                            <div className="h-10 flex justify-cente items-center ">
+                              <div className="flex border-1 gap-2 rounded-lg border-[#97989C] w-16 h-7 justify-center items-center">
+                                <p className="text-[#97989C] text-2xl">-</p>
+                                <p className="text-[#97989C] text-lg">
+                                  {item.quantidade}
+                                </p>
+                                <p className="text-[#97989C] text-lg">+</p>
+                              </div>
+                              <div>
+                                <h1 className="text-md ml-16 text-purpledark font-bold">
+                                  R${item.preco}
+                                </h1>
+                              </div>
                             </div>
                           </div>
-                          <div className="h-10 flex justify-cente items-center ">
-                            <div className="flex border-2 gap-3 rounded-lg border-[#97989C] w-25 h-8 justify-center items-center">
-                              <p className="text-[#97989C] text-3xl">-</p>
-                              <p className="text-[#97989C] text-2xl">
-                                {item.quantidade}
-                              </p>
-                              <p className="text-[#97989C] text-2xl">+</p>
-                            </div>
-                            <div>
-                              <h1 className="text-2xl ml-16 text-purpledark font-bold">
-                                R${item.preco}
+                        </div>
+                      ))}
+                    </div>
+                    <div className=" w-full  border-b-1 border-[#d6d2d2]"></div>
+                    <div className="w-full flex items-center justify-center pt-5">
+                      <div className="bg-blue w-90/100 flex items-center justify-center rounded-md h-10  font-primary">
+                        <Swiper
+                          modules={[Autoplay]}
+                          autoplay={{
+                            delay: 3000,
+                            disableOnInteraction: false,
+                          }}
+                          loop={true}
+                          speed={2000}
+                          spaceBetween={20}
+                          slidesPerView={1}
+                        >
+                          <SwiperSlide>
+                            <div className="flex gap-1.5 items-center justify-center">
+                              <h1 className="text-purpledark text-sm font-semibold">
+                                Ganhe 10% de desconto no seu primeiro pedido.
                               </h1>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                     </div>
-                    <div className=" w-full border-b-1 border-[#d6d2d2]"></div>
-                    <div className="w-full h-10/100 flex justify-center items-center">
-                      <div className="w-90/100 flex justify-center border-b-1  border-[#d6d2d2] items-center h-full">
-                        <div className="flex bg-[#C2E9F9] h-60/100  w-full items-center justify-center">
-                          <p className="text-purpledark font-semibold">
-                            Ganhe 10,00% de desconto no seu primeiro pedido.
-                          </p>
-                        </div>
+                          </SwiperSlide>
+                          <SwiperSlide>
+                            <div className="flex gap-1.5 items-center justify-center">
+                              <h1 className="text-purpledark text-sm font-semibold">
+                                Utilize o cupom DESCONTO10
+                              </h1>
+                            </div>
+                          </SwiperSlide>
+                        </Swiper>
                       </div>
                     </div>
+                    <div className="w-full pt-5 flex justify-center items-center">
+                       <div className=" w-90/100  border-b-1 border-[#d6d2d2]"></div>
+                    </div>
+                    
                     <div className="w-full flex gap-2 flex-col items-center">
                       <div className="w-90/100 mt-3 flex justify-between">
                         <p className="text-[#abaaaa]">SUBTOTAL</p>
                         <p className="font-semibold">R$ 89,90</p>
                       </div>
-                       <div className="w-90/100 flex justify-between">
+                      <div className="w-90/100 flex justify-between">
                         <p className="text-[#abaaaa]">FRETE</p>
                         <p className="font-semibold">A calcular</p>
                       </div>
-                       <div className="w-90/100 pb-4 flex justify-between">
+                      <div className="w-90/100 pb-4 flex justify-between">
                         <p className="text-[#abaaaa]">TOTAL</p>
                         <p className="font-semibold">R$ 89,90</p>
                       </div>
@@ -293,10 +335,14 @@ function NavBar({ search }) {
                       <div className=" w-90/100 border-b-1 border-[#d6d2d2]"></div>
                     </div>
                     <div className="w-full  pt-5 flex justify-center items-center ">
-                      <button className=" w-90/100 p-2 rounded-lg bg-purpledark font-semibold text-white">FINALIZAR COMPRA</button>
+                      <button className=" w-90/100 p-2 rounded-lg bg-purpledark font-semibold text-white cursor-pointer">
+                        FINALIZAR COMPRA
+                      </button>
                     </div>
                     <div className="w-full  pt-5 flex justify-center items-center ">
-                      <button className=" w-90/100 p-2 rounded-lg bg-white border-2 font-semibold border-purpledark text-purpledark">CONTINUAR COMPRANDO</button>
+                      <button className=" w-90/100 p-2 rounded-lg bg-white border-2 font-semibold border-purpledark text-purpledark cursor-pointer">
+                        CONTINUAR COMPRANDO
+                      </button>
                     </div>
                   </div>
                 )}
