@@ -68,6 +68,7 @@ function Perfil() {
 
   const inicio = () => {
     navigate("/");
+    
   };
 
   useEffect(() => {
