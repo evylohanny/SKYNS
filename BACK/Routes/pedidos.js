@@ -145,6 +145,7 @@ async function produzProduto(produto) {
         } else if (response.status === 201) {
 
             console.log('Produto enviado com sucesso!', response.status);
+            return response;
         }
 
     } catch (error) {

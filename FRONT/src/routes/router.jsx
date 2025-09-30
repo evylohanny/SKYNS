@@ -7,7 +7,7 @@ import Gestão from "../pages/Gestão";
 import Pedidos from "../pages/Pedidos";
 import Results from "../pages/Results.jsx";
 import Rastreio from "../pages/Rastreio.jsx";
-import Pagamento from "../pages/Pagamento.jsx"
+import Pagamento from "../pages/Pagamento.jsx";
 
 const router = createBrowserRouter([
     {
