@@ -6,23 +6,30 @@ router.get('/pedidos', async(req, res) => {
 
     try {
         
-        const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 10000 });
+        const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 100000 });
     
         res.json(response.data);
     } catch (error) {
         
         res.json({ message: error });
-    }
+    };
 
 });
 
 router.post('/pedidos', async(req, res) => {
 
-    const { pedido } = req.body;
+    try {
+        
+        const { pedido } = req.body;
+    
+        filaDeEspera(pedido);
+    
+        res.json({ message: 'Pedido recebido com sucesso!'});
+    } catch (error) {
+        
+        res.json({ message: `Erro ao receber pedido! ${error}` });
+    };
 
-    filaDeEspera(pedido);
-
-    res.json({ message: 'Pedido recebido com sucesso!'});
 });
 
 async function filaDeEspera(pedido) {
@@ -42,14 +49,15 @@ async function filaDeEspera(pedido) {
 
 async function traduzProduto(produto) {
 
-    var produtoTraduzido = produto;
-
-    produtoTraduzido.color1 = traduzCor(produtoTraduzido.color1);
-    produtoTraduzido.color2 = traduzCor(produtoTraduzido.color2);
-    produtoTraduzido.color3 = traduzCor(produtoTraduzido.color3);
+    produto.color1 = traduzCor(produto.color1);
+    produto.color2 = traduzCor(produto.color2);
+    produto.color3 = traduzCor(produto.color3);
+    produto.draw1 = traduzDesenho(produto.draw1);
+    produto.draw2 = traduzDesenho(produto.draw2);
+    produto.draw3 = traduzDesenho(produto.draw3);
 
     console.log('Traduziu produto!');
-    return await produzProduto(produtoTraduzido);
+    return await produzProduto(produto);
 };
 
 function traduzCor(corProduto) {
@@ -68,57 +76,81 @@ function traduzCor(corProduto) {
     };
 };
 
+function traduzDesenho(desenhoProduto) {
+
+    if (!desenhoProduto) return;
+
+    switch (desenhoProduto) {
+
+        case 'casa': return 1;
+
+        case 'barco': return 2;
+
+        case 'estrela': return 3;
+
+        default: return 0;
+    };
+};
+
 async function produzProduto(produto) {
 
-    if (!produto) return;
-
-    const body = {
-        "payload": {
-                "orderId": `pedido-${produto.id}-${produto.name}-${Date.now()}`,
-                "caixa": {
-                    "codigoProduto": 2,
-                    "bloco1": {
-		                    "cor": produto.color1,
-                        "lamina1": 1,
-                        "lamina2": 1,
-                        "lamina3": 1,
-                        "padrao1": "1",
-                        "padrao2": "1",
-                        "padrao3": "1"
+    try {
+        
+        if (!produto) return;
+    
+        const body = {
+            "payload": {
+                    "orderId": `pedido-${produto.id}-${produto.name}-${Date.now()}`,
+                    "caixa": {
+                        "codigoProduto": 1,
+                        "bloco1": {
+                                "cor": 0,
+                            "lamina1": produto.color1,
+                            "lamina2": 1,
+                            "lamina3": 1,
+                            "padrao1": produto.draw1,
+                            "padrao2": "1",
+                            "padrao3": "1"
+                        },
+                        "bloco2": {
+                                "cor": 0,
+                            "lamina1": produto.color2,
+                            "lamina2": 1,
+                            "lamina3": 1,
+                            "padrao1": produto.draw2,
+                            "padrao2": "1",
+                            "padrao3": "1"
+                        },
+                        "bloco3": {
+                                "cor": 0,
+                            "lamina1": produto.color3,
+                            "lamina2": 1,
+                            "lamina3": 1,
+                            "padrao1": produto.draw3,
+                            "padrao2": "1",
+                            "padrao3": "1"
+                        }
                     },
-                    "bloco2": {
-		                    "cor": produto.color2,
-                        "lamina1": 1,
-                        "lamina2": 1,
-                        "lamina3": 1,
-                        "padrao1": "1",
-                        "padrao2": "1",
-                        "padrao3": "1"
-                    },
-                    "bloco3": {
-		                    "cor": produto.color3,
-                        "lamina1": 1,
-                        "lamina2": 1,
-                        "lamina3": 1,
-                        "padrao1": "1",
-                        "padrao2": "1",
-                        "padrao3": "1"
-                    }
+                    "sku": "KIT-01"
                 },
-                "sku": "KIT-01"
-            },
-            "callbackUrl": "http://localhost:3000/pedidos"
-            };
+                "callbackUrl": "http://localhost:3000/pedidos"
+        };
 
-            console.log('Chegou prestes á produção!', body);
-            const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 100000 });
+        console.log('Chegou prestes á produção!', body);
+        const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 100000 });
+
+        if (response.status === 404) {
+
+            console.log('Erro ao enviar produto', response.status);
+        } else if (response.status === 201) {
+
+            console.log('Produto enviado com sucesso!', response.status);
+        }
+
+    } catch (error) {
             
-            if (response.status === 201) {
-                console.log(response.data);
-            } else {
-
-                console.log('Não deu certo.', response.data);
-            };
+        console.log('Não deu certo.', error);
+    }
 };
 
 module.exports = router;
