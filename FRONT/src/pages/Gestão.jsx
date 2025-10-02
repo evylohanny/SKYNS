@@ -28,7 +28,7 @@ function Gestão() {
     <div className=''>
       <div className='flex flex-row justify-between font-tertiary p-5 px-18 w-full shadow-md'>
         <img src={iconLogoG} alt="" />
-        <div className='flex flex-row justify-center items-center gap-1.5'>
+        <div className='flex flex-row justify-center items-center gap-1.5 cursor-pointer'>
             <img src={iconSair} alt="" />
             <p className='text-purpledark font-semibold'>Sair</p>
         </div>
@@ -65,8 +65,8 @@ function Gestão() {
           </div>
         </div>
       </div>
-      <div className="w-[82%] h-[90vh] bg-cover bg-center flex justify-center items-center"
-       style={{ backgroundImage: `url(${fundoGes})` }}>
+      <div className="w-[82%] min-h-screen bg-cover bg-center flex justify-center items-start py-10"
+        style={{ backgroundImage: `url(${fundoGes})` }}>
         {renderComponente()}
       </div>
       </div>

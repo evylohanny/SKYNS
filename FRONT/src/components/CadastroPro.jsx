@@ -32,7 +32,7 @@ function CadastroPro() {
 
   // ====== Render ======
   return (
-    <div className="w-[80%] h-[80vh] bg-white rounded-sm shadow p-10 flex flex-col">
+    <div className="w-[80%] min-h-screen bg-white rounded-sm shadow p-10 flex flex-col">
       <div className="flex flex-row w-full gap-15">
         
         {/* ===================== COLUNA ESQUERDA - FOTOS ===================== */}
@@ -42,13 +42,27 @@ function CadastroPro() {
           {/* Grid de Fotos */}
           <div className="grid grid-cols-2 gap-x-0 gap-y-3 w-[70%]">
             {/* Foto Grande */}
-            <label className="col-span-2 w-59 h-59 border border-dashed border-gray2 rounded-lg flex items-center justify-center cursor-pointer hover:border-purpledark">
+            <label className="relative col-span-2 w-59 h-59 border border-dashed border-gray2 rounded-lg flex items-center justify-center cursor-pointer hover:border-purpledark">
               {images[0] ? (
-                <img
-                  src={images[0]}
-                  alt="preview"
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <div className="relative w-full h-full">
+                  <img
+                    src={images[0]}
+                    alt="preview"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  {/* Botão remover */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newImages = [...images];
+                      newImages[0] = null;
+                      setImages(newImages);
+                    }}
+                    className="absolute top-1 right-1 bg-purpledark text-white w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
               ) : (
                 <img
                   src={cameraRoxa}
@@ -66,31 +80,45 @@ function CadastroPro() {
 
             {/* Fotos Pequenas */}
             {images.slice(1).map((img, idx) => (
-              <label
-                key={idx}
-                className="w-full max-w-[110px] aspect-square border border-dashed border-gray2 rounded-lg flex items-center justify-center cursor-pointer hover:border-purpledark"
-              >
-                {img ? (
+            <label
+              key={idx}
+              className="relative w-full max-w-[110px] aspect-square border border-dashed border-gray2 rounded-lg flex items-center justify-center cursor-pointer hover:border-purpledark"
+            >
+              {img ? (
+                <div className="relative w-full h-full">
                   <img
                     src={img}
                     alt={`preview-${idx}`}
                     className="w-full h-full object-cover rounded-lg"
                   />
-                ) : (
-                  <img
-                    src={cameraRoxa}
-                    alt="camera icon"
-                    className="w-5 h-5 opacity-80"
-                  />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleFileChange(e, idx + 1)}
+                  {/* Botão remover */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newImages = [...images];
+                      newImages[idx + 1] = null;
+                      setImages(newImages);
+                    }}
+                    className="absolute top-1 right-1 bg-purpledark text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <img
+                  src={cameraRoxa}
+                  alt="camera icon"
+                  className="w-5 h-5 opacity-80"
                 />
-              </label>
-            ))}
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, idx + 1)}
+              />
+            </label>
+          ))}
           </div>
 
           {/* Texto informativo */}
@@ -158,28 +186,50 @@ function CadastroPro() {
             />
           </div>
 
-          {/* Estrelas */}
-          <div className="flex flex-col gap-4 relative">
-            <label className="font-semibold text-gray2/80">Estrelas</label>
-            <select className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
-             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none">
-              <option value="">Selecione</option>
-              <option>⭐</option>
-              <option>⭐⭐</option>
-              <option>⭐⭐⭐</option>
-              <option>⭐⭐⭐⭐</option>
-              <option>⭐⭐⭐⭐⭐</option>
-            </select>
-               <img
-                  src={setaSelectCinza}
-                  alt="seta select"
-                  className="pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3 peer-focus:hidden"
-               />
-               <img
-                  src={setaSelectPurple}
-                  alt="seta select focus"
-                  className="hidden peer-focus:block pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3"
+          <div className="grid grid-cols-2 gap-4">
+            {/* Estrelas */}
+            <div className="flex flex-col gap-4 relative">
+              <label className="font-semibold text-gray2/80">Estrelas</label>
+              <select className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+              focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none">
+                <option value="">Selecione</option>
+                <option>⭐</option>
+                <option>⭐⭐</option>
+                <option>⭐⭐⭐</option>
+                <option>⭐⭐⭐⭐</option>
+                <option>⭐⭐⭐⭐⭐</option>
+              </select>
+                <img
+                    src={setaSelectCinza}
+                    alt="seta select"
+                    className="pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3 peer-focus:hidden"
                 />
+                <img
+                    src={setaSelectPurple}
+                    alt="seta select focus"
+                    className="hidden peer-focus:block pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3"
+                  />
+            </div>
+
+            {/* Quantidade */}
+            <div className="flex flex-col items-end gap-4">
+              <label className="font-semibold text-gray2/80">Quantidade produto</label>
+              <div className="flex w-38 justify-center items-center border border-purpledark rounded-md px-2 py-1">
+                <button
+                  className="px-2 text-purpledark cursor-pointer"
+                  onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
+                >
+                  −
+                </button>
+                <span className="px-3 text-purpledark">{quantidade}</span>
+                <button
+                  className="px-2 text-purpledark cursor-pointer"
+                  onClick={() => setQuantidade(quantidade + 1)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Preço + Peso */}
@@ -207,26 +257,6 @@ function CadastroPro() {
                 className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
                  focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer"
               />
-            </div>
-          </div>
-
-          {/* Quantidade */}
-          <div className="flex items-center justify-between">
-            <label className="text-sm text-gray2">Quantidade produto</label>
-            <div className="flex items-center border border-purpledark rounded-md px-2 py-1">
-              <button
-                className="px-2 text-purpledark"
-                onClick={() => setQuantidade(Math.max(1, quantidade - 1))}
-              >
-                −
-              </button>
-              <span className="px-3">{quantidade}</span>
-              <button
-                className="px-2 text-purpledark"
-                onClick={() => setQuantidade(quantidade + 1)}
-              >
-                +
-              </button>
             </div>
           </div>
 
@@ -277,7 +307,8 @@ function CadastroPro() {
               id="modificado"
               checked={produtoModificado}
               onChange={() => setProdutoModificado(!produtoModificado)}
-              className="accent-purpledark w-6 h-6"
+              className="w-6 h-6 rounded-full appearance-none border-2 border-purpledark
+                        checked:bg-purpledark checked:border-purpledark"
             />
             <label htmlFor="modificado" className="font-semibold text-gray2/80">
               Produto modificado
@@ -295,13 +326,21 @@ function CadastroPro() {
                 "ácido glicólico",
                 "ácido lático",
               ].map((item, idx) => (
-                <label key={idx} className="flex items-center gap-2">
+                <label
+                  key={idx}
+                  className={`flex items-center gap-2 ${
+                    !produtoModificado ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
                   <input
                     type="checkbox"
                     value={item}
                     checked={componentes.includes(item)}
                     onChange={handleCheckbox}
-                    className="accent-purpledark w-4 h-4"
+                    disabled={!produtoModificado}
+                    className="appearance-none w-5 h-5 border-2 border-purpledark rounded-md 
+                      checked:bg-purpledark transition-colors duration-200 cursor-pointer
+                      disabled:cursor-not-allowed disabled:border-gray-300 disabled:checked:bg-gray-400"
                   />
                   {item}
                 </label>
@@ -311,7 +350,7 @@ function CadastroPro() {
 
           {/* Botão Publicar */}
           <div className="flex justify-end">
-            <button className="bg-purpledark hover:bg-blue hover:text-purpledark text-white px-6 py-2 rounded-md text-sm transition">
+            <button className="bg-purpledark cursor-pointer hover:bg-blue hover:text-purpledark text-white px-6 py-2 rounded-md text-sm transition">
               PUBLICAR PRODUTO
             </button>
           </div>
