@@ -35,7 +35,22 @@ import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
+
   const navigate = useNavigate();
+
+  // useEffect(() => {
+
+  //   const pegaProdutos = async() => {
+
+  //     try {
+        
+  //       const response = 
+  //     } catch (error) {
+        
+  //     }
+  //   };
+  // }, []);
+
   const [products, setProcuts] = useState([
      {
       name: "Ácido hialurônico hidratante firmador",
