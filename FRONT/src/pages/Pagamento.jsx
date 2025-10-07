@@ -213,7 +213,7 @@ function Pagamento() {
           <div className="flex flex-col justify-center pl-[40%]">
             <label className="text-blackwhite/80 font-semibold">Cupom de desconto</label>
             <input
-              className="text-sm p-2 mt-3 border px-2 border-blackwhite/100 w-85 rounded-[5px] outline-none focus:border-purpledark focus:outline-none"
+              className="text-sm p-2 mt-3 border px-2 border-blackwhite/70 w-85 rounded-[5px] outline-none focus:border-purpledark focus:outline-none"
               type="text"
               placeholder="ex: desconto10"
             />
@@ -312,7 +312,7 @@ function Pagamento() {
         </div>
 
         {/* lado Direito */}
-        <div className="absolute right-0 top-27 w-[40%] h-[150vh] bg-blackwhite/10 overflow-y-auto">
+        <div className="absolute right-0 top-27 w-[40%] h-[170vh] bg-blackwhite/10 overflow-y-auto">
           <div className="fixed right-0 top-27 w-[40%] h-[90%] overflow-y-auto">
             <div className="flex flex-col p-10 gap-5">
               <p className="text-[20px]">Resumo de Pedidos</p>
