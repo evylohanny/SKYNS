@@ -6,7 +6,7 @@ const pedidosProducao = require('./Routes/IOT/pedidos.js');
 const pedidos = require('./Routes/pedidos.js');
 const produtos = require('./Routes/produtos.js');
 const pagamento = require('./Routes/pagamento.js');
-
+const user = require('./Routes/user.js');
 const app = express();
 
 app.use(cors({ origin: "*" }));
@@ -17,6 +17,7 @@ app.use('/', pedidosProducao);
 app.use('/', pedidos);
 app.use('/', produtos);
 app.use('/', pagamento);
+app.use('/', user);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Rota não encontrada' });

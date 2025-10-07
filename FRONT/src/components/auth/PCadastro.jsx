@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import ky from "ky";
 
 function PCadastro() {
     
@@ -21,7 +23,8 @@ function PCadastro() {
   const [valor_data_cadastro, setValor_data_cadastro] = useState("");
   const [Erro_data_cadastro, setErro_data_cadastro] = useState("");
   const [mensagem_data_cadastro, setMensagem_data_cadastro] = useState("");
-
+  
+  const navigate = useNavigate();
   const formatarCPF = (value) => {
     value = value.replace(/\D/g, "");
     value = value.replace(/^(\d{3})(\d)/, "$1.$2");
@@ -83,65 +86,105 @@ function PCadastro() {
     }
   }, [valor_data_cadastro]);
 
-  const cadastrar = () => {
-    if (valor_senha_cadastro.length < 4) {
-      setMensagem_senha_cadastro("senha incorreta!");
-      setErro_senha_cadastro(true);
-    } else {
-      setErro_senha_cadastro(false);
-      setMensagem_senha_cadastro("");
-    }
+const cadastrar = async () => {
+  let Erro = false;
 
-    if (
-      !valor_email_cadastro.includes("@gmail.com") &&
-      !valor_email_cadastro.includes("@hotmail.com")
-    ) {
-      setMensagem_email_cadastro("Email incorreto!");
-      setErro_email_cadastro(true);
-    } else {
-      setMensagem_email_cadastro("");
-      setErro_email_cadastro(false);
-    }
 
-    if (valor_nome_cadastro.length < 1) {
-      setMensagem_nome_cadastro("Nome incorreto!");
-      setErro_nome_cadastro(true);
-    } else {
-      setMensagem_nome_cadastro("");
-      setErro_nome_cadastro(false);
-    }
+  if (valor_senha_cadastro.length < 4) {
+    setMensagem_senha_cadastro("Senha incorreta!");
+    setErro_senha_cadastro(true);
+    Erro = true;
+  } else {
+    setErro_senha_cadastro(false);
+    setMensagem_senha_cadastro("");
+  }
 
-    if (valor_cpf_cadastro.length < 14) {
-      setMensagem_cpf_cadastro("CPF Invalido!");
-      setErro_cpf_cadastro(true);
-    } else {
-      setMensagem_cpf_cadastro("");
-      setErro_cpf_cadastro(false);
-    }
+  
+  if (
+    !valor_email_cadastro.includes("@gmail.com") &&
+    !valor_email_cadastro.includes("@hotmail.com")
+  ) {
+    setMensagem_email_cadastro("Email incorreto!");
+    setErro_email_cadastro(true);
+    Erro = true;
+  } else {
+    setMensagem_email_cadastro("");
+    setErro_email_cadastro(false);
+  }
 
-    if (valor_data_cadastro.length == 10) {
-      const [dia, mes, ano] = valor_data_cadastro.split("/").map(Number);
-      const nascimento = new Date(ano, mes - 1, dia);
-      const hoje = new Date();
-      let idade = hoje.getFullYear() - nascimento.getFullYear();
-      const naoFezAniversario =
-        hoje.getMonth() < nascimento.getMonth() ||
-        (hoje.getMonth() === nascimento.getMonth() &&
-          hoje.getDate() < nascimento.getDate());
+ 
+  if (valor_nome_cadastro.length < 1) {
+    setMensagem_nome_cadastro("Nome incorreto!");
+    setErro_nome_cadastro(true);
+    Erro = true;
+  } else {
+    setMensagem_nome_cadastro("");
+    setErro_nome_cadastro(false);
+  }
 
-      if (naoFezAniversario) idade--;
+  
+  if (valor_cpf_cadastro.length < 14) {
+    setMensagem_cpf_cadastro("CPF inválido!");
+    setErro_cpf_cadastro(true);
+    Erro = true;
+  } else {
+    setMensagem_cpf_cadastro("");
+    setErro_cpf_cadastro(false);
+  }
 
-      if (idade < 18 || isNaN(nascimento.getTime())) {
-        setMensagem_data_cadastro("Você deve ser maior de 18 anos!");
-        setErro_data_cadastro(true);
-      } else {
-        setErro_data_cadastro(false);
-      }
-    } else {
-      setErro_data_cadastro(true);
+  
+  if (valor_data_cadastro.length === 10) {
+    const [dia, mes, ano] = valor_data_cadastro.split("/").map(Number);
+    const nascimento = new Date(ano, mes - 1, dia);
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const naoFezAniversario =
+      hoje.getMonth() < nascimento.getMonth() ||
+      (hoje.getMonth() === nascimento.getMonth() &&
+        hoje.getDate() < nascimento.getDate());
+
+    if (naoFezAniversario) idade--;
+
+    if (idade < 18 || isNaN(nascimento.getTime())) {
       setMensagem_data_cadastro("Você deve ser maior de 18 anos!");
+      setErro_data_cadastro(true);
+      Erro = true;
+    } else {
+      setErro_data_cadastro(false);
+      setMensagem_data_cadastro("");
     }
-  };
+  } else {
+    setErro_data_cadastro(true);
+    setMensagem_data_cadastro("Data inválida!");
+    temErro = true;
+  }
+const dataFormatada = valor_data_cadastro.split("/").reverse().join("-");
+
+  if (!Erro) {
+
+    try {
+      const response = await ky.post("http://localhost:3000/cadastro", {
+        json: {
+          nome: valor_nome_cadastro,
+          email: valor_email_cadastro,
+          senha: valor_senha_cadastro,
+          cpf: valor_cpf_cadastro,
+          data_nascimento: dataFormatada 
+        },
+      }).json();
+
+      console.log(response); 
+
+      alert("Cadastro realizado com sucesso!");
+      navigate("/"); 
+
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      alert("Erro ao cadastrar usuário!");
+    }
+  }
+};
+
 
   return (
     <div className="flex flex-col w-full pt-12  ">
