@@ -4,7 +4,7 @@ const path = require('path');
 
 const pedidosProducao = require('./Routes/IOT/pedidos.js');
 const pedidos = require('./Routes/pedidos.js');
-const home = require('./Routes/home.js');
+const produtos = require('./Routes/produtos.js');
 const pagamento = require('./Routes/pagamento.js');
 
 const app = express();
@@ -15,8 +15,8 @@ app.use(express.json());
 
 app.use('/', pedidosProducao);
 app.use('/', pedidos);
-app.use('/', home);
-app.use('/', pagamento)
+app.use('/', produtos);
+app.use('/', pagamento);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Rota não encontrada' });
