@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useContext } from "react";
 import clsx from 'clsx';
 import "swiper/css";
+import ky from 'ky';
 
 import FooterCompleto from "../components/FooterCompleto";
 import NavBar from "../components/NavBar";
@@ -38,18 +39,28 @@ function Home() {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   const pegaProdutos = async() => {
+    const getProducts = async() => {
 
-  //     try {
+      try {
         
-  //       const response = 
-  //     } catch (error) {
+        const data = await ky.get('http://localhost:3000/produtos').json();
         
-  //     }
-  //   };
-  // }, []);
+        console.log(data);
+      } catch (error) {
+        
+        if (error.response && error.response.status === 404) {
+
+          console.log('Produto não encontrado.');
+          return null;
+        };
+
+        console.log('Erro inesperado: ', error.message);
+      };
+    };
+    getProducts();
+  }, []);
 
   const [products, setProcuts] = useState([
      {
