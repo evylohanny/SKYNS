@@ -74,6 +74,7 @@ function Home() {
     {
       name: "Ácido hialurônico Premium",
       description:
+
         "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
       price: "89,90",
       image: product_2,
@@ -149,11 +150,12 @@ function Home() {
     }]);
 
     const handleProductClick = (tipo) => {
+
     if(tipo === "customizavel"){
       navigate("/produtocustomizavel");
     } else {
       navigate("/produtocomum");
-    }
+    };
   };
 
     const comments = [
