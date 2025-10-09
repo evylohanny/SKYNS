@@ -380,7 +380,7 @@ function CadastroPro() {
 
           {/* Botão Publicar */}
           <div className="flex justify-end">
-            <button onClick={handleSubmit()} className="bg-purpledark cursor-pointer hover:bg-blue hover:text-purpledark text-white px-6 py-2 
+            <button onClick={handleSubmit} className="bg-purpledark cursor-pointer hover:bg-blue hover:text-purpledark text-white px-6 py-2 
              rounded-md text-sm transition">
               PUBLICAR PRODUTO
             </button>
