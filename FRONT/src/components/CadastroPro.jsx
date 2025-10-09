@@ -30,6 +30,36 @@ function CadastroPro() {
     );
   };
 
+  const handleSubmit = async () => {
+  const formData = new FormData();
+  
+  // adiciona imagens
+  images.forEach((img, i) => {
+    if (img instanceof File) formData.append('imagens', img);
+  });
+
+  // adiciona os outros campos
+  formData.append('categoria', categoria);
+  formData.append('produto', produto);
+  formData.append('titulo', titulo);
+  formData.append('estrelas', estrelas);
+  formData.append('quantidade', quantidade);
+  formData.append('preco', preco);
+  formData.append('peso', peso);
+  formData.append('descricao', descricao);
+  formData.append('descricaoCompleta', descricaoCompleta);
+  formData.append('produtoModificado', produtoModificado);
+  formData.append('componentes', JSON.stringify(componentes));
+
+  const res = await fetch('http://localhost:5000/api/produtos/cadastro', {
+    method: 'POST',
+    body: formData
+  });
+
+  const data = await res.json();
+  console.log(data);
+  };
+
   // ====== Render ======
   return (
     <div className="w-[80%] min-h-screen bg-white rounded-sm shadow p-10 flex flex-col">
@@ -350,7 +380,8 @@ function CadastroPro() {
 
           {/* Botão Publicar */}
           <div className="flex justify-end">
-            <button className="bg-purpledark cursor-pointer hover:bg-blue hover:text-purpledark text-white px-6 py-2 rounded-md text-sm transition">
+            <button onClick={handleSubmit()} className="bg-purpledark cursor-pointer hover:bg-blue hover:text-purpledark text-white px-6 py-2 
+             rounded-md text-sm transition">
               PUBLICAR PRODUTO
             </button>
           </div>
