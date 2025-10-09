@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+let instance = null;
 
 const pool = new Pool({
   user: "skyns_user",      
@@ -15,4 +16,74 @@ pool.connect()
   .then(() => console.log("📦 Conectado ao PostgreSQL Render!"))
   .catch(err => console.error("Erro ao conectar:", err));
 
-module.exports = pool;
+class DbService {
+
+  static getDbServiceInstance() {
+
+    return instance ? instance : new DbService();
+  };
+
+  async buscaUsuarios () {
+
+    try {
+      
+      const sql = 'SELECT * FROM usuario';
+      const response = pool.query(sql);
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+  async buscaProdutos () {
+    try {
+      
+      const sql = 'SELECT * FROM produtos';
+      const response = pool.query(sql); 
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+  async buscaPedidos () {
+    try {
+      
+      const sql = 'SELECT * FROM pedidos';
+      const response = pool.query(sql); 
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+  async buscaPagamentos () {
+    try {
+      
+      const sql = 'SELECT * FROM pagamento';
+      const response = pool.query(sql); 
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+  async buscaProdutosPersonalizaveis () {
+    try {
+      
+      const sql = 'SELECT * FROM produtos WHERE personalizavel = $1';
+      const response = pool.query(sql, [true]); 
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+};
+
+module.exports = DbService;

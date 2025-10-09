@@ -68,7 +68,12 @@ function NavBar({ search }) {
   const caminho = (index) => {
     if (index == 1) {
       navigate("/pedidos");
-    }
+    };
+
+    if (index == 3) {
+
+      navigate('/produto/progresso');
+    };
   };
   const handleClick = () => {
     if (isLocked) {

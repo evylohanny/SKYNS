@@ -1,20 +1,27 @@
+const DbService = require('../config/db.config.js');
 const express = require('express');
-const pool = require('../config/db.config.js');
 const router = express.Router();
 
 router.get('/pedidos', async(req, res) => {
 
     try {
+        
+        const pedido = new DbService();
+        const response = pedido.buscaPedidos;
 
-        const response = await pool.query('SELECT * FROM produtos');
+        if (response) {
 
-        if (response.rows.length <= 0) return res.status(404).json({ message: 'Produtos não encontrados.' });
-
-        res.status(201).json({ message: 'Produtos encontrados.', data: response.rows });
+            return res.status(200).json({ message: 'Pedidos encontrados com sucesso!', data: response });
+        };
     } catch (error) {
         
-        res.status(500).json({ message: error });
-    }
+        if (error.response.status === 404) {
+
+            return res.status(404).json({ message: 'Produtos não encontrados! '});
+        };
+
+        return res.status(500).json({ message: 'Erro interno do servidor.', error: error.message});
+    };
 });
 
 module.exports = router;

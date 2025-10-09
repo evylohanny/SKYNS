@@ -26,8 +26,8 @@ function Rastreio() {
     <div className='h-full w-full flex flex-col items-center'>
         <div className='w-full h-fit flex flex-col'>
             <CarrosselPQ />
-            <div className='w-full h-22 flex items-center justify-center shadow-xl'>
-                <img src={logo} alt="" />
+            <div className='w-full h-22 flex items-center justify-center border-b-[0.5px] border-b-gray'>
+                <img className='cursor-pointer' onClick={() => navigate('/')} src={logo} alt="" />
             </div>
         </div>
         <div className='w-295 mt-20 h-full flex flex-col'>
