@@ -28,8 +28,8 @@ class DbService {
     try {
       
       const sql = 'SELECT NOW()';
-      const response = pool.query(sql);
-      return (await response).rows;
+      const response = await pool.query(sql);
+      return response.rows;
     } catch (error) {
       console.log(error);
       return false;
@@ -41,7 +41,7 @@ class DbService {
     try {
       
       const sql = 'SELECT * FROM usuario';
-      const response = pool.query(sql);
+      const response = await pool.query(sql);
       return response.rows;
     } catch (error) {
       console.log(error);
@@ -53,7 +53,7 @@ class DbService {
     try {
       
       const sql = 'SELECT * FROM produtos';
-      const response = pool.query(sql); 
+      const response = await pool.query(sql); 
       return response.rows;
     } catch (error) {
       console.log(error);
@@ -65,7 +65,7 @@ class DbService {
     try {
       
       const sql = 'SELECT * FROM pedidos';
-      const response = pool.query(sql); 
+      const response = await pool.query(sql); 
       return response.rows;
     } catch (error) {
       console.log(error);
@@ -77,7 +77,7 @@ class DbService {
     try {
       
       const sql = 'SELECT * FROM pagamento';
-      const response = pool.query(sql); 
+      const response = await pool.query(sql); 
       return response.rows;
     } catch (error) {
       console.log(error);
@@ -89,7 +89,7 @@ class DbService {
     try {
       
       const sql = 'SELECT * FROM produtos WHERE personalizavel = $1';
-      const response = pool.query(sql, [true]); 
+      const response = await pool.query(sql, [true]); 
       return response.rows;
     } catch (error) {
       console.log(error);
