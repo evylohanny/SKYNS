@@ -23,6 +23,19 @@ class DbService {
     return instance ? instance : new DbService();
   };
 
+  async testeDb () {
+
+    try {
+      
+      const sql = 'SELECT NOW()';
+      const response = pool.query(sql);
+      return (await response).rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };    
+
   async buscaUsuarios () {
 
     try {

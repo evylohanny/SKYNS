@@ -1,13 +1,21 @@
 const PORT = process.env.PORT || 3000;
-const pool = require("./config/db.config");
+const DbService = require("./config/db.config");
 const app = require('./App');
   
 app.get("/teste-db", async (req, res) => {
   try {
-    const result = await pool.query("SELECT NOW()");
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
+
+    const test = new DbService();
+    const response = test.testeDb;
+    
+    if (response) {
+
+      res.status(200).json({
+        message: 'Conectado ao banco de dados SKYNS!'
+      });
+    };
+  } catch (error) {
+    console.log(error);
     res.status(500).send("Erro ao consultar o banco");
   };
 });

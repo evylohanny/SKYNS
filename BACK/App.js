@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 
 const pedidosProducao = require('./Routes/IOT/pedidos.js');
+const rastreio = require('./Routes/IOT/rastreio.js');
 const pedidos = require('./Routes/pedidos.js');
 const produtos = require('./Routes/produtos.js');
 const pagamento = require('./Routes/pagamento.js');
@@ -16,6 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.use('/', pedidosProducao);
+app.use('/', rastreio);
 app.use('/', pedidos);
 app.use('/', pagamento);
 app.use('/', gestao);
