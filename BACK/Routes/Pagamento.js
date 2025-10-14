@@ -32,8 +32,7 @@ router.get('/pagamento', async (req, res) => {
   }
 });
 
-
-// Salvar produtos do pagamento (com opção de manter 30 dias)
+// Salvar produtos do pagamento 
 router.post('/pagamento', async (req, res) => {
   try {
     const { produtos, salvarPor30Dias } = req.body;
@@ -66,17 +65,6 @@ router.delete('/pagamento', async (req, res) => {
   }
 });
 
-// Remover registros com mais de 30 dias (opcional, automático)
-router.delete('/pagamento/expirar', async (req, res) => {
-  try {
-    await pool.query(
-      'DELETE FROM pagamentos WHERE criado_em < NOW() - INTERVAL 30 DAY'
-    );
-    res.json({ message: 'Pagamentos antigos removidos' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao remover pagamentos antigos' });
-  }
-});
+
 
 module.exports = router;
