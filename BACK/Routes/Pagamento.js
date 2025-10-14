@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/db.config.js');
+const DbService = require('../config/db.config.js');
 
 //buscar peodutos no banco
 router.get('/produtos' , async (req,res) =>{
-    try {
+  try {
+    
+        const db = new DbService();
+        const pool = await db.getPool();
         const [rows] = await pool.query('SELECT * FROM produtos');
         res,express.json(rows);
 
@@ -17,6 +20,9 @@ router.get('/produtos' , async (req,res) =>{
 //buscar produtos salvo no pagamento
 router.get('/pagamento', async (req, res) => {
   try {
+  
+    const db = new DbService();
+    const pool = await db.getPool();
     const [rows] = await pool.query(
       'SELECT * FROM pagamento ORDER BY criado_em DESC LIMIT 1'
     );
@@ -36,6 +42,9 @@ router.get('/pagamento', async (req, res) => {
 // Salvar produtos do pagamento (com opção de manter 30 dias)
 router.post('/pagamento', async (req, res) => {
   try {
+
+    const db = new DbService();
+    const pool = await db.getPool();
     const { produtos, salvarPor30Dias } = req.body;
 
     if (!produtos || produtos.length === 0) {
@@ -58,6 +67,9 @@ router.post('/pagamento', async (req, res) => {
 // Limpar produtos do pagamento
 router.delete('/pagamento', async (req, res) => {
   try {
+
+    const db = new DbService();
+    const pool = await db.getPool();
     await pool.query('DELETE FROM pagamento');
     res.json({ message: 'Carrinho limpo com sucesso' });
   } catch (err) {
@@ -69,6 +81,9 @@ router.delete('/pagamento', async (req, res) => {
 // Remover registros com mais de 30 dias (opcional, automático)
 router.delete('/pagamento/expirar', async (req, res) => {
   try {
+
+    const db = new DbService();
+    const pool = await db.getPool();
     await pool.query(
       'DELETE FROM pagamentos WHERE criado_em < NOW() - INTERVAL 30 DAY'
     );
