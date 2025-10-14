@@ -6,7 +6,7 @@ import Enderecos from "../components/perfil/Enderecos";
 import Cartoes from "../components/perfil/Cartoes";
 import { Modal } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
+import ky from "ky";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -15,7 +15,8 @@ function Perfil() {
   const navigate = useNavigate();
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
-
+  const id_usuario_logado = localStorage.getItem("id_usuario_logado");
+  const [dados_usuario, setDados_usuario] = useState({})
   const alternarTipo = () => {
     setTipoInput((prev) => (prev === "password" ? "text" : "password"));
     setTipoIconSenha((prev) =>
@@ -68,7 +69,6 @@ function Perfil() {
 
   const inicio = () => {
     navigate("/");
-    
   };
 
   useEffect(() => {
@@ -83,9 +83,28 @@ function Perfil() {
     }
   }, [valorEmailExcluir]);
 
-  const pedidos = [
-   
-  ];
+  const pedidos = [];
+
+  useEffect(() => {
+    const buscarPerfil = async () => {
+      try {
+        const response = await ky.post("http://localhost:3000/perfil", {
+        json: { id_usuario_logado }
+        }).json();
+      
+        const dados = response;
+        setDados_usuario(dados)
+       
+        
+      } catch (error) {
+        console.error("Erro ao buscar perfil:", error);
+      }
+    };
+
+    buscarPerfil();
+  }, []);
+
+
 
   return (
     <div className="w-full h-full">
@@ -102,7 +121,7 @@ function Perfil() {
               Historico de pedidos
             </div>
           </div>
-
+           
           <div className="w-full flex justify-center ">
             <div className="w-79/100 ml-12 flex flex-col  justify-start pr-9 items-center h-95 overflow-y-auto">
               {pedidos.map((items, index) => {
@@ -269,6 +288,7 @@ function Perfil() {
                       focus:border-purpleborde outline-none"
                       placeholder="Ex: Manasses@gmail.com"
                       type="text"
+                      value={dados_usuario.email_usuario}
                       onChange={(e) => setValorEmailExcluir(e.target.value)}
                     />
                   </div>

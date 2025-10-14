@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import ky from "ky";
-// import jwt_decode from "jwt-decode"; // <-- import correto para Vite/React:
 import { useNavigate } from "react-router-dom";
 
 function PLogin() {
@@ -53,12 +52,8 @@ function PLogin() {
         })
         .json();
 
-      // Salvar token no localStorage
-      localStorage.setItem("token", response.token);
-
-      // Decodificar token para pegar o ID do usuário
-      const decoded = jwt_decode(response.token);
-      console.log("ID do usuário logado:", decoded.id);
+      localStorage.setItem("id_usuario_logado", response.decode.id);
+      console.log(response.decode.id)
 
       navigate("/");
     } catch (error) {

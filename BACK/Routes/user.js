@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/db.config.js');
-const jwt = require('jsonwebtoken'); // ← IMPORT JWT
+const dbservice = require('../config/db.config.js');
+const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'SEU_SECRET_KEY';
 
 router.post('/cadastro', async (req, res) => {
+  
   try {
+
+    const db = new dbservice();
+    const pool = await db.getPool();
+
     const { nome, email, senha, cpf, data_nascimento } = req.body;
 
    const existingUser = await pool.query(
@@ -48,6 +53,10 @@ router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 
   try {
+
+    const db = new dbservice();
+    const pool = await db.getPool();
+
     const result = await pool.query(
       'SELECT * FROM usuario WHERE email_usuario = $1',
       [email]
@@ -58,23 +67,47 @@ router.post('/login', async (req, res) => {
     }
 
     const user = result.rows[0];
-
+    
     if (user.senha !== senha) {
       return res.status(400).json({ message: 'Email ou senha incorreto!' });
     }
-
-    // Gerar JWT com o ID do usuário
+    
     const token = jwt.sign(
       { id: user.id_usuario }, 
       'SEU_SECRET_KEY', 
       { expiresIn: '1h' }
     );
 
-    res.json({ token });
+    const decode = jwt.verify(token, SECRET_KEY);
+
+    res.json({ decode });
+  
   } catch (error) {
     console.error('Erro ao fazer login:', error);
     res.status(500).json({ message: 'Erro ao fazer login.' });
   }
 });
+
+router.post('/perfil', async (req, res) => {
+
+  try {
+    const { id_usuario_logado } = req.body;
+    const db = new dbservice();
+    const pool = await db.getPool();
+
+    const result = await pool.query(
+      'SELECT * FROM usuario WHERE id_usuario = $1',
+      [id_usuario_logado]
+    );
+
+    const response = result.rows[0];
+
+    res.status(200).json(response);
+
+  } catch (error) {
+    console.error('Erro ao buscar usuario:', error);
+    res.status(500).json(error);
+  }
+})
 
 module.exports = router;
