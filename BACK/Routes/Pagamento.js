@@ -8,8 +8,8 @@ router.get('/produtos' , async (req,res) =>{
     
         const db = new DbService();
         const pool = await db.getPool();
-        const [rows] = await pool.query('SELECT * FROM produtos');
-        res,express.json(rows);
+        const response = await pool.query('SELECT * FROM produtos');
+        res.json(response.rows);
 
     } catch (err) {
         console.error(err);
@@ -23,14 +23,14 @@ router.get('/pagamento', async (req, res) => {
   
     const db = new DbService();
     const pool = await db.getPool();
-    const [rows] = await pool.query(
+    const response = await pool.query(
       'SELECT * FROM pagamento ORDER BY criado_em DESC LIMIT 1'
     );
-    if (rows.length === 0) {
+    if (response.rows.length === 0) {
       return res.json([]);
     }
 
-    const carrinho = JSON.parse(rows[0].produtos_json);
+    const carrinho = JSON.parse(response.rows[0].produtos_json);
     res.json(carrinho);
   } catch (err) {
     console.error(err);

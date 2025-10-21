@@ -102,6 +102,28 @@ class DbService {
     };
   };
 
+  async buscaFotosProdutos () {
+
+    try {
+    
+      const sql = 'SELECT * FROM fotos';
+      const response = await pool.query(sql);
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return false;
+    };
+  };
+
+  buscaFotoProduto () {
+
+      return 'SELECT url FROM fotos WHERE fk_id_produto=$1 AND posicao=$2';
+  };
+
+  criaNovaFoto () {
+      
+      return 'INSERT INTO fotos (url, posicao, fk_id_user) VALUES ($1, $2, $3)';
+  };
 };
 
 module.exports = DbService;

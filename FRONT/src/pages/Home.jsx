@@ -38,6 +38,7 @@ import { useNavigate } from "react-router-dom";
 function Home() {
 
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
 
@@ -45,9 +46,10 @@ function Home() {
 
       try {
         
-        const data = await ky.get('http://localhost:3000/produtos').json();
+        const response = await ky.get('http://localhost:3000/produtos').json();
         
-        console.log(data);
+        console.log(response);
+        setProducts(response);
       } catch (error) {
         
         if (error.response && error.response.status === 404) {
@@ -62,92 +64,120 @@ function Home() {
     getProducts();
   }, []);
 
-  const [products, setProcuts] = useState([
-     {
-      name: "Ácido hialurônico hidratante firmador",
-      description:
-        "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
-      price: "59,90",
-      image: product,
-       tipo: "comum" ,
-    },
-    {
-      name: "Ácido hialurônico Premium",
-      description:
+  const getProductPhoto = async (id) => {
 
-        "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
-      price: "89,90",
-      image: product_2,
-       tipo: "comum" ,
-    },
-    {
-      name: "Sérum humificado três leites",
-      description: "O mais puro esfoliante extraído do leite de cabra.",
-      price: "37,99",
-      image: product,
-       tipo: "comum",
-    },
-    {
-      name: "Protetor labial sabor cereja do amor",
-      description:
-        "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
-      price: "37,99",
-      image: product_2,
-     tipo: "customizavel" 
-    },
-    {
-      name: "Máscara facial detox de argila verde",
-      description:
-        "Remove impurezas e controla a oleosidade sem ressecar a pele.",
-      price: "29,90",
-      image: product,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Creme nutritivo com vitamina C",
-      description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
-      price: "49,90",
-      image: product_2,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Ácido hialurônico hidratante firmador",
-      description: "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
-      price: "59,90",
-      image: product,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Ácido hialurônico Premium",
-      description:
-        "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
-      price: "89,90",
-      image: product_2,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Sérum humificado três leites",
-      description: "O mais puro esfoliante extraído do leite de cabra.",
-      price: "37,99",
-      image: product,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Protetor labial sabor cereja do amor",
-      description:
-        "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
-      price: "37,99",
-      image: product_2,
-      tipo: "customizavel" ,
-    },
-    {
-      name: "Máscara facial detox de argila verde",
-      description:
-        "Remove impurezas e controla a oleosidade sem ressecar a pele.",
-      price: "29,90",
-      image: product,
-      tipo: "customizavel" ,
-    }]);
+    try {
+      
+      const response = await ky.get(`http://localhost:3000/${id}/foto`).json();
+
+      if (response) {
+
+        return response.rows[0];
+      };
+    } catch (error) {
+      
+      if (error.response.status === 404) {
+
+       return console.log({
+          message: `Nenhuma foto do produto ${id} encontrada!`,
+          error: error.message
+        });
+      };
+
+      console.log({
+
+        message: `Erro ao buscar foto do produto ${id}`,
+        error: error.message
+      });
+    };
+  };
+
+  // const [products, setProcuts] = useState([
+  //    {
+  //     name: "Ácido hialurônico hidratante firmador",
+  //     description:
+  //       "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
+  //     price: "59,90",
+  //     image: product,
+  //      tipo: "comum" ,
+  //   },
+  //   {
+  //     name: "Ácido hialurônico Premium",
+  //     description:
+
+  //       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
+  //     price: "89,90",
+  //     image: product_2,
+  //      tipo: "comum" ,
+  //   },
+  //   {
+  //     name: "Sérum humificado três leites",
+  //     description: "O mais puro esfoliante extraído do leite de cabra.",
+  //     price: "37,99",
+  //     image: product,
+  //      tipo: "comum",
+  //   },
+  //   {
+  //     name: "Protetor labial sabor cereja do amor",
+  //     description:
+  //       "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
+  //     price: "37,99",
+  //     image: product_2,
+  //    tipo: "customizavel" 
+  //   },
+  //   {
+  //     name: "Máscara facial detox de argila verde",
+  //     description:
+  //       "Remove impurezas e controla a oleosidade sem ressecar a pele.",
+  //     price: "29,90",
+  //     image: product,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Creme nutritivo com vitamina C",
+  //     description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
+  //     price: "49,90",
+  //     image: product_2,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Ácido hialurônico hidratante firmador",
+  //     description: "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
+  //     price: "59,90",
+  //     image: product,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Ácido hialurônico Premium",
+  //     description:
+  //       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
+  //     price: "89,90",
+  //     image: product_2,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Sérum humificado três leites",
+  //     description: "O mais puro esfoliante extraído do leite de cabra.",
+  //     price: "37,99",
+  //     image: product,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Protetor labial sabor cereja do amor",
+  //     description:
+  //       "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
+  //     price: "37,99",
+  //     image: product_2,
+  //     tipo: "customizavel" ,
+  //   },
+  //   {
+  //     name: "Máscara facial detox de argila verde",
+  //     description:
+  //       "Remove impurezas e controla a oleosidade sem ressecar a pele.",
+  //     price: "29,90",
+  //     image: product,
+  //     tipo: "customizavel" ,
+  //   }]);
 
     const handleProductClick = (tipo) => {
 
@@ -299,14 +329,14 @@ function Home() {
         <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
         <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
-          onClick={() => handleProductClick(item.tipo)}
+          onClick={() => handleProductClick(item.categoria)}
          >
-          <img className="w-full h-full object-cover" src={item.image} alt="" />
+          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
-         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">{renderStars(5)}</div>
-         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
          <div className="flex flex-row w-full gap-1.5">
           <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300"
            onClick={() => handleProductClick(item.tipo)}
@@ -369,10 +399,10 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
           onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={item.image} alt="" />
+          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
-         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">
           <img src={estrela} alt="" />
           <img src={estrela} alt="" />
@@ -380,7 +410,7 @@ function Home() {
           <img src={estrela} alt="" />
           <img src={estrela} alt="" />
          </div>
-         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
          <div className="flex flex-row w-full gap-1.5">
           <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
           <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
@@ -474,7 +504,7 @@ function Home() {
                   }
                 </div>
                 <h1 className="w-70 text-[16px] font-secondary font-bold text-extradarkpurple">{item.product_title}</h1>
-                <p className="w-65 text-[14px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
+                <p className="w-65 text-[14px] font-secondary text-black opacity-70">{`"${item.breve_descricao}"`}</p>
               </SwiperSlide>
             ))
           }
@@ -527,10 +557,10 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
          onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={item.image} alt="" />
+          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
-         <p className="w-full text-[13px] text-black h-[40px]">{item.description}</p>
+         <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">
           <img src={estrela} alt="" />
           <img src={estrela} alt="" />
@@ -538,7 +568,7 @@ function Home() {
           <img src={estrela} alt="" />
           <img src={estrela} alt="" />
          </div>
-         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.price}`}</div>
+         <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
          <div className="flex flex-row w-full gap-1.5">
           <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">Adicionar</div>
           <div className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"

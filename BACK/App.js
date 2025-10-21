@@ -8,6 +8,7 @@ const pedidos = require('./Routes/pedidos.js');
 const produtos = require('./Routes/produtos.js');
 const pagamento = require('./Routes/pagamento.js');
 const gestao = require('./Routes/gestao.js');
+const fotos = require('./Routes/fotos.js');
 
 const user = require('./Routes/user.js');
 const app = express();
@@ -23,6 +24,7 @@ app.use('/', pagamento);
 app.use('/', gestao);
 app.use('/', produtos);
 app.use('/', pagamento);
+app.use('/', fotos);
 app.use('/', user);
 
 app.use((req, res) => {
