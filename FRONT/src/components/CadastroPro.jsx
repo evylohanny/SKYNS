@@ -39,16 +39,17 @@ function CadastroPro() {
   });
 
   // adiciona os outros campos
-  formData.append('categoria', categoria);
-  formData.append('produto', produto);
-  formData.append('titulo', titulo);
-  formData.append('estrelas', estrelas);
-  formData.append('quantidade', quantidade);
+  formData.append('titulo_', titulo_);
+  formData.append('quantidade_estoque', quantidade_estoque); 
   formData.append('preco', preco);
+  formData.append('breve_descricao', breve_descricao);
+  formData.append('completa_descricao', completa_descricao);
+  formData.append('quantidade_estrelas', quantidade_estrelas);
+  formData.append('categoria', categoria);
   formData.append('peso', peso);
-  formData.append('descricao', descricao);
-  formData.append('descricaoCompleta', descricaoCompleta);
-  formData.append('produtoModificado', produtoModificado);
+  formData.append('personalizado', personalizado);
+  formData.append('data_lancamento', data_lancamento);
+  formData.append('tipo', tipo);
   formData.append('componentes', JSON.stringify(componentes));
 
   const res = await fetch('http://localhost:5000/api/produtos/cadastro', {

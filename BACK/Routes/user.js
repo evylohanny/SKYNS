@@ -94,7 +94,7 @@ router.post('/perfil', async (req, res) => {
     const { id_usuario_logado } = req.body;
     const db = new dbservice();
     const pool = await db.getPool();
-
+    
     const result = await pool.query(
       'SELECT * FROM usuario WHERE id_usuario = $1',
       [id_usuario_logado]
@@ -109,5 +109,39 @@ router.post('/perfil', async (req, res) => {
     res.status(500).json(error);
   }
 })
+
+router.put('/editando_dados', async (req, res) => {
+  try {
+    const { id_usuario, nome_usuario, email_usuario, cpf, data_nascimento, telefone, genero } = req.body;
+
+    if (!id_usuario) {
+      return res.status(400).json({ message: "ID do usuário é obrigatório" });
+    }
+
+    const db = new dbservice();
+    const pool = await db.getPool();
+
+    const dataFormatada = data_nascimento ? data_nascimento.split("T")[0] : null;
+
+    await pool.query(
+      `UPDATE usuario
+       SET nome_usuario = COALESCE($1, nome_usuario),
+           email_usuario = COALESCE($2, email_usuario),
+           cpf = COALESCE($3, cpf),
+           data_nascimento = COALESCE($4, data_nascimento),
+           telefone = COALESCE($5, telefone),
+           genero = COALESCE($6, genero)
+       WHERE id_usuario = $7`,
+      [nome_usuario, email_usuario, cpf, dataFormatada, telefone, genero, id_usuario]
+    );
+
+    res.status(200).json({ message: "Usuário atualizado com sucesso!" });
+
+  } catch (error) {
+    console.error("Erro ao atualizar usuário:", error);
+    res.status(500).json({ error: "Erro ao atualizar usuário." });
+  }
+});
+
 
 module.exports = router;

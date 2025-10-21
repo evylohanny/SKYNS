@@ -14,7 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-
+import ky from "ky";
 
 function NavBar({ search }) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
@@ -24,7 +24,9 @@ function NavBar({ search }) {
   const searchInputRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const id_usuario_logado = localStorage.getItem("id_usuario_logado");
   const [aberto, setAberto] = useState(false);
+  const [dados_usuario, setDados_usuario] = useState({});
   const abrir = () => setAberto(true);
   const fechar = () => {
     setAberto(false);
@@ -98,7 +100,14 @@ function NavBar({ search }) {
   };
 
   const perfil = () => {
-    navigate("/perfil");
+
+    if(id_usuario_logado == null){
+ 
+       navigate('/cadastro')
+    }else{
+
+      navigate('/perfil')
+    }
   };
 
   const onSearchChange = (event) => {
@@ -140,6 +149,26 @@ function NavBar({ search }) {
     navigate('/')
     setAberto(false);
   }
+
+  
+  useEffect(() => {
+    const buscarPerfil = async () => {
+      try {
+        const response = await ky
+          .post("http://localhost:3000/perfil", {
+            json: { id_usuario_logado },
+          })
+          .json();
+
+        const dados = response;
+        setDados_usuario(dados);
+      } catch (error) {
+        console.error("Erro ao buscar perfil:", error);
+      }
+    };
+
+    buscarPerfil();
+  }, []);
   return (
     <div className="w-full h-30">
       <div className="w-full h-40 fixed top-0 left-0 bg-white z-[999]">
@@ -172,7 +201,7 @@ function NavBar({ search }) {
               </Link>
               <div className="flex flex-col text-sm text-blackwhite/80 font-primary">
                 <p>Olá,</p>
-                <p>Nome Cliente</p>
+                <p>{dados_usuario.nome_usuario ? dados_usuario.nome_usuario : "Visitante"}</p>
               </div>
               <Link onClick={abrir}>
                 <img src={iconCarrinho} alt="" className="pl-3" />
