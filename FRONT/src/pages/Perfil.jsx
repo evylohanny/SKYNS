@@ -111,7 +111,7 @@ function Perfil() {
       <NavBar />
       <div className=" w-full  h-1/6 flex justify-center items-end">
         <div className="bg-[#FEF5FF] flex items-center text-lg p-4 w-76/100 h-48/100 font-medium  rounded-2xl">
-          <p className=" pl-2 text-purpledark">Olá, Manassés!</p>
+          <p className=" pl-2 text-purpledark">Olá, {dados_usuario.nome_usuario}</p>
         </div>
       </div>
       {pedidos.length > 0 ? (
@@ -194,7 +194,7 @@ function Perfil() {
           <div className=" bg-[#F4F4F4] w-36/100 h-65/100 rounded-2xl">
             <div className="flex w-full h-32/100 items-center justify-center gap-5">
               <img src="img_perfil.svg" alt="" />
-              <p className="text-2xl h-10">Manassés Marcelino</p>
+              <p className="text-2xl h-10">{dados_usuario.nome_usuario}</p>
             </div>
             <div className=" pl-10 w-full flex flex-col justify-center items-center">
               <div className="w-50/100">

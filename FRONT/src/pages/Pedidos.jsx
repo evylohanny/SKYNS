@@ -1,9 +1,12 @@
-import React from "react";
+
 import NavBar from "../components/NavBar";
 import FooterTecnico from "../components/FooterTecnico";
+import { useEffect, useState } from "react";
+import ky from "ky";
 
 function Pedidos() {
-
+  const id_usuario_logado = localStorage.getItem("id_usuario_logado");
+    const [dados_usuario, setDados_usuario] = useState({});
     const pedidos = [
     {
       nome: "Esfiliante solar ultra UV - 300G colectins verao",
@@ -25,12 +28,31 @@ function Pedidos() {
     },
   ];
 
+  useEffect(() => {
+    const buscarPerfil = async () => {
+      try {
+        const response = await ky
+          .post("http://localhost:3000/perfil", {
+            json: { id_usuario_logado },
+          })
+          .json();
+
+        const dados = response;
+        setDados_usuario(dados);
+      } catch (error) {
+        console.error("Erro ao buscar perfil:", error);
+      }
+    };
+
+    buscarPerfil();
+  }, []);
+
   return (
     <div className="w-full h-full">
       <NavBar />
       <div className=" w-full  h-1/6 flex justify-center items-end">
         <div className="bg-[#FEF5FF] flex items-center text-lg p-4 w-76/100 h-48/100 font-medium  rounded-2xl">
-          <p className=" pl-2 text-purpledark">Olá, Manassés!</p>
+          <p className=" pl-2 text-purpledark">Olá, {dados_usuario.nome_usuario}</p>
         </div>
       </div>
       <div className=" w-full pt-6 flex justify-center items-center">
