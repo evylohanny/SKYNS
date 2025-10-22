@@ -23,7 +23,7 @@ class DbService {
     return instance ? instance : new DbService();
   };
 
-  async getPool () {
+  getPool () {
 
     return pool;
   };
@@ -108,7 +108,7 @@ class DbService {
     
       const sql = 'SELECT * FROM fotos';
       const response = await pool.query(sql);
-      return response.rows;
+      return response;
     } catch (error) {
       console.log(error);
       return false;
@@ -122,7 +122,7 @@ class DbService {
 
   criaNovaFoto () {
       
-      return 'INSERT INTO fotos (url, posicao, fk_id_user) VALUES ($1, $2, $3)';
+      return 'INSERT INTO fotos (url, posicao, fk_id_produto) VALUES ($1, $2, $3) RETURNING *';
   };
 };
 

@@ -50,14 +50,14 @@ router.get('/:id/foto', async(req, res) => {
             return res.status(404).json({
 
                 message: `Nenhuma foto do produto ${id} encontrada!`,
-                error: response.error.message
+                error: response
             });
         };
 
         return res.status(200).json({
 
             message: `Foto do produto ${id} encontrada com sucesso!`,
-            data: response.rows
+            data: response.rows[0]
         });
     } catch (error) {
         
@@ -72,7 +72,7 @@ router.get('/:id/foto', async(req, res) => {
 router.post('/:id/foto', async(req, res) => {
 
     const { id } = req.params;
-    const { url, posicao, fk_id_user } = req.body;
+    const { url, posicao, fk_id_produto } = req.body;
 
     try {
 
@@ -80,21 +80,21 @@ router.post('/:id/foto', async(req, res) => {
         const sql = db.criaNovaFoto();
         const pool = db.getPool();
 
-        const response = await pool.query(sql, [url, posicao, fk_id_user]);  
+        const response = await pool.query(sql, [url, posicao, fk_id_produto]);  
 
-        if (response.rows.length <= 0) {
+        if (response.rows.length === 0) {
 
             return res.status(404).json({
 
                 message: `Erro ao enviar foto!`,
-                error: response.error.message
+                error: response
             });
         };
 
         return res.status(200).json({
 
             message: `Foto do produto ${id} enviada com sucesso!`,
-            data: response.rows
+            data: response.rows[0]
         });
     } catch (error) {
         

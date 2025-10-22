@@ -72,17 +72,9 @@ function Home() {
 
       if (response) {
 
-        return response.rows[0];
+        return response.data;
       };
     } catch (error) {
-      
-      if (error.response.status === 404) {
-
-       return console.log({
-          message: `Nenhuma foto do produto ${id} encontrada!`,
-          error: error.message
-        });
-      };
 
       console.log({
 
@@ -331,7 +323,7 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
           onClick={() => handleProductClick(item.categoria)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductPhoto(item.id_produto)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
@@ -399,7 +391,7 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
           onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductPhoto(item.id_produto)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
@@ -557,7 +549,7 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
          onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductPhoto(item.id_produto)} alt="" />
          </div>
          <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
