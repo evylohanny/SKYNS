@@ -23,7 +23,7 @@ class DbService {
     return instance ? instance : new DbService();
   };
 
-  async getPool () {
+  getPool () {
 
     return pool;
   };

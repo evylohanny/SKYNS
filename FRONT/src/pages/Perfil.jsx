@@ -1,13 +1,12 @@
 import NavBar from "../components/NavBar";
 import FooterTecnico from "../components/FooterTecnico";
-
 import Dados_pessoais from "../components/perfil/Dados_pessoais";
 import Enderecos from "../components/perfil/Enderecos";
 import Cartoes from "../components/perfil/Cartoes";
 import { Modal } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ky from "ky";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 import { useNavigate } from "react-router-dom";
 
 function Perfil() {
@@ -16,13 +15,15 @@ function Perfil() {
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
   const id_usuario_logado = localStorage.getItem("id_usuario_logado");
-  const [dados_usuario, setDados_usuario] = useState({})
+  const [dados_usuario, setDados_usuario] = useState({});
+
   const alternarTipo = () => {
     setTipoInput((prev) => (prev === "password" ? "text" : "password"));
     setTipoIconSenha((prev) =>
       prev === "icon_nao_ver.png" ? "icon_ver.png" : "icon_nao_ver.png"
     );
   };
+  
   const ativaAbaDados = () => {
     setInfoAtiva("dados");
   };
@@ -88,14 +89,18 @@ function Perfil() {
   useEffect(() => {
     const buscarPerfil = async () => {
       try {
-        const response = await ky.post("http://localhost:3000/perfil", {
-        json: { id_usuario_logado }
-        }).json();
-      
+        const response = await ky
+          .post("http://localhost:3000/perfil", {
+            json: { id_usuario_logado },
+          })
+          .json();
+
         const dados = response;
-        setDados_usuario(dados)
-       
-        
+        setDados_usuario(dados);
+        // Se o usuário já tiver uma foto, carregar ela
+        if (dados.foto_perfil) {
+          setFotoPreview(dados.foto_perfil);
+        }
       } catch (error) {
         console.error("Erro ao buscar perfil:", error);
       }
@@ -104,14 +109,70 @@ function Perfil() {
     buscarPerfil();
   }, []);
 
+  const sair_da_conta = async () => {
+    localStorage.removeItem("id_usuario_logado");
+    navigate("/");
+  };
 
+  
+  const fileInputRef = useRef(null);
+
+  const abrirExplorador = () => {
+    fileInputRef.current.click();
+  };
+
+  const selecionarImagem = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Verificar se é uma imagem
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas arquivos de imagem.');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB.');
+        return;
+      }
+    
+      fazerUploadFoto(file);
+    }
+  };
+
+  const fazerUploadFoto = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('foto', file);
+      formData.append('id_usuario', id_usuario_logado);
+
+      const response = await ky.post('http://localhost:3000/upload-foto', {
+        body: formData
+      }).json();
+
+      if (response.success) {
+        console.log('Foto atualizada com sucesso!');
+        
+        setDados_usuario(prev => ({
+          ...prev,
+          foto: response.fotoUrl
+        }));
+      } else {
+        alert('Erro ao fazer upload da foto.');
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload:', error);
+      alert('Erro ao fazer upload da foto.');
+    }
+  };
 
   return (
     <div className="w-full h-full">
       <NavBar />
       <div className=" w-full  h-1/6 flex justify-center items-end">
         <div className="bg-[#FEF5FF] flex items-center text-lg p-4 w-76/100 h-48/100 font-medium  rounded-2xl">
-          <p className=" pl-2 text-purpledark">Olá, {dados_usuario.nome_usuario}</p>
+          <p className=" pl-2 text-purpledark">
+            Olá, {dados_usuario.nome_usuario}
+          </p>
         </div>
       </div>
       {pedidos.length > 0 ? (
@@ -121,7 +182,7 @@ function Perfil() {
               Historico de pedidos
             </div>
           </div>
-           
+
           <div className="w-full flex justify-center ">
             <div className="w-79/100 ml-12 flex flex-col  justify-start pr-9 items-center h-95 overflow-y-auto">
               {pedidos.map((items, index) => {
@@ -193,9 +254,32 @@ function Perfil() {
         <div className="flex w-76/100 gap-20 ">
           <div className=" bg-[#F4F4F4] w-36/100 h-65/100 rounded-2xl">
             <div className="flex w-full h-32/100 items-center justify-center gap-5">
-              <img src="img_perfil.svg" alt="" />
+              <div
+                className="relative cursor-pointer"
+                onClick={abrirExplorador}
+                title="Clique para alterar a foto"
+              >
+                <img
+                  src={ dados_usuario.foto || "img_perfil.svg"}
+                  alt="Foto de perfil"
+                  className="w-24 h-24 rounded-full object-cover border-2 border-black"
+                />
+                <div className="absolute bottom-0 right-0 bg-purpledark text-white text-xs px-2 py-1 rounded-full">
+                  Editar
+                </div>
+              </div>
+
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={selecionarImagem}
+              />
+
               <p className="text-2xl h-10">{dados_usuario.nome_usuario}</p>
             </div>
+
             <div className=" pl-10 w-full flex flex-col justify-center items-center">
               <div className="w-50/100">
                 <button
@@ -243,7 +327,10 @@ function Perfil() {
                 </button>
               </div>
               <div className="w-45/100">
-                <button className="text-lg pt-6 cursor-pointer font-medium">
+                <button
+                  onClick={sair_da_conta}
+                  className="text-lg pt-6 cursor-pointer font-medium"
+                >
                   Sair
                 </button>
               </div>
@@ -288,7 +375,7 @@ function Perfil() {
                       focus:border-purpleborde outline-none"
                       placeholder="Ex: Manasses@gmail.com"
                       type="text"
-                      value={dados_usuario.email_usuario}
+                      value={valorEmailExcluir}
                       onChange={(e) => setValorEmailExcluir(e.target.value)}
                     />
                   </div>
@@ -302,7 +389,7 @@ function Perfil() {
                         type={tipoInput}
                         placeholder="Ex: 1234"
                         maxLength={8}
-                        onChange={(e) => setValor_senha_login(e.target.value)}
+                        onChange={(e) => setValorSenhaExcluir(e.target.value)}
                       />
                       <img
                         className=" pr-3 w-9 h-6 cursor-pointer"

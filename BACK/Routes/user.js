@@ -3,6 +3,41 @@ const router = express.Router();
 const dbservice = require('../config/db.config.js');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'SEU_SECRET_KEY';
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configurar multer para upload de imagens
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = 'uploads/fotos_perfil/';
+    // Criar diretório se não existir
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    // Gerar nome único para o arquivo
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'foto-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  },
+  fileFilter: function (req, file, cb) {
+    // Verificar se é imagem
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Apenas arquivos de imagem são permitidos!'), false);
+    }
+  }
+});
 
 router.post('/cadastro', async (req, res) => {
   
@@ -143,5 +178,66 @@ router.put('/editando_dados', async (req, res) => {
   }
 });
 
+// ROTA PARA UPLOAD DE FOTO DE PERFIL
+router.post('/upload-foto', upload.single('foto'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Nenhuma imagem enviada' });
+    }
+
+    const id_usuario = req.body.id_usuario;
+    
+    if (!id_usuario) {
+      return res.status(400).json({ success: false, message: 'ID do usuário é obrigatório' });
+    }
+
+    
+    const fotoUrl = `/uploads/fotos_perfil/${req.file.filename}`;
+    const fotoUrlCompleta = `http://localhost:3000${fotoUrl}`;
+
+    const db = new dbservice();
+    const pool = await db.getPool();
+
+    // Primeiro verificar se o usuário existe
+    const userCheck = await pool.query(
+      'SELECT id_usuario FROM usuario WHERE id_usuario = $1',
+      [id_usuario]
+    );
+
+    if (userCheck.rows.length === 0) {
+      // Deletar a foto que foi salva
+      fs.unlinkSync(req.file.path);
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    }
+
+    // Atualizar foto no banco de dados
+    await pool.query(
+      'UPDATE usuario SET foto = $1 WHERE id_usuario = $2',
+      [fotoUrlCompleta, id_usuario]
+    );
+
+    res.json({
+      success: true,
+      message: 'Foto atualizada com sucesso',
+      fotoUrl: fotoUrlCompleta
+    });
+
+  } catch (error) {
+    console.error('Erro no upload da foto:', error);
+    
+    // Se houve erro e o arquivo foi salvo, deletar
+    if (req.file) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (deleteError) {
+        console.error('Erro ao deletar arquivo:', deleteError);
+      }
+    }
+    
+    res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+  }
+});
+
+router.use('/uploads', express.static('uploads'));
 
 module.exports = router;

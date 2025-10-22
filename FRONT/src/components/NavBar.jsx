@@ -100,9 +100,9 @@ function NavBar({ search }) {
   };
 
   const perfil = () => {
-
-    if(id_usuario_logado == null){
- 
+    const usuario = localStorage.getItem("id_usuario_logado");
+    if(usuario == null){
+     
        navigate('/cadastro')
     }else{
 

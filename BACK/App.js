@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser')
 const path = require('path');
 
 const pedidosProducao = require('./Routes/IOT/pedidos.js');
@@ -16,7 +17,10 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
+app.use('/uploads', express.static('uploads'));
 app.use('/', pedidosProducao);
 app.use('/', rastreio);
 app.use('/', pedidos);
