@@ -32,38 +32,56 @@ router.get('/produtos', async(req, res) => {
     };
 });
 
+router.post('/produtos', async(req, res) => {
 
+    try {
 
-// router.post('/produtos', async(req, res) => {
+    const db = new DbService();
+    const pool = db.getPool();
 
-//     try {
+    const {
+      titulo_,
+      quantidade_estoque,
+      preco,
+      breve_descricao,
+      completa_descricao,
+      quantidade_estrelas,
+      categoria,
+      peso,
+      personalizado,
+      quantidade_minima
+    } = req.body;
 
-// const db = new DbService();
-// const pool = db.getPool();
+    const response = await pool.query(' INSERT INTO produtos (titulo_, quantidade_estoque, preco, breve_descricao, completa_descricao, quantidade_estrelas, categoria, peso, personalizado, quantidade_minima) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', [
+        titulo_,
+        quantidade_estoque,
+        preco,
+        breve_descricao,
+        completa_descricao,
+        quantidade_estrelas,
+        categoria,
+        peso,
+        personalizado,
+        quantidade_minima
+    ]);
 
-//         const { titulo, descricao, preco } = req.body;
+    if (response.rows.length > 0) {
 
-//         const response = await pool.query('INSERT INTO produtos (titulo, descricao, preco) VALUES ($1, $2, $3)', [
-//             titulo, descricao, preco
-//         ]);
+        return res.status(200).json({ 
+            message: 'Produto cadastrado com sucesso!'
+        });
+    };
 
-//         if (response.affectedRows > 0) {
-
-//             return res.status(200).json({ 
-//                 message: 'Produto cadastrado com sucesso!'
-//             });
-//         };
-
-//         return res.status(404).json({ 
-//             message: 'Erro: não encontrado.' 
-//         });
-//     } catch (error) {
+    return res.status(404).json({ 
+        message: 'Erro: não encontrado.' 
+    });
+    } catch (error) {
         
-//         return res.status(500).json({ 
-//             message: 'Erro interno no servidor.', 
-//             error: error.message
-//         });
-//     };
-// });
+        return res.status(500).json({ 
+        message: 'Erro interno no servidor.', 
+        error: error.message
+    });
+    };
+});
 
 module.exports = router;

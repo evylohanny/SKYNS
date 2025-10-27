@@ -5,7 +5,7 @@ const fs = require('fs');
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
-}
+};
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,7 +23,7 @@ const fileFilter = (req, file, cb) => {
   
   if (mimetype && extname) {
     return cb(null, true);
-  }
+  };
   cb(new Error('Apenas imagens são permitidas!'));
 };
 
