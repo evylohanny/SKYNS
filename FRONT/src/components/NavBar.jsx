@@ -74,7 +74,7 @@ function NavBar({ search }) {
 
     if (index == 3) {
 
-      navigate('/produto/progresso');
+      navigate(`/rastreio/:id`);
     };
   };
   const handleClick = () => {

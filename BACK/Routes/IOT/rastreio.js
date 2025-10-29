@@ -2,39 +2,54 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-router.get('/rastreio-produto', async (req, res) => {
+router.get('/rastreio/:id', async (req, res) => {
 
     try {
       
-        const { id } = req.body;
+        const { id } = req.params;
 
-        const response = axios.get('http://52.1.197.112:3000/queue/items', id, { timeout: 10000 });
+        const response = axios.get(`http://52.1.197.112:3000/queue/items/${id}`, { timeout: 10000 });
 
-        if (response && response.production === 'A') {
+        const status = response.status;
+        console.log(status);
+
+        if (response && status === 'ESTOQUE') {
 
             res.status(200).json({
-                message: 'Pedido em produção'
+                message: 'Pedido em estoque',
+                status: status 
             });
         };
         
-        if (response && response.production === 'B') {
+        if (response && status === 'PROCESSO') {
 
             res.status(200).json({
-                message: 'Pedido em produção'
+                message: 'Pedido em processo',
+                status: status
             });
         };
 
-        if (response && response.production === 'C') {
+        if (response && status === 'MONTAGEM') {
 
             res.status(200).json({
-                message: 'Pedido em produção'
+                message: 'Pedido em montagem',
+                status: status
             });
         };
 
-        if (response && response.production === 'D') {
+        if (response && status === 'EXPEDIÇÃO') {
 
             res.status(200).json({
-                message: 'Pedido em expedição'
+                message: 'Pedido em expedição',
+                status: status
+            });
+        };
+
+        if (response && status === 'COMPLETED') {
+
+            res.status(200).json({
+                message: 'Pedido entregue',
+                status: status
             });
         };
     } catch (error) {

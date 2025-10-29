@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import ky from 'ky';
 import clsx from 'clsx';
 import CarrosselPQ from '../components/CarrosselPQ';
 
@@ -13,14 +14,38 @@ import montagemConcluido from '../assets/montagem2.svg';
 import expedicao from '../assets/expedicao.svg';
 import expedicaoConcluido from '../assets/expedicao2.svg';
 import completed from '../assets/completed.svg';
+import { useEffect } from 'react';
 
 function Rastreio() {
 
-    const [currentPhase, setCurrentPhase] = useState('Estoque');
-    const phases = ['Estoque', 'Processo', 'Montagem', 'Expedição'];
+    const [currentPhase, setCurrentPhase] = useState('');
     const navigate = useNavigate();
 
     const changePhase = (phase) => setCurrentPhase(phase);
+    const { id } = useParams();
+
+    useEffect(() => {
+
+        const getProductState = () => {
+
+            try {
+
+                const response = ky.get(`http://localhost:3000/rastreio/${id}`).json();
+
+                if (!response) {
+
+                  return console.log('Erro na busca do status do pedido!');
+                };
+
+                console.log(response.status)
+                setCurrentPhase(response.status);
+            } catch (error) {
+                
+                console.log('Erro interno do servidor', error);
+            }
+        };
+        getProductState();
+    }, []);
 
   return (
     <div className='h-full w-full flex flex-col items-center'>
@@ -64,7 +89,7 @@ function Rastreio() {
                     </div>
                     <div className='w-30 h-30 flex flex-col justify-end items-center'>
                         <img className='w-[125px] h-[125px]' onClick={() => changePhase('Completed')} src={currentPhase === 'Expedição' ? expedicaoConcluido : currentPhase === 'Completed' ? concluido : expedicao} />
-                        <p className={clsx('text-center font-semibold text-[1rem]', currentPhase === 'Expedição' || currentPhase === 'Completed' ? 'text-purpledark' : 'text-gray2 opacity-66')}>Expedição</p>
+                        <p className={clsx('text-center font-semibold text-[1rem]', currentPhase === 'Expedição' || currentPhase === 'COMPLETED' ? 'text-purpledark' : 'text-gray2 opacity-66')}>Expedição</p>
                     </div>
                 </div>
                 <div className='mt-10 flex items-center justify-center'>
