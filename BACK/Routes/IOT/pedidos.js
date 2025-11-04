@@ -23,10 +23,10 @@ router.post('/pedidos/production', async(req, res) => {
     
         filaDeEspera(pedido);
     
-        res.json({ message: 'Pedido recebido com sucesso!'});
+        res.status(200).json({ message: 'Pedido recebido com sucesso!'});
     } catch (error) {
         
-        res.json({ message: `Erro ao receber pedido! ${error}` });
+        res.status(500).json({ message: `Erro ao receber pedido! ${error}` });
     };
 
 });
@@ -132,7 +132,7 @@ async function produzProduto(produto) {
                     },
                     "sku": "KIT-01"
                 },
-                "callbackUrl": "http://localhost:3000/pedidos"
+                "callbackUrl": "http://localhost:3000/pedidos/production"
         };
 
         console.log('Chegou prestes á produção!', body);

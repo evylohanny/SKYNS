@@ -74,7 +74,7 @@ function NavBar({ search }) {
 
     if (index == 3) {
 
-      navigate('/produto/progresso');
+      navigate(`/rastreio/:id`);
     };
   };
   const handleClick = () => {
@@ -100,9 +100,9 @@ function NavBar({ search }) {
   };
 
   const perfil = () => {
-
-    if(id_usuario_logado == null){
- 
+    const usuario = localStorage.getItem("id_usuario_logado");
+    if(usuario == null){
+     
        navigate('/cadastro')
     }else{
 

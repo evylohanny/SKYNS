@@ -39,6 +39,7 @@ function Home() {
 
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [productPhotos, setProductPhotos] = useState({});
 
   useEffect(() => {
 
@@ -50,6 +51,10 @@ function Home() {
         
         console.log(response);
         setProducts(response);
+        
+        if (response && response.length > 0) {
+          fetchAllProductPhotos(response);
+        }
       } catch (error) {
         
         if (error.response && error.response.status === 404) {
@@ -61,6 +66,25 @@ function Home() {
         console.log('Erro inesperado: ', error.message);
       };
     };
+
+    const fetchAllProductPhotos = async (productsList) => {
+      const photos = {};
+      
+      for (const product of productsList) {
+        try {
+          const photoUrl = await getProductPhoto(product.id_produto);
+          if (photoUrl) {
+            photos[product.id_produto] = photoUrl;
+          }
+        } catch (error) {
+          console.log(`Erro ao buscar foto do produto ${product.id_produto}:`, error);
+          photos[product.id_produto] = product;
+        }
+      }
+      
+      setProductPhotos(photos);
+    };
+
     getProducts();
   }, []);
 
@@ -68,118 +92,32 @@ function Home() {
 
     try {
       
-      const response = await ky.get(`http://localhost:3000/${id}/foto`).json();
+      const response = await ky.get(`http://localhost:3000/produtos/${id}/foto`).json();
 
       if (response) {
-
-        return response.rows[0];
-      };
+        console.log(response.data);
+        return response.data.url;
+      }
+      console.log('Erro');
     } catch (error) {
-      
-      if (error.response.status === 404) {
-
-       return console.log({
-          message: `Nenhuma foto do produto ${id} encontrada!`,
-          error: error.message
-        });
-      };
 
       console.log({
-
         message: `Erro ao buscar foto do produto ${id}`,
         error: error.message
       });
+      return null;
     };
   };
 
-  // const [products, setProcuts] = useState([
-  //    {
-  //     name: "Ácido hialurônico hidratante firmador",
-  //     description:
-  //       "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
-  //     price: "59,90",
-  //     image: product,
-  //      tipo: "comum" ,
-  //   },
-  //   {
-  //     name: "Ácido hialurônico Premium",
-  //     description:
+  const getProductImage = (product) => {
+    if (productPhotos[product.id_produto]) {
+      return productPhotos[product.id_produto];
+    }
+    
+    return product.tipo === "customizavel" ? product_2 : product;
+  };
 
-  //       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
-  //     price: "89,90",
-  //     image: product_2,
-  //      tipo: "comum" ,
-  //   },
-  //   {
-  //     name: "Sérum humificado três leites",
-  //     description: "O mais puro esfoliante extraído do leite de cabra.",
-  //     price: "37,99",
-  //     image: product,
-  //      tipo: "comum",
-  //   },
-  //   {
-  //     name: "Protetor labial sabor cereja do amor",
-  //     description:
-  //       "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
-  //     price: "37,99",
-  //     image: product_2,
-  //    tipo: "customizavel" 
-  //   },
-  //   {
-  //     name: "Máscara facial detox de argila verde",
-  //     description:
-  //       "Remove impurezas e controla a oleosidade sem ressecar a pele.",
-  //     price: "29,90",
-  //     image: product,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Creme nutritivo com vitamina C",
-  //     description: "Ilumina e uniformiza o tom da pele com ação antioxidante.",
-  //     price: "49,90",
-  //     image: product_2,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Ácido hialurônico hidratante firmador",
-  //     description: "Descubra o poder do ativo que preenche, suaviza e revitaliza sua pele de dentro pra fora.",
-  //     price: "59,90",
-  //     image: product,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Ácido hialurônico Premium",
-  //     description:
-  //       "Versão premium com alta concentração para resultados mais rápidos e duradouros.",
-  //     price: "89,90",
-  //     image: product_2,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Sérum humificado três leites",
-  //     description: "O mais puro esfoliante extraído do leite de cabra.",
-  //     price: "37,99",
-  //     image: product,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Protetor labial sabor cereja do amor",
-  //     description:
-  //       "Apaixone-se pelo toque suave e o sabor irresistível da cereja do amor.",
-  //     price: "37,99",
-  //     image: product_2,
-  //     tipo: "customizavel" ,
-  //   },
-  //   {
-  //     name: "Máscara facial detox de argila verde",
-  //     description:
-  //       "Remove impurezas e controla a oleosidade sem ressecar a pele.",
-  //     price: "29,90",
-  //     image: product,
-  //     tipo: "customizavel" ,
-  //   }]);
-
-    const handleProductClick = (tipo) => {
+  const handleProductClick = (tipo) => {
 
     if(tipo === "customizavel"){
       navigate("/produtocustomizavel");
@@ -310,7 +248,6 @@ function Home() {
         el: ".swiper-pagination",
         clickable: true,
         renderBullet: (index, className) => {
-          // Mostra apenas os 5 primeiros bullets
           if (index < 11) {
             return `<span class="${className}"></span>`;
           }
@@ -331,9 +268,9 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
           onClick={() => handleProductClick(item.categoria)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductImage(item)} alt={item.titulo_} onError={(e) => { e.target.src = product; }} />
          </div>
-         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.titulo_}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">{renderStars(5)}</div>
          <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
@@ -378,7 +315,6 @@ function Home() {
         el: ".swiper-pagination-2",
         clickable: true,
         renderBullet: (index, className) => {
-          // Mostra apenas os 5 primeiros bullets
           if (index < 11) {
             return `<span class="${className}"></span>`;
           }
@@ -399,9 +335,9 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
           onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductImage(item)} alt={item.titulo_} onError={(e) => { e.target.src = product; }} />
          </div>
-         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.titulo_}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">
           <img src={estrela} alt="" />
@@ -504,12 +440,12 @@ function Home() {
                   }
                 </div>
                 <h1 className="w-70 text-[16px] font-secondary font-bold text-extradarkpurple">{item.product_title}</h1>
-                <p className="w-65 text-[14px] font-secondary text-black opacity-70">{`"${item.breve_descricao}"`}</p>
+                <p className="w-65 text-[14px] font-secondary text-black opacity-70">{`"${item.description}"`}</p>
               </SwiperSlide>
             ))
           }
         </Swiper>
-        <div className="custom-next-comments absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_comments} /></div> 
+        <div className="custom-next-comments absolute right-[-100px] top-[45%] w-15 -translate-y-1/2 z-10 cursor-pointer"><img src={seta_comments} /> </div> 
       </section>
       <section className="flex flex-col bg-black mt-10 h-[100vh]">
         <img src={large_product} alt="" />
@@ -536,7 +472,6 @@ function Home() {
         el: ".swiper-pagination-3",
         clickable: true,
         renderBullet: (index, className) => {
-          // Mostra apenas os 5 primeiros bullets
           if (index < 11) {
             return `<span class="${className}"></span>`;
           }
@@ -557,9 +492,9 @@ function Home() {
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
          onClick={() => handleProductClick(item.tipo)}
          >
-          <img className="w-full h-full object-cover" src={() => getProductPhoto(item.id)} alt="" />
+          <img className="w-full h-full object-cover" src={getProductImage(item)} alt={item.titulo_} onError={(e) => { e.target.src = product; }} />
          </div>
-         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.name}</h1>
+         <h1 className="text-black opacity-70 text-[22px] h-[70px] font-secondary not-italic [font-optical-sizing:auto] font-bold w-full mt-3">{item.titulo_}</h1>
          <p className="w-full text-[13px] text-black h-[40px]">{item.breve_descricao}</p>
          <div className="w-full mt-5 flex gap-1">
           <img src={estrela} alt="" />

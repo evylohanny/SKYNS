@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         element: <Results />
     },
     {
-        path: '/produto/progresso',
+        path: '/rastreio/:id',
         element: <Rastreio />
     },
     {
