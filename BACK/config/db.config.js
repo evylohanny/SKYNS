@@ -115,6 +115,26 @@ class DbService {
     };
   };
 
+    async buscaProdutos(tipo) {
+    let query = "SELECT * FROM produtos";
+    const params = [];
+
+    if (tipo === "comum") {
+      query += " WHERE personalizado = 0";
+    } else if (tipo === "customizavel") {
+      query += " WHERE personalizado = 1";
+    }
+
+    query += " ORDER BY data_lancamento DESC";
+    const [rows] = await pool.query(query, params);
+    return rows;
+  }
+
+  async buscaProdutoPorId(id) {
+    const [rows] = await pool.query("SELECT * FROM produtos WHERE id_produto = ?", [id]);
+    return rows[0] || null;
+  }
+
   buscaFotoProduto () {
 
       return 'SELECT url FROM fotos WHERE fk_id_produto=$1 AND posicao=$2';

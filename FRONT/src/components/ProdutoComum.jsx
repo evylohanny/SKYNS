@@ -47,7 +47,7 @@ function ProdutoComum() {
     }
   };
 
-  const [tab, setTab] = useState("funciona");
+  const [tab, setTab] = useState("composicao");
 
     useEffect(() => {
     window.scrollTo(0, 0);
@@ -79,10 +79,11 @@ function ProdutoComum() {
           </div>
           <div className="w-[450px] h-[580px] relative">
             <button className="custom-prev absolute top-1/2 left-2 -translate-y-1/2 z-10">
-              <img src={setaEsquerda} alt="anterior" className="w-8 h-8" />
+              <img src={setaEsquerda} alt="anterior" className="w-8 h-8 cursor-pointer" />
             </button>
-            <button className="custom-next absolute top-1/2 right-2 -translate-y-1/2 z-10">
-              <img src={setaDireita} alt="próximo" className="w-8 h-8" />
+            <button className="custom-next absolute top-1/2 right-2 -translate-y-1/2 z-10"> 
+            
+              <img src={setaDireita} alt="próximo" className="w-8 h-8 cursor-pointer" />
             </button>
 
             <Swiper
@@ -165,21 +166,21 @@ function ProdutoComum() {
             <div className="flex items-center border-2 border-purpledark rounded-lg w-30 p-6 py-1">
               <button
                 onClick={diminuir}
-                className="text-purpledark text-xl font-medium w-10"
+                className="text-purpledark text-xl font-medium w-10 cursor-pointer"
               >
                 −
               </button>
-              <span className="mx-3 text-purpledark font-medium w-10">
+              <span className="mx-3 text-purpledark font-medium w-10 ">
                 {quantidade}
               </span>
               <button
                 onClick={aumentar}
-                className="text-purpledark text-xl font-medium w-10"
+                className="text-purpledark text-xl font-medium w-10 cursor-pointer"
               >
                 +
               </button>
             </div>
-            <button className="bg-blue text-purpledark font-semibold px-7 py-2 rounded-lg">
+            <button className="bg-blue text-purpledark font-semibold px-13 py-2 rounded-lg transition cursor-pointer hover:bg-purpledark hover:text-white">
               COMPRAR
             </button>
           </div>
