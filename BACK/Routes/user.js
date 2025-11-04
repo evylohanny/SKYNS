@@ -178,7 +178,7 @@ router.put('/editando_dados', async (req, res) => {
   }
 });
 
-// ROTA PARA UPLOAD DE FOTO DE PERFIL
+
 router.post('/upload-foto', upload.single('foto'), async (req, res) => {
   try {
     if (!req.file) {
@@ -198,7 +198,7 @@ router.post('/upload-foto', upload.single('foto'), async (req, res) => {
     const db = new dbservice();
     const pool = await db.getPool();
 
-    // Primeiro verificar se o usuário existe
+  
     const userCheck = await pool.query(
       'SELECT id_usuario FROM usuario WHERE id_usuario = $1',
       [id_usuario]
@@ -210,7 +210,6 @@ router.post('/upload-foto', upload.single('foto'), async (req, res) => {
       return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
     }
 
-    // Atualizar foto no banco de dados
     await pool.query(
       'UPDATE usuario SET foto = $1 WHERE id_usuario = $2',
       [fotoUrlCompleta, id_usuario]
@@ -225,7 +224,7 @@ router.post('/upload-foto', upload.single('foto'), async (req, res) => {
   } catch (error) {
     console.error('Erro no upload da foto:', error);
     
-    // Se houve erro e o arquivo foi salvo, deletar
+    
     if (req.file) {
       try {
         fs.unlinkSync(req.file.path);
@@ -239,5 +238,7 @@ router.post('/upload-foto', upload.single('foto'), async (req, res) => {
 });
 
 router.use('/uploads', express.static('uploads'));
+
+
 
 module.exports = router;

@@ -43,30 +43,15 @@ function Perfil() {
     setErroExcluir(false);
   };
 
-  const [mensagemErro] = useState("Email ou Senha incorreto!");
+  const [mensagemErro, setMensagemErro] = useState("");
   const [erroExcluir, setErroExcluir] = useState(false);
 
   const [valorEmailExcluir, setValorEmailExcluir] = useState("");
   const [valorSenhaExcluir, setValorSenhaExcluir] = useState("");
 
-  const excluir = () => {
-    if (
-      valorEmailExcluir.includes("@gmail.com") ||
-      (valorEmailExcluir.includes("@hotmail.com") &&
-        valorSenhaExcluir.length > 4)
-    ) {
-      setErroExcluir(false);
-    } else {
-      setErroExcluir(true);
-    }
-
-    if (
-      valorEmailExcluir.includes("@gmail.com") ||
-      valorEmailExcluir.includes("@hotmail.com" && valorSenhaExcluir.length > 4)
-    ) {
-      navigate("/cadastro");
-    }
-  };
+  const excluir = async () => {
+  
+};
 
   const inicio = () => {
     navigate("/");
@@ -97,7 +82,6 @@ function Perfil() {
 
         const dados = response;
         setDados_usuario(dados);
-        // Se o usuário já tiver uma foto, carregar ela
         if (dados.foto_perfil) {
           setFotoPreview(dados.foto_perfil);
         }
@@ -164,6 +148,8 @@ function Perfil() {
       alert('Erro ao fazer upload da foto.');
     }
   };
+
+  
 
   return (
     <div className="w-full h-full">

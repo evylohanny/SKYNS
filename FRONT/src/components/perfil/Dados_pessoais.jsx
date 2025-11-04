@@ -45,7 +45,27 @@ function Dados_pessoais() {
     buscarPerfil();
   }, []);
 
+  const [nomeInvalido, setNomeInvalido] = useState(false);
+  const mensagemNome = "Digite seu nome corretamente!";
+  const [emailInvalido, setEmailInvalido] = useState(false);
+  const mensagemEmail = "Email invalido!";
   const salvar_dados = async () => {
+    if (
+      !dados_usuario.nome_usuario ||
+      dados_usuario.nome_usuario.trim().length < 3
+    ) {
+      setNomeInvalido(true);
+      return;
+    }
+    if (
+      !dados_usuario.email_usuario ||
+      (!dados_usuario.email_usuario.trim().includes("@gmail.com") &&
+        !dados_usuario.email_usuario.trim().includes("@hotmail.com"))
+    ) {
+      setEmailInvalido(true);
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/editando_dados", {
         method: "PUT",
@@ -55,10 +75,29 @@ function Dados_pessoais() {
 
       const data = await response.json();
       console.log(data);
+      window.location.reload(); 
     } catch (error) {
       console.error("Erro ao editar dados:", error);
     }
   };
+
+  useEffect(() => {
+    if (
+      dados_usuario.nome_usuario &&
+      dados_usuario.nome_usuario.trim().length > 0
+    ) {
+      setNomeInvalido(false);
+    }
+  }, [dados_usuario.nome_usuario]);
+
+  useEffect(() => {
+    if (
+      dados_usuario.email_usuario &&
+      dados_usuario.email_usuario.trim().length > 0
+    ) {
+      setEmailInvalido(false);
+    }
+  }, [dados_usuario.email_usuario]);
 
   return (
     <div className="bg-[#F4F4F4] w-60/100 flex flex-col items-center  rounded-2xl">
@@ -68,14 +107,18 @@ function Dados_pessoais() {
         </h1>
       </div>
       <div className="flex flex-col mt-4 w-84/100">
-        <label className="text-lg">Nome</label>
+        <label className="text-lg">Nome completo</label>
         <div className="w-full pt-2">
           <input
             type="text"
             placeholder="Ex: Manassés"
             className="w-full border-[#D9D9D9] text-[#bdbbbb] border-2 rounded-lg p-1.5
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
-            value={dados_usuario.nome_usuario ? formatarNome(dados_usuario.nome_usuario) : ""}
+            value={
+              dados_usuario.nome_usuario
+                ? formatarNome(dados_usuario.nome_usuario)
+                : ""
+            }
             onChange={(e) =>
               setDados_usuario({
                 ...dados_usuario,
@@ -84,7 +127,14 @@ function Dados_pessoais() {
             }
           />
         </div>
-        <label className="text-lg pt-5">Email</label>
+        <div className="h-6">
+          {nomeInvalido && (
+            <p className="text-red-500 text-sm  font-medium text-purpledark">
+              {mensagemNome}
+            </p>
+          )}
+        </div>
+        <label className="text-lg ">Email</label>
         <div className="w-full pt-2">
           <input
             type="text"
@@ -100,7 +150,14 @@ function Dados_pessoais() {
             }
           />
         </div>
-        <label className="text-lg pt-5">CPF</label>
+        <div className="h-6">
+          {emailInvalido && (
+            <p className="text-red-500 text-sm  font-medium text-purpledark">
+              {mensagemEmail}
+            </p>
+          )}
+        </div>
+        <label className="text-lg ">CPF</label>
         <div className="w-full pt-2">
           <input
             type="text"
@@ -125,11 +182,13 @@ function Dados_pessoais() {
              focus:border-purpleborde focus:text-black outline-none disabled:bg-gray-200 disabled:text-gray-500"
             value={
               dados_usuario.data_nascimento
-                ? formatarData(dados_usuario.data_nascimento
-                    .split("T")[0]
-                    .split("-")
-                    .reverse()
-                    .join("/"))
+                ? formatarData(
+                    dados_usuario.data_nascimento
+                      .split("T")[0]
+                      .split("-")
+                      .reverse()
+                      .join("/")
+                  )
                 : ""
             }
             onChange={(e) =>
