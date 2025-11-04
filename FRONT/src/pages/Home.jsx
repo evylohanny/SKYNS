@@ -95,10 +95,10 @@ function Home() {
       const response = await ky.get(`http://localhost:3000/produtos/${id}/foto`).json();
 
       if (response) {
-        console.log(response.data)
+        console.log(response.data);
         return response.data.url;
       }
-      console.log('Erro')
+      console.log('Erro');
     } catch (error) {
 
       console.log({

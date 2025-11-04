@@ -132,7 +132,7 @@ async function produzProduto(produto) {
                     },
                     "sku": "KIT-01"
                 },
-                "callbackUrl": "http://localhost:3000/pedidos"
+                "callbackUrl": "http://localhost:3000/pedidos/production"
         };
 
         console.log('Chegou prestes á produção!', body);
