@@ -15,7 +15,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // 🔍 Buscar produto específico
 router.get("/:id", async (req, res) => {
   try {
@@ -131,9 +130,7 @@ module.exports = router;
 // });
 
 
-=======
 router.post('/produtos', async(req, res) => {
->>>>>>> 2db5d13386626647fe240cc7783c9c120c677d4a
 
     try {
 
