@@ -92,7 +92,7 @@ function Home() {
 
     try {
       
-      const response = await ky.get(`http://localhost:3000/produtos/${id}/foto`).json();
+      const response = await ky.get(`http://localhost:3000/${id}/foto`).json();
 
       if (response) {
         console.log(response.data);
