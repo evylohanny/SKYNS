@@ -45,24 +45,81 @@ function Dados_pessoais() {
     buscarPerfil();
   }, []);
 
+  const validarMaioridade = (dataNascimento) => {
+    if (!dataNascimento) return false;
+    
+    // Converte a data do formato DD/MM/YYYY para Date object
+    const [dia, mes, ano] = dataNascimento.split('/').map(Number);
+    const dataNasc = new Date(ano, mes - 1, dia); // mês é 0-indexed no JavaScript
+    
+    // Data atual
+    const hoje = new Date();
+    
+    // Calcula a idade
+    let idade = hoje.getFullYear() - dataNasc.getFullYear();
+    const mesAtual = hoje.getMonth();
+    const diaAtual = hoje.getDate();
+    
+    // Ajusta a idade se ainda não fez aniversário este ano
+    if (mesAtual < dataNasc.getMonth() || 
+        (mesAtual === dataNasc.getMonth() && diaAtual < dataNasc.getDate())) {
+      idade--;
+    }
+    
+    return idade >= 18;
+  };
+
   const [nomeInvalido, setNomeInvalido] = useState(false);
   const mensagemNome = "Digite seu nome corretamente!";
   const [emailInvalido, setEmailInvalido] = useState(false);
   const mensagemEmail = "Email invalido!";
+  const [cpfInvalido, setCpfInvalido] = useState(false);
+  const mensagemCpf = "Cpf invalido!";
+  const [nascimentoInvalido, setNascimentoInvalido] = useState(false);
+  const mensagemNascimento = "Você deve ser maior de 18 anos!";
+
   const salvar_dados = async () => {
+    // Resetar estados de erro
+    setNomeInvalido(false);
+    setEmailInvalido(false);
+    setCpfInvalido(false);
+    setNascimentoInvalido(false);
+
+    let temErro = false;
+
+    // Validação do nome
     if (
       !dados_usuario.nome_usuario ||
       dados_usuario.nome_usuario.trim().length < 3
     ) {
       setNomeInvalido(true);
-      return;
+      temErro = true;
     }
+
+    // Validação do email
     if (
       !dados_usuario.email_usuario ||
       (!dados_usuario.email_usuario.trim().includes("@gmail.com") &&
         !dados_usuario.email_usuario.trim().includes("@hotmail.com"))
     ) {
       setEmailInvalido(true);
+      temErro = true;
+    }
+
+    // Validação do CPF
+    if (!dados_usuario.cpf || dados_usuario.cpf.trim().length < 14) {
+      setCpfInvalido(true);
+      temErro = true;
+    }
+
+    // Validação da data de nascimento
+    if (!dados_usuario.data_nascimento || !validarMaioridade(dados_usuario.data_nascimento)) {
+      setNascimentoInvalido(true);
+      temErro = true;
+    }
+
+    // Se houver algum erro, não prossegue com o salvamento
+    if (temErro) {
       return;
     }
 
@@ -81,6 +138,7 @@ function Dados_pessoais() {
     }
   };
 
+
   useEffect(() => {
     if (
       dados_usuario.nome_usuario &&
@@ -98,6 +156,25 @@ function Dados_pessoais() {
       setEmailInvalido(false);
     }
   }, [dados_usuario.email_usuario]);
+
+  useEffect(() => {
+    if (
+      dados_usuario.cpf &&
+      dados_usuario.cpf.trim().length > 0
+    ) {
+      setCpfInvalido(false);
+    }
+  }, [dados_usuario.cpf]);
+
+  useEffect(() => {
+    if (
+      dados_usuario.data_nascimento &&
+      validarMaioridade(dados_usuario.data_nascimento)
+    ) {
+      setNascimentoInvalido(false);
+    }
+  }, [dados_usuario.data_nascimento]);
+
 
   return (
     <div className="bg-[#F4F4F4] w-60/100 flex flex-col items-center  rounded-2xl">
@@ -173,7 +250,14 @@ function Dados_pessoais() {
             }
           />
         </div>
-        <label className="text-lg pt-5">Data de nascimento</label>
+        <div className="h-6">
+          {cpfInvalido && (
+            <p className="text-red-500 text-sm  font-medium text-purpledark">
+              {mensagemCpf}
+            </p>
+          )}
+        </div>
+        <label className="text-lg">Data de nascimento</label>
         <div className="w-full pt-2">
           <input
             type="text"
