@@ -27,14 +27,14 @@ function Produtos({ tipo }) {
 
   return (
     <div>
-      {tipo === "customizavel" &&
+      {tipo &&
         produtos.map((produto) => (
-          <ProdutoCustomizavel key={produto.id} dados={produto} />
+          <ProdutoCustomizavel key={produto.id_produto} dados={produto} />
         ))}
 
-      {tipo === "comum" &&
+      {!tipo &&
         produtos.map((produto) => (
-          <ProdutoComum key={produto.id} dados={produto} />
+          <ProdutoComum key={produto.id_produto} dados={produto} />
         ))}
     </div>
   );
