@@ -114,15 +114,15 @@ function Home() {
       return productPhotos[product.id_produto];
     }
     
-    return product.tipo === "customizavel" ? product_2 : product;
+    return product.tipo ? product_2 : product;
   };
 
-  const handleProductClick = (tipo) => {
+  const handleProductClick = (tipo, id) => {
 
-    if(tipo === "customizavel"){
-      navigate("/produtocustomizavel");
+    if(tipo){
+      navigate("/produtocustomizavel", { state: { tipo: tipo, id: id } });
     } else {
-      navigate("/produtocomum");
+      navigate("/produtocomum", { state: { tipo: tipo, id: id } });
     };
   };
 
@@ -266,7 +266,7 @@ function Home() {
         <SwiperSlide key={index} className="group flex flex-col items-center cursor-pointer mb-10">
         <div className="flex flex-col h-max-[100vh] w-[258px] gap-1">
          <div className="w-[258px] h-[278px] transition-transform duration-300 group-hover:scale-110 group-hover:z-10 relative"
-          onClick={() => handleProductClick(item.categoria)}
+          onClick={() => handleProductClick(item.personalizado, item.id_produto)}
          >
           <img className="w-full h-full object-cover" src={getProductImage(item)} alt={item.titulo_} onError={(e) => { e.target.src = product; }} />
          </div>

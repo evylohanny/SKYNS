@@ -22,7 +22,7 @@ import iconcheck from "../assets/iconCheck.svg";
 import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
-function ProdutoCustomizavel() {
+function ProdutoCustomizavel({ dados }) {
   const limiteRef = useRef(null);
   const fotos = [noture3, noture1, noture2];
   const [activeIndex, setActiveIndex] = useState(0);
@@ -204,7 +204,7 @@ function ProdutoCustomizavel() {
             <img src={estrelas} alt="estrelas" />
           </div>
           <p className="pt-6 font-medium text-[25px] text-gray2">
-            Sérum Rejuvenescedor Nocturne 45+
+            {dados.titulo_}
           </p>
           <div className="flex justify-end ">
             <p className="mt-4 bg-blackwhite/20 w-fit px-2 py-0.5 rounded">
@@ -218,10 +218,7 @@ function ProdutoCustomizavel() {
           </div>
           <div>
             <p className="w-120 text-[16px] mt-2 text-blackwhite/95">
-              Pele renovada e protegida, até nos dias mais ensolarados! Prepare
-              sua pele para brilhar com segurança! O Esfoliante Solar Ultra UV
-              Apripeiadi foi desenvolvido especialmente para quem quer cuidar
-              das manchas e renovar a pele sem abrir mão da proteção solar.
+              {dados.completa_descricao}
             </p>
             <p className="mt-3 font-semibold text-[18px] text-blackwhite/80">
               O que ele faz?

@@ -117,23 +117,22 @@ class DbService {
 
     async buscaProdutos(tipo) {
     let query = "SELECT * FROM produtos";
-    const params = [];
 
-    if (tipo === "comum") {
+    if (!tipo) {
       query += " WHERE personalizado = 0";
-    } else if (tipo === "customizavel") {
+    } else if (tipo) {
       query += " WHERE personalizado = 1";
     }
 
     query += " ORDER BY data_lancamento DESC";
-    const [rows] = await pool.query(query, params);
+    const [rows] = await pool.query(query);
     return rows;
   }
 
   async buscaProdutoPorId(id) {
-    const [rows] = await pool.query("SELECT * FROM produtos WHERE id_produto = ?", [id]);
-    return rows[0] || null;
-  }
+    const response = await pool.query("SELECT * FROM produtos WHERE id_produto = $1", [id]);
+    return response.rows[0];
+  };
 
   buscaFotoProduto () {
 

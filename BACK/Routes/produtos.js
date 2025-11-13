@@ -19,8 +19,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id);
     const produto = new DbService();
     const response = await produto.buscaProdutoPorId(id);
+    console.log(response);
     if (!response) return res.status(404).json({ error: "Produto não encontrado" });
     res.json(response);
   } catch (error) {
