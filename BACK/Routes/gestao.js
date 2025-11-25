@@ -1,5 +1,6 @@
 const express = require('express');
 const DbService = require('../config/db.config.js');
+const { Result } = require('pg');
 const router = express.Router();
 
 router.post('/produtos', async (req, res) => {
@@ -19,19 +20,21 @@ router.post('/produtos', async (req, res) => {
       personalizado,
       quantidade_minima,
       data_lancamento,
-      componente,
       tipo
     } = req.body;
 
-    await pool.query(
+    const result = await pool.query(
       `INSERT INTO produtos (titulo_, quantidade_estoque, preco, breve_descricao, completa_descricao, quantidade_estrelas, categoria, peso,
-      personalizado, quantidade_minima, componente, data_lancamento,tipo)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      personalizado, quantidade_minima, data_lancamento, tipo)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      RETURNING id_produto`,
       [titulo_, quantidade_estoque, preco, breve_descricao, completa_descricao, quantidade_estrelas, categoria, peso,
-      personalizado === 'true' ? 1 : 0, quantidade_minima, componente, data_lancamento, tipo]
+      personalizado ? 1 : 0, quantidade_minima, data_lancamento, tipo]
     );
 
-    res.status(201 ).json({ message: 'Produto cadastrado com sucesso!' });
+    res.status(201 ).json({ message: 'Produto cadastrado com sucesso!',
+      id_produto: result.rows[0].id_produto
+     });
   } catch (error) {
     console.error('Erro ao cadastrar produto:', error);
     res.status(500).json({ message: 'Erro ao cadastrar produto', error });

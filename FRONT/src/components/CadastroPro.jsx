@@ -9,21 +9,23 @@ function CadastroPro() {
 
   // formulário
   const [quantidade, setQuantidade] = useState(1);
-  const [descricao, setDescricao] = useState("");
-  const [descricaoCompleta, setDescricaoCompleta] = useState("");
-  const [produtoModificado, setProdutoModificado] = useState(false);
-  const [componentes, setComponentes] = useState([]);
+  const [breveDescricao, setBreveDescricao] = useState("");
+  const [completaDescricao, setCompletaDescricao] = useState("");
+  const [personalizado, setPersonalizado] = useState(false);
+  // const [componentes, setComponentes] = useState([]);
 
   // novos estados para inputs/ selects
-  const [titulo, setTitulo] = useState("");
+  const [titulo_, setTitulo_] = useState("");
   const [categoria, setCategoria] = useState("");
-  const [produtoTipo, setProdutoTipo] = useState(""); // "Gel", "Sabonete", etc
-  const [estrelas, setEstrelas] = useState(""); // 1 a 5 ou string
+  const [tipo, setTipo] = useState(""); // "Gel", "Sabonete", etc
+  const [quantidadeEstrelas, setQuantidadeEstrelas] = useState(""); // 1 a 5 ou string
   const [preco, setPreco] = useState("");
   const [peso, setPeso] = useState("");
   const [quantidadeMinima, setQuantidadeMinima] = useState(1);
 
   const [sending, setSending] = useState(false);
+
+  const [errors, setErrors] = useState({});
 
   // ====== Funções ======
   const handleFileChange = (e, index) => {
@@ -35,34 +37,41 @@ function CadastroPro() {
     setImages(newImages);
   };
 
-  const handleCheckbox = (e) => {
-    const value = e.target.value;
-    setComponentes((prev) =>
-      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
-    );
-  };
+  // const handleCheckbox = (e) => {
+  //   const value = e.target.value;
+  //   setComponentes((prev) =>
+  //     prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+  //   );
+  // };
 
   // ====== Função de envio ======
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      alert("❌ Preencha todos os campos obrigatórios.");
+      return;
+    }
+
     if (sending) return;
     setSending(true);
 
     try {
       // 1️⃣ Enviar dados do produto (JSON) para /produtos
       const produtoData = {
-        titulo_: titulo,
+        titulo_: titulo_,
         quantidade_estoque: Number(quantidade),
         preco: preco,
-        breve_descricao: descricao,
-        completa_descricao: descricaoCompleta,
-        quantidade_estrelas: estrelas ? Number(estrelas) : null,
+        breve_descricao: breveDescricao,
+        completa_descricao: completaDescricao,
+        quantidade_estrelas: quantidadeEstrelas ? Number(quantidadeEstrelas) : 0,
         categoria: categoria,
         peso: Number(peso),
-        personalizado: produtoModificado === true ? 'true' : 'false',
+        personalizado: personalizado,
         quantidade_minima: Number(quantidadeMinima),
         data_lancamento: new Date().toISOString(),
-        tipo: produtoTipo
+        tipo: tipo,
+        // componentes: componentes
       };
 
       const res = await fetch("http://localhost:3000/produtos", {
@@ -83,35 +92,24 @@ function CadastroPro() {
         throw new Error("ID do produto não retornado pelo servidor.");
       }
 
-      // 2️⃣ Enviar imagens (se houver) para POST /:id/foto
-      // Observação: seu back espera os campos (url=file, posicao, fk_id_user)
-      const uploadPromises = [];
-      for (let i = 0; i < images.length; i++) {
-        if (images[i] && images[i].file) {
-          const formData = new FormData();
-          formData.append("url", images[i].file); // campo que o back espera
-          formData.append("posicao", String(i + 1));
-          formData.append("fk_id_user", String(idProduto)); // seu back usa esse nome
+      // 🌟 2️⃣ ENVIAR FOTOS PARA /produtos/:id/foto
+      const fotosValidas = images
+        .map((item, index) => item ? { ...item, posicao: index } : null)
+        .filter(Boolean);
 
-          // não setamos headers 'Content-Type' — fetch faz isso automaticamente para FormData
-          const p = fetch(`http://localhost:3000/${idProduto}/foto`, {
-            method: "POST",
-            body: formData,
-          }).then(async (r) => {
-            if (!r.ok) {
-              const txt = await r.text().catch(() => null);
-              throw new Error(`Erro upload imagem ${i + 1}: ${r.status} ${txt || ''}`);
-            }
-            return r.json().catch(() => null);
-          });
-          uploadPromises.push(p);
-        }
+      for (const foto of fotosValidas) {
+        await fetch(`http://localhost:3000/produtos/${idProduto}/foto`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            url: foto.url,              // URL gerada pelo browser
+            posicao: foto.posicao,     // posição na galeria
+            fk_id_produto: idProduto,  // id do produto salvo
+          }),
+        });
       }
 
-      // aguarda todos uploads (se houver)
-      await Promise.all(uploadPromises);
-
-      alert("✅ Produto e fotos cadastrados com sucesso!");
+      alert("✅ Produto + cadastrado com sucesso!");
       // opcional: limpar form / redirecionar
       window.location.reload();
     } catch (error) {
@@ -121,6 +119,38 @@ function CadastroPro() {
       setSending(false);
     }
   };
+
+  const validateForm = () => {
+    const newErrors = {};
+      if (!categoria) newErrors.categoria = "Selecione uma categoria.";
+      if (!tipo) newErrors.tipo = "Selecione o tipo de produto.";
+      if (!titulo_.trim()) newErrors.titulo_ = "O título é obrigatório.";
+
+      if (!quantidade || quantidade < 1)
+        newErrors.quantidade = "Quantidade inválida.";
+
+      if (!preco || Number(preco) <= 0)
+        newErrors.preco = "Informe um preço válido.";
+
+      if (!peso.trim())
+        newErrors.peso = "Informe o peso.";
+
+      if (!breveDescricao.trim())
+        newErrors.breveDescricao = "Escreva a breve descrição.";
+
+      if (!completaDescricao.trim())
+        newErrors.completaDescricao = "Escreva a descrição completa.";
+
+      if (!quantidadeEstrelas)
+        newErrors.quantidadeEstrelas = "Selecione a quantidade de estrelas.";
+
+      if (images.filter(img => img !== null).length < 3)
+        newErrors.images = "Adicione pelo menos 3 fotos.";
+
+      // validação OK?
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    };
 
   return (
     <form onSubmit={handleSubmit} className="w-[80%] min-h-screen bg-white rounded-sm shadow p-10 flex flex-col">
@@ -209,8 +239,8 @@ function CadastroPro() {
           <div className="flex flex-col gap-2 relative">
             <label className="font-semibold text-gray2/80">Produto</label>
             <select
-              value={produtoTipo}
-              onChange={(e) => setProdutoTipo(e.target.value)}
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50 focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
             >
               <option value="">Selecione</option>
@@ -227,8 +257,8 @@ function CadastroPro() {
             <label className="font-semibold text-gray2/80">Título</label>
             <input
               type="text"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
+              value={titulo_}
+              onChange={(e) => setTitulo_(e.target.value)}
               placeholder="Ex: gel clear new ultra UV"
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80"
             />
@@ -239,8 +269,8 @@ function CadastroPro() {
             <div className="flex flex-col gap-2 relative">
               <label className="font-semibold text-gray2/80">Estrelas</label>
               <select
-                value={estrelas}
-                onChange={(e) => setEstrelas(e.target.value)}
+                value={quantidadeEstrelas}
+                onChange={(e) => setQuantidadeEstrelas(e.target.value)}
                 className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80"
               >
                 <option value="">Selecione</option>
@@ -309,12 +339,12 @@ function CadastroPro() {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold text-gray2/80">Breve descrição</label>
-              <span className="font-semibold text-gray2/80">{descricao.length} até 70</span>
+              <span className="font-semibold text-gray2/80">{breveDescricao.length} até 70</span>
             </div>
             <textarea
               maxLength={70}
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
+              value={breveDescricao}
+              onChange={(e) => setBreveDescricao(e.target.value)}
               placeholder="Escreva uma breve descrição para um campo pequeno"
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 resize-none"
             />
@@ -324,12 +354,12 @@ function CadastroPro() {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold text-gray2/80">Descrição completa</label>
-              <span className="font-semibold text-gray2/80">{descricaoCompleta.length} até 350</span>
+              <span className="font-semibold text-gray2/80">{completaDescricao.length} até 350</span>
             </div>
             <textarea
               maxLength={350}
-              value={descricaoCompleta}
-              onChange={(e) => setDescricaoCompleta(e.target.value)}
+              value={completaDescricao}
+              onChange={(e) => setCompletaDescricao(e.target.value)}
               placeholder="Escreva uma descrição detalhada sobre o produto"
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 resize-none"
               rows={4}
@@ -343,32 +373,32 @@ function CadastroPro() {
             <input
               type="checkbox"
               id="modificado"
-              checked={produtoModificado}
-              onChange={() => setProdutoModificado(!produtoModificado)}
+              checked={personalizado}
+              onChange={() => setPersonalizado(!personalizado)}
               className="w-5 h-5 rounded appearance-none border-2 border-purpledark checked:bg-purpledark checked:border-purpledark"
             />
             <label htmlFor="modificado" className="font-semibold text-gray2/80">Produto modificado</label>
           </div>
 
           {/* Opções de componentes */}
-          <div>
+          {/* <div>
             <p className="font-semibold text-gray2/80 mb-4">Opções de componentes</p>
             <div className="grid grid-cols-2 gap-3 text-sm text-gray1">
               {["retinol","ácido mandélico","vitamina c","ácido glicólico","ácido lático"].map((item, idx) => (
-                <label key={idx} className={`flex items-center gap-2 ${!produtoModificado ? "opacity-50 cursor-not-allowed" : ""}`}>
+                <label key={idx} className={`flex items-center gap-2 ${!personalizado ? "opacity-50 cursor-not-allowed" : ""}`}>
                   <input
                     type="checkbox"
                     value={item}
                     checked={componentes.includes(item)}
                     onChange={handleCheckbox}
-                    disabled={!produtoModificado}
+                    disabled={!personalizado}
                     className="appearance-none w-5 h-5 border-2 border-purpledark rounded-md checked:bg-purpledark transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed disabled:border-gray-300 disabled:checked:bg-gray-400"
                   />
                   {item}
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Botão Publicar */}
           <div className="flex justify-end">
