@@ -36,14 +36,14 @@ router.get('/fotos', async(req, res) => {
 
 router.get('/:id/foto', async(req, res) => {
 
-    const { id } = req.params;
+    const { id, posicao } = req.params;
 
     try {    
 
         const db = new DbService();
         const pool = db.getPool();
         const sql = db.buscaFotoProduto();
-        const response = await pool.query(sql, [id, 1]);
+        const response = await pool.query(sql, [id, posicao]);
 
         if (response.rows.length <= 0) {
 
