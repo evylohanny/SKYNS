@@ -46,111 +46,106 @@ function CadastroPro() {
 
   // ====== Função de envio ======
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      alert("❌ Preencha todos os campos obrigatórios.");
-      return;
+  // 🔥 nova validação dentro do handleSubmit
+  const newErrors = {};
+
+  if (!categoria) newErrors.categoria = "Selecione uma categoria.";
+  if (!tipo) newErrors.tipo = "Selecione o tipo de produto.";
+  if (!titulo_.trim()) newErrors.titulo_ = "O título é obrigatório.";
+
+  if (!preco || Number(preco) <= 0)
+    newErrors.preco = "Informe um preço válido.";
+
+  if (!peso.trim())
+    newErrors.peso = "Informe o peso.";
+
+  if (!breveDescricao.trim())
+    newErrors.breveDescricao = "Escreva a breve descrição.";
+
+  if (!completaDescricao.trim())
+    newErrors.completaDescricao = "Escreva a descrição completa.";
+
+  if (!quantidadeEstrelas)
+    newErrors.quantidadeEstrelas = "Selecione a quantidade de estrelas.";
+
+  if (images.filter(img => img !== null).length < 3)
+    newErrors.images = "Adicione no mínimo três fotos para a publicação";
+
+  // aplica erros no estado
+  setErrors(newErrors);
+
+  // se der erro, para tudo
+  if (Object.keys(newErrors).length > 0) {
+    return;
+  }
+
+  // 🔁 evita envio duplo
+  if (sending) return;
+  setSending(true);
+
+  try {
+    const produtoData = {
+      titulo_: titulo_,
+      quantidade_estoque: Number(quantidade),
+      preco: preco,
+      breve_descricao: breveDescricao,
+      completa_descricao: completaDescricao,
+      quantidade_estrelas: quantidadeEstrelas ? Number(quantidadeEstrelas) : 0,
+      categoria: categoria,
+      peso: Number(peso),
+      personalizado: personalizado,
+      quantidade_minima: Number(quantidadeMinima),
+      data_lancamento: new Date().toISOString(),
+      tipo: tipo,
+    };
+
+    const res = await fetch("http://localhost:3000/produtos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(produtoData),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => null);
+      throw new Error(`Erro ao cadastrar produto: ${res.status} ${txt || ''}`);
     }
 
-    if (sending) return;
-    setSending(true);
+    const data = await res.json();
+    const idProduto = data.id_produto || data.id || data.insertId;
 
-    try {
-      // 1️⃣ Enviar dados do produto (JSON) para /produtos
-      const produtoData = {
-        titulo_: titulo_,
-        quantidade_estoque: Number(quantidade),
-        preco: preco,
-        breve_descricao: breveDescricao,
-        completa_descricao: completaDescricao,
-        quantidade_estrelas: quantidadeEstrelas ? Number(quantidadeEstrelas) : 0,
-        categoria: categoria,
-        peso: Number(peso),
-        personalizado: personalizado,
-        quantidade_minima: Number(quantidadeMinima),
-        data_lancamento: new Date().toISOString(),
-        tipo: tipo,
-        // componentes: componentes
-      };
+    if (!idProduto) {
+      throw new Error("ID do produto não retornado pelo servidor.");
+    }
 
-      const res = await fetch("http://localhost:3000/produtos", {
+    // envio das fotos
+    const fotosValidas = images
+      .map((item, index) => item ? { ...item, posicao: index } : null)
+      .filter(Boolean);
+
+    for (const foto of fotosValidas) {
+      await fetch(`http://localhost:3000/produtos/${idProduto}/foto`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(produtoData),
+        body: JSON.stringify({
+          url: foto.url,
+          posicao: foto.posicao,
+          fk_id_produto: idProduto,
+        }),
       });
-
-      if (!res.ok) {
-        const txt = await res.text().catch(() => null);
-        throw new Error(`Erro ao cadastrar produto: ${res.status} ${txt || ''}`);
-      }
-
-      const data = await res.json();
-      const idProduto = data.id_produto || data.id || data.insertId; // tenta variações
-
-      if (!idProduto) {
-        throw new Error("ID do produto não retornado pelo servidor.");
-      }
-
-      // 🌟 2️⃣ ENVIAR FOTOS PARA /produtos/:id/foto
-      const fotosValidas = images
-        .map((item, index) => item ? { ...item, posicao: index } : null)
-        .filter(Boolean);
-
-      for (const foto of fotosValidas) {
-        await fetch(`http://localhost:3000/produtos/${idProduto}/foto`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            url: foto.url,              // URL gerada pelo browser
-            posicao: foto.posicao,     // posição na galeria
-            fk_id_produto: idProduto,  // id do produto salvo
-          }),
-        });
-      }
-
-      alert("✅ Produto + cadastrado com sucesso!");
-      // opcional: limpar form / redirecionar
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao cadastrar produto:", error);
-      alert("❌ Erro ao cadastrar produto. Veja console para mais detalhes.");
-    } finally {
-      setSending(false);
     }
-  };
 
-  const validateForm = () => {
-    const newErrors = {};
-      if (!categoria) newErrors.categoria = "Selecione uma categoria.";
-      if (!tipo) newErrors.tipo = "Selecione o tipo de produto.";
-      if (!titulo_.trim()) newErrors.titulo_ = "O título é obrigatório.";
+    alert("✅ Produto + fotos cadastrado com sucesso!");
+    window.location.reload();
 
-      if (!quantidade || quantidade < 1)
-        newErrors.quantidade = "Quantidade inválida.";
-
-      if (!preco || Number(preco) <= 0)
-        newErrors.preco = "Informe um preço válido.";
-
-      if (!peso.trim())
-        newErrors.peso = "Informe o peso.";
-
-      if (!breveDescricao.trim())
-        newErrors.breveDescricao = "Escreva a breve descrição.";
-
-      if (!completaDescricao.trim())
-        newErrors.completaDescricao = "Escreva a descrição completa.";
-
-      if (!quantidadeEstrelas)
-        newErrors.quantidadeEstrelas = "Selecione a quantidade de estrelas.";
-
-      if (images.filter(img => img !== null).length < 3)
-        newErrors.images = "Adicione pelo menos 3 fotos.";
-
-      // validação OK?
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    };
+  } catch (error) {
+    console.error("Erro ao cadastrar produto:", error);
+    alert("❌ Erro ao cadastrar produto. Veja console para mais detalhes.");
+  } finally {
+    setSending(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="w-[80%] min-h-screen bg-white rounded-sm shadow p-10 flex flex-col">
@@ -211,8 +206,13 @@ function CadastroPro() {
               </label>
             ))}
           </div>
-
-          <p className="font-semibold text-sm text-gray3/60 mt-1">Adicione no mínimo três fotos para a publicação</p>
+          <div
+            className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+              errors.images ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <p>{errors.images || ""}</p>
+          </div>
         </div>
 
         {/* ===================== COLUNA DIREITA - FORMULÁRIO ===================== */}
@@ -222,7 +222,14 @@ function CadastroPro() {
             <label className="font-semibold text-gray2/80">Categoria de peles</label>
             <select
               value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
+              onChange={(e) => {
+                setCategoria(e.target.value);
+
+                setErrors((prev) => ({
+                  ...prev,
+                  categoria: "",
+                }));
+              }}
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50 focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
             >
               <option value="">Selecione</option>
@@ -231,8 +238,15 @@ function CadastroPro() {
               <option value="Pele acneica">Pele acneica</option>
               <option value="Pele madura">Pele madura</option>
             </select>
-            <img src={setaSelectCinza} alt="seta select" className="pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3 peer-focus:hidden" />
-            <img src={setaSelectPurple} alt="seta select focus" className="hidden peer-focus:block pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3" />
+            <img src={setaSelectCinza} alt="seta select" className="pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3 peer-focus:hidden" />
+            <img src={setaSelectPurple} alt="seta select focus" className="hidden peer-focus:block pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3" />
+          <div
+            className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+              errors.categoria ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <p>{errors.categoria || ""}</p>
+          </div>
           </div>
 
           {/* Produto / Tipo (select) */}
@@ -240,7 +254,14 @@ function CadastroPro() {
             <label className="font-semibold text-gray2/80">Produto</label>
             <select
               value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
+              onChange={(e) => {
+                setTipo(e.target.value);
+
+                setErrors((prev) => ({
+                  ...prev,
+                  tipo: "",
+                }));
+              }}
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50 focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
             >
               <option value="">Selecione</option>
@@ -248,8 +269,15 @@ function CadastroPro() {
               <option value="Gel">Gel</option>
               <option value="Máscara">Máscara</option>
             </select>
-            <img src={setaSelectCinza} alt="seta select" className="pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3 peer-focus:hidden" />
-            <img src={setaSelectPurple} alt="seta select focus" className="hidden peer-focus:block pointer-events-none absolute right-3 top-15 -translate-y-1/2 w-3 h-3" />
+            <img src={setaSelectCinza} alt="seta select" className="pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3 peer-focus:hidden" />
+            <img src={setaSelectPurple} alt="seta select focus" className="hidden peer-focus:block pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3" />
+          <div
+            className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+              errors.tipo ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <p>{errors.tipo || ""}</p>
+          </div>
           </div>
 
           {/* Título */}
@@ -258,10 +286,25 @@ function CadastroPro() {
             <input
               type="text"
               value={titulo_}
-              onChange={(e) => setTitulo_(e.target.value)}
+              onChange={(e) => {
+                setTitulo_(e.target.value);
+
+                setErrors((prev) => ({
+                  ...prev,
+                  titulo_: "",
+                }));
+              }}
               placeholder="Ex: gel clear new ultra UV"
-              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80"
+              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+              focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
             />
+            <div
+              className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+                errors.titulo_ ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <p>{errors.titulo_ || ""}</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -270,8 +313,15 @@ function CadastroPro() {
               <label className="font-semibold text-gray2/80">Estrelas</label>
               <select
                 value={quantidadeEstrelas}
-                onChange={(e) => setQuantidadeEstrelas(e.target.value)}
-                className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80"
+                onChange={(e) => {
+                  setQuantidadeEstrelas(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    quantidadeEstrelas: "",
+                  }));
+                }}
+                className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50 focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
               >
                 <option value="">Selecione</option>
                 <option value="1">⭐</option>
@@ -280,12 +330,21 @@ function CadastroPro() {
                 <option value="4">⭐⭐⭐⭐</option>
                 <option value="5">⭐⭐⭐⭐⭐</option>
               </select>
+              <img src={setaSelectCinza} alt="seta select" className="pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3 peer-focus:hidden" />
+              <img src={setaSelectPurple} alt="seta select focus" className="hidden peer-focus:block pointer-events-none absolute right-3 top-13 -translate-y-1/2 w-3 h-3" />
+            <div
+              className={`text-purpledark min-w-1/5 h-4 text-sm transition-opacity duration-500 ${
+                errors.quantidadeEstrelas ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <p>{errors.quantidadeEstrelas || ""}</p>
+            </div>
             </div>
 
             {/* Quantidade */}
             <div className="flex flex-col items-end gap-2">
               <label className="font-semibold text-gray2/80">Quantidade produto</label>
-              <div className="flex w-38 justify-center items-center border border-purpledark rounded-md px-2 py-1">
+              <div className="flex w-38 justify-center items-center border border-purpledark rounded-md px-2 py-1.5">
                 <button
                   type="button"
                   className="px-2 text-purpledark cursor-pointer"
@@ -310,16 +369,31 @@ function CadastroPro() {
             {/* Preço */}
             <div className="flex flex-col gap-2">
               <label className="font-semibold text-gray2/80">Preço</label>
-              <div className="flex items-center peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80">
+              <div className="flex items-center peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+               focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer">
                 <span className="text-gray2/80 mr-1">R$</span>
                 <input
                   type="number"
                   value={preco}
-                  onChange={(e) => setPreco(e.target.value)}
+                  onChange={(e) => {
+                    setPreco(e.target.value);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      preco: "",
+                    }));
+                  }}
                   placeholder=""
                   className="w-full outline-none text-sm"
                 />
               </div>
+            <div
+              className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+                errors.preco ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <p>{errors.preco || ""}</p>
+            </div>
             </div>
 
             {/* Peso */}
@@ -328,10 +402,25 @@ function CadastroPro() {
               <input
                 type="text"
                 value={peso}
-                onChange={(e) => setPeso(e.target.value)}
+                onChange={(e) => {
+                  setPeso(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    peso: "",
+                  }));
+                }}
                 placeholder="Ex: 300g"
-                className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80"
+                className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+                 focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer"
               />
+            <div
+              className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+                errors.peso ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <p>{errors.peso || ""}</p>
+            </div>
             </div>
           </div>
 
@@ -346,8 +435,16 @@ function CadastroPro() {
               value={breveDescricao}
               onChange={(e) => setBreveDescricao(e.target.value)}
               placeholder="Escreva uma breve descrição para um campo pequeno"
-              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 resize-none"
+              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+                focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer resize-none"
             />
+          <div
+            className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+              errors.breveDescricao ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <p>{errors.breveDescricao || ""}</p>
+          </div>
           </div>
 
           {/* Descrição completa */}
@@ -361,9 +458,17 @@ function CadastroPro() {
               value={completaDescricao}
               onChange={(e) => setCompletaDescricao(e.target.value)}
               placeholder="Escreva uma descrição detalhada sobre o produto"
-              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 resize-none"
+              className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
+                focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer resize-none"
               rows={4}
             />
+          <div
+            className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+              errors.completaDescricao ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <p>{errors.completaDescricao || ""}</p>
+          </div>
           </div>
 
           <hr className="border-gray2/50 mt-7 mb-7" />
