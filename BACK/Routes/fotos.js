@@ -34,16 +34,43 @@ router.get('/fotos', async(req, res) => {
     };
 });
 
+router.get('/:id/:posicao/foto', async (req, res) => {
+    const { id, posicao } = req.params;
+
+    try {
+        const db = new DbService();
+        const pool = db.getPool();
+        const sql = db.buscaFotoProduto();
+        const response = await pool.query(sql, [id, posicao]);
+
+        if (response.rows.length === 0) {
+            return res.status(404).json({
+                message: `Nenhuma foto do produto ${id} encontrada!`,
+            });
+        }
+
+        return res.status(200).json({
+            message: `Foto encontrada`,
+            data: response.rows[0]
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: `Erro ao buscar fotos`,
+            error: error.message
+        });
+    }
+});
+
 router.get('/:id/foto', async(req, res) => {
 
-    const { id } = req.params;
+    const { id, posicao } = req.params;
 
     try {    
 
         const db = new DbService();
         const pool = db.getPool();
         const sql = db.buscaFotoProduto();
-        const response = await pool.query(sql, [id, 1]);
+        const response = await pool.query(sql, [id, posicao]);
 
         if (response.rows.length <= 0) {
 
@@ -68,6 +95,9 @@ router.get('/:id/foto', async(req, res) => {
         });
     };
 });
+
+
+
 
 router.post('/:id/foto', async(req, res) => {
 

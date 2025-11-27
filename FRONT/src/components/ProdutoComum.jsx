@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import ky from 'ky';
 
 //components importados
 import Filtro from "../components/Filtro.jsx";
@@ -13,9 +14,6 @@ import Feedback from "../components/Feedback.jsx";
 import FeedbackDeitado from "../components/FeedbackDeitado.jsx"
 
 // fotos
-import noture1 from "../assets/SKYNSNature1.svg";
-import noture2 from "../assets/SKYNSNature2.svg";
-import noture3 from "../assets/SKYNSNature3.svg";
 import estrelas from "../assets/estrelas.svg";
 import iconcheck from "../assets/iconCheck.svg";
 
@@ -26,7 +24,7 @@ import setaDireita from "../assets/SetaDireitaCinza.svg";
 function ProdutoComum({ dados }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const fotos = [noture3, noture1, noture2];
+  const fotos = [dados.fotos];
   const swiperRef = useRef(null);
 
   const handleMiniClick = (index) => {
@@ -47,11 +45,34 @@ function ProdutoComum({ dados }) {
       setQuantidade((prev) => prev - 1);
     }
   };
+  
 
   const [tab, setTab] = useState("composicao");
 
     useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+
+    async function buscaFoto(id_produto) {
+      try {
+        for (let posicao = 1; posicao < 4; posicao++) {
+          const response = await ky
+          .get(`http://localhost:3000/${id_produto}/${posicao}/foto`)
+          .json();
+          
+          if (response.data) {
+            console.log(response.data);
+          } else {
+            break;
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    buscaFoto(dados.id_produto);
   }, []);
   
   return (
@@ -127,7 +148,7 @@ function ProdutoComum({ dados }) {
 
           <div className="pt-2 flex gap-3 items-center">
             <p className="line-through text-black/40 font-bold">R$89,90</p>{" "}
-            <p className=" text-purpledark font-bold text-[25px]">R$59,90</p>
+            <p className=" text-purpledark font-bold text-[25px]">{dados.preco}</p>
           </div>
           <div>
             <p className="w-150 text-[17px] mt-2 text-blackwhite/95">
