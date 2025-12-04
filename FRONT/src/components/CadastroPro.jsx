@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import cameraRoxa from "../assets/cameraRoxa.svg";
 import setaSelectCinza from '../assets/setaSelectCinza.svg';
 import setaSelectPurple from '../assets/setaSelectPurple.svg';
+import Checkroxinho from '../assets/Checkroxinho.svg';
+import Failroxinho from '../assets/Failroxinho.svg';
 
 function CadastroPro() {
   // imagens: cada item = { file, url } ou null
@@ -26,6 +28,9 @@ function CadastroPro() {
   const [sending, setSending] = useState(false);
 
   const [errors, setErrors] = useState({});
+
+  const [SuccessModal, setSuccessModal] = useState(false);
+  const [FailModal, setFailModal] = useState(false);
 
   // ====== Funções ======
   const handleFileChange = (e, index) => {
@@ -136,12 +141,19 @@ function CadastroPro() {
       });
     }
 
-    alert("✅ Produto + fotos cadastrado com sucesso!");
-    window.location.reload();
+    setSuccessModal(true);
+    setTimeout(() => {
+      setSuccessModal(false);
+      window.location.reload()
+    }, 3000);
 
   } catch (error) {
     console.error("Erro ao cadastrar produto:", error);
-    alert("❌ Erro ao cadastrar produto. Veja console para mais detalhes.");
+    setFailModal(true);
+    setTimeout(() => {
+      setFailModal(false);
+      window.location.reload()
+    }, 3000);
   } finally {
     setSending(false);
   }
@@ -433,7 +445,14 @@ function CadastroPro() {
             <textarea
               maxLength={70}
               value={breveDescricao}
-              onChange={(e) => setBreveDescricao(e.target.value)}
+              onChange={(e) => {
+                setBreveDescricao(e.target.value);
+
+                setErrors((prev) => ({
+                  ...prev,
+                  breveDescricao: "",
+                }));
+              }}
               placeholder="Escreva uma breve descrição para um campo pequeno"
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
                 focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer resize-none"
@@ -456,7 +475,14 @@ function CadastroPro() {
             <textarea
               maxLength={350}
               value={completaDescricao}
-              onChange={(e) => setCompletaDescricao(e.target.value)}
+              onChange={(e) => {
+                setCompletaDescricao(e.target.value);
+
+                setErrors((prev) => ({
+                  ...prev,
+                  completaDescricao: "",
+                }));
+              }}
               placeholder="Escreva uma descrição detalhada sobre o produto"
               className="peer w-full border rounded-md px-3 py-2 text-sm text-gray2/80 outline-none border-gray3/50
                 focus-within:outline-none focus-within:ring-2 focus-within:ring-purpledark cursor-pointer resize-none"
@@ -516,6 +542,34 @@ function CadastroPro() {
             </button>
           </div>
         </div>
+        {SuccessModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+            <div className="bg-white rounded-4xl shadow-lg p-9 w-[450px] text-center">
+              <div className="flex justify-center mb-4 w-[100%]">
+                <img src={Checkroxinho} alt="" className="w-[25%]"/>
+              </div>
+
+              <h2 className="text-2xl font-semibold text-gray1/90">Cadastro realizado!</h2>
+              <p className="text-gray3 mt-2 text-lg">
+                Tudo certo! Seu produto foi cadastrado com sucesso!
+              </p>
+            </div>
+          </div>
+        )}
+        {FailModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+            <div className="bg-white rounded-4xl shadow-lg p-9 w-[450px] text-center">
+              <div className="flex justify-center mb-4 w-[100%]">
+                <img src={Failroxinho} alt="" className="w-[25%]"/>
+              </div>
+
+              <h2 className="text-2xl font-semibold text-gray1/90">Cadastro não concluído!</h2>
+              <p className="text-gray3 mt-2 text-lg">
+                Atenção! Erro ao cadastrar produto.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </form>
   );
