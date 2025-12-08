@@ -35,6 +35,7 @@ router.get('/fotos', async(req, res) => {
 });
 
 router.get('/:id/:posicao/foto', async (req, res) => {
+    
     const { id, posicao } = req.params;
 
     try {
@@ -63,8 +64,9 @@ router.get('/:id/:posicao/foto', async (req, res) => {
 
 router.get('/:id/foto', async(req, res) => {
 
-    const { id, posicao } = req.params;
-
+    const { id } = req.params;
+    const posicao = 1;
+    
     try {    
 
         const db = new DbService();
@@ -95,8 +97,6 @@ router.get('/:id/foto', async(req, res) => {
         });
     };
 });
-
-
 
 
 router.post('/:id/foto', async(req, res) => {

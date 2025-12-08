@@ -6,7 +6,7 @@ router.get('/pedidos/production', async(req, res) => {
 
     try {
         
-        const response = await axios.get('http://52.1.197.112:3000/queue/items', { timeout: 100000 });
+        const response = await axios.get('http://52.72.137.244:3000/queue/items', { timeout: 100000 });
     
         res.json(response.data);
     } catch (error) {
@@ -136,7 +136,7 @@ async function produzProduto(produto) {
         };
 
         console.log('Chegou prestes á produção!', body);
-        const response = await axios.post('http://52.1.197.112:3000/queue/items', body, { timeout: 100000 });
+        const response = await axios.post('http://52.72.137.244:3000/queue/items', body, { timeout: 100000 });
 
         if (response.status === 404) {
 

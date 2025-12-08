@@ -24,14 +24,14 @@ import setaDireita from "../assets/SetaDireitaCinza.svg";
 function ProdutoComum({ dados }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const fotos = [dados.fotos];
+  const [fotos, setFotos] = useState([]);
   const swiperRef = useRef(null);
 
   const handleMiniClick = (index) => {
     setActiveIndex(index);
     if (swiperRef.current) {
       swiperRef.current.slideTo(index);
-    }
+    };
   };
 
   const [quantidade, setQuantidade] = useState(1);
@@ -46,7 +46,6 @@ function ProdutoComum({ dados }) {
     }
   };
   
-
   const [tab, setTab] = useState("composicao");
 
     useEffect(() => {
@@ -57,17 +56,24 @@ function ProdutoComum({ dados }) {
 
     async function buscaFoto(id_produto) {
       try {
+        const novasFotos = [...fotos];
+        const id = id_produto;
+
         for (let posicao = 1; posicao < 4; posicao++) {
           const response = await ky
-          .get(`http://localhost:3000/${id_produto}/${posicao}/foto`)
-          .json();
-          
-          if (response.data) {
-            console.log(response.data);
-          } else {
-            break;
-          }
+            .get(`http://localhost:3000/${id}/${posicao}/foto`)
+            .json();
+
+          if (!response.data) break;
+
+          const foto = response.data;
+
+          if (posicao === 1) novasFotos[0] = foto;
+          if (posicao === 2) novasFotos[1] = foto;
+          if (posicao === 3) novasFotos[2] = foto;
         }
+
+        setFotos(novasFotos);
       } catch (err) {
         console.error(err);
       }
@@ -107,7 +113,6 @@ function ProdutoComum({ dados }) {
             
               <img src={setaDireita} alt="próximo" className="w-8 h-8 cursor-pointer" />
             </button>
-
             <Swiper
               modules={[Navigation]}
               navigation={{
@@ -118,15 +123,17 @@ function ProdutoComum({ dados }) {
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               initialSlide={activeIndex}
             >
-              {fotos.map((foto, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    className="h-[550px] w-[450px] object-cover"
-                    src={foto}
-                    alt={`foto-${index}`}
-                  />
+                <SwiperSlide>
+                  {
+                    fotos.map((foto, index) => (
+                      <img
+                      className="h-[550px] w-[450px] object-cover"
+                      src={foto}
+                      alt={`foto-${index}`}
+                      />
+                    ))
+                  }
                 </SwiperSlide>
-              ))}
             </Swiper>
           </div>
         </div>

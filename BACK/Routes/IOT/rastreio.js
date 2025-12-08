@@ -8,7 +8,7 @@ router.get('/rastreio/:id', async (req, res) => {
       
         const { id } = req.params;
 
-        const response = await axios.get(`http://52.1.197.112:3000/queue/items/${id}`, { timeout: 10000 });
+        const response = await axios.get(`http://52.72.137.244:3000/queue/items/${id}`, { timeout: 10000 });
 
         const status = response.data.status;
         console.log(status);

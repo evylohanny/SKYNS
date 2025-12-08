@@ -5,15 +5,15 @@ import { useLocation } from "react-router-dom";
 import ky from "ky";
 
 function Produtos() {
+  const location = useLocation();
+  const { dados } = location.state || {};
   const [produto, setProduto] = useState({});
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
-  const { tipo, id } = location.state;
-
   useEffect(() => {
     const kyProdutos = async () => {
       try {
-        console.log(id);
+        console.log(dados.id_produto);
+        const id = dados.id_produto;
         const res = await ky.get(`http://localhost:3000/produtos/${id}`).json();
         setProduto(res);
       } catch (error) {
@@ -24,7 +24,7 @@ function Produtos() {
     };
 
     kyProdutos();
-  }, [tipo]);
+  }, []);
 
   if (loading) return <p>Carregando produtos...</p>;
 
@@ -32,11 +32,11 @@ function Produtos() {
 
   return (
     <div>
-      {tipo &&
+      {dados.personalizado &&
         <ProdutoCustomizavel dados={produto} />
       }
 
-      {!tipo &&
+      {!dados.personalizado &&
         <ProdutoComum dados={produto} />
       }
     </div>
