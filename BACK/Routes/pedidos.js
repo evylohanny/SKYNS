@@ -2,33 +2,44 @@ const DbService = require('../config/db.config.js');
 const express = require('express');
 const router = express.Router();
 
-router.get('/pedidos', async(req, res) => {
+router.get('/pedidos', async (req, res) => {
+  try {
+    const pedido = new DbService();
+    const response = await pedido.buscaPedidos(); // AGORA EXECUTA
 
-    try {
-        
-        const pedido = new DbService();
-        const response = pedido.buscaPedidos;
+    if (!response || response.length === 0) {
+      return res.status(404).json({
+        message: 'Nenhum pedido encontrado'
+      });
+    }
 
-        if (response) {
+    // Garantir que "componentes" sempre vira array
+    const pedidosFormatados = response.map(p => {
+      let comps = p.componentes;
 
-            return res.status(200).json({ 
-                message: 'Pedidos encontrados com sucesso!', data: response 
-            });
-        };
-    } catch (error) {
-        
-        if (error.response.status === 404) {
+      if (typeof comps === "string") {
+        // Se vier "Ácido Hialurônico,Niacinamida"
+        comps = comps.split(",").map(c => c.trim());
+      }
 
-            return res.status(404).json({ 
-                message: 'Produtos não encontrados!'
-            });
-        };
+      return {
+        ...p,
+        componentes: comps
+      };
+    });
 
-        return res.status(500).json({ 
-            message: 'Erro interno do servidor.', 
-            error: error.message
-        });
-    };
+    return res.status(200).json({
+      message: 'Pedidos encontrados com sucesso!',
+      data: pedidosFormatados
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Erro interno do servidor.',
+      error: error.message
+    });
+  }
 });
+
 
 module.exports = router;

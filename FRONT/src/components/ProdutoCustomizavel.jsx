@@ -1,4 +1,4 @@
-import { useState, useRef,useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -22,7 +22,7 @@ import setaDireita from "../assets/SetaDireitaCinza.svg";
 
 function ProdutoCustomizavel({ dados }) {
   const limiteRef = useRef(null);
-  const fotos = [dados.foto];
+  const [fotos, setFotos] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
 
@@ -34,27 +34,43 @@ function ProdutoCustomizavel({ dados }) {
   };
 
   useEffect(() => {
+    if (!dados || !dados.id_produto) return;
 
     async function buscaFoto(id_produto) {
       try {
+        const novasFotos = [];
+
         for (let posicao = 1; posicao < 4; posicao++) {
-          const response = await ky
-          .get(`http://localhost:3000/${id_produto}/${posicao}/foto`)
-          .json();
-          
-          if (response.data) {
-            console.log(response.data);
-          } else {
-            break;
+          let response;
+
+          try {
+            response = await ky
+              .get(`http://localhost:3000/${id_produto}/${posicao}/foto`)
+              .json();
+          } catch (err) {
+            if (err.response && err.response.status === 404) {
+              console.log(`Foto ${posicao} não existe`);
+              continue;
+            }
+            throw err;
+          }
+
+          if (response.data?.url) {
+            novasFotos[posicao - 1] = response.data.url;
           }
         }
-      } catch (err) {
-        console.error(err);
+
+        setFotos(novasFotos);
+      } catch (error) {
+        console.error("Erro ao buscar fotos:", error);
       }
-    };
+    }
+
     buscaFoto(dados.id_produto);
-  }, []);
-    
+  }, [dados]);
+
+
+
   const [quantidade, setQuantidade] = useState(1);
 
   const aumentar = () => setQuantidade((prev) => prev + 1);
@@ -145,7 +161,7 @@ function ProdutoCustomizavel({ dados }) {
     });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
@@ -156,32 +172,35 @@ function ProdutoCustomizavel({ dados }) {
 
       {/* primeira parte (filtro, fotos e descrição) */}
       <div className="pl-5">
+
         <Filtro
           limiteRef={limiteRef}
           selecionados={selecionados}
           toggleComponente={toggleComponente}
+          componentes={dados.componentes || []}
+          categoria={dados.categoria || "Acneica"}
         />
+
+
       </div>
 
       <div className="flex pt-18 gap-10 items-start justify-center pl-68">
         {/* 2 - Fotos */}
         <div className="flex gap-6">
           {/* Coluna de miniaturas */}
-          <div className="flex flex-col gap-4">
-            {fotos.map((foto, index) => (
-              <img
-                key={index}
-                className={`w-[80px] cursor-pointer border-2 ${
-                  activeIndex === index
-                    ? "border-purpledark"
-                    : "border-transparent"
-                }`}
-                src={foto}
-                alt={`miniatura-${index}`}
-                onClick={() => handleMiniClick(index)}
-              />
-            ))}
-          </div>
+<div className="flex flex-col gap-4">
+  {fotos.map((foto, index) => (
+    <img
+      key={index}
+      src={foto}
+      alt={`Miniatura ${index}`}
+      className={`w-20 h-20 rounded-lg cursor-pointer border 
+        ${activeIndex === index ? "border-purpledark" : "border-transparent"}`}
+      onClick={() => handleMiniClick(index)}
+    />
+  ))}
+</div>
+
 
           {/* Foto principal */}
           <div className="w-[450px] h-[550px] relative">
@@ -193,25 +212,27 @@ function ProdutoCustomizavel({ dados }) {
             </button>
 
             <Swiper
-              modules={[Navigation]}
-              navigation={{
-                prevEl: ".custom-prev",
-                nextEl: ".custom-next",
-              }}
-              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-              onSwiper={(swiper) => (swiperRef.current = swiper)}
-              initialSlide={activeIndex}
-            >
-              {fotos.map((foto, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    className="h-[550px] w-[450px] object-cover"
-                    src={foto}
-                    alt={`foto-${index}`}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+  modules={[Navigation]}
+  navigation={{
+    prevEl: ".custom-prev",
+    nextEl: ".custom-next",
+  }}
+  onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+  onSwiper={(swiper) => (swiperRef.current = swiper)}
+  initialSlide={activeIndex}
+  className="swiper-principal"
+>
+  {fotos.map((foto, index) => (
+    <SwiperSlide key={index}>
+      <img
+        src={foto}
+        alt={`Foto ${index}`}
+        className="w-full h-full object-cover rounded-xl"
+      />
+    </SwiperSlide>
+  ))}
+</Swiper>
+
           </div>
         </div>
 
@@ -234,7 +255,10 @@ function ProdutoCustomizavel({ dados }) {
 
           <div className="pt-6 flex gap-3 items-center">
             <p className="line-through text-black/40 font-bold">R$89,90</p>
-            <p className=" text-purpledark font-bold text-[25px]">R{dados.preco}</p>
+           <p className=" text-purpledark font-bold text-[25px]">
+  R${dados.preco}
+</p>
+
           </div>
           <div>
             <p className="w-120 text-[16px] mt-2 text-blackwhite/95">
@@ -297,21 +321,19 @@ function ProdutoCustomizavel({ dados }) {
       <div className="w-[80%] mx-auto pl-54">
         <div className="flex border-b-2 border-b-blackwhite/50 gap-6 ">
           <button
-            className={`pb-2 ${
-              tab === "funciona"
-                ? "border-b-2 border-purpledark font-semibold"
-                : "text-blackwhite/70"
-            }`}
+            className={`pb-2 ${tab === "funciona"
+              ? "border-b-2 border-purpledark font-semibold"
+              : "text-blackwhite/70"
+              }`}
             onClick={() => setTab("funciona")}
           >
             Como funciona
           </button>
           <button
-            className={`pb-2 ${
-              tab === "composicao"
-                ? "border-b-2 border-purpledark font-semibold"
-                : "text-blackwhite/70"
-            }`}
+            className={`pb-2 ${tab === "composicao"
+              ? "border-b-2 border-purpledark font-semibold"
+              : "text-blackwhite/70"
+              }`}
             onClick={() => setTab("composicao")}
           >
             Composição especificada

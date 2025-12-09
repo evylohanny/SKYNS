@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-function Filtro({ limiteRef, selecionados, toggleComponente }) {
+function Filtro({ limiteRef, selecionados, toggleComponente, componentes = [], categoria = "Acneica" }) {
   const filtroRef = useRef(null);
   const [top, setTop] = useState(50);
 
@@ -22,30 +22,12 @@ function Filtro({ limiteRef, selecionados, toggleComponente }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [limiteRef]);
 
-  const componentes = [
-    "Retinol",
-    "Ácido Glicólico",
-    "Vitamina C",
-    "Ácido Mandélico",
-    "Ácido Lático",
-  ];
-
   const combinacoesToxicas = {
-    Retinol: [
-      "Ácido Glicólico",
-      "Ácido Mandélico",
-      "Ácido Lático",
-      "Vitamina C",
-    ],
+    Retinol: ["Ácido Glicólico", "Ácido Mandélico", "Ácido Lático", "Vitamina C"],
     "Ácido Glicólico": ["Retinol", "Vitamina C"],
     "Ácido Mandélico": ["Retinol", "Vitamina C"],
     "Ácido Lático": ["Retinol", "Vitamina C"],
-    "Vitamina C": [
-      "Retinol",
-      "Ácido Glicólico",
-      "Ácido Mandélico",
-      "Ácido Lático",
-    ],
+    "Vitamina C": ["Retinol", "Ácido Glicólico", "Ácido Mandélico", "Ácido Lático"],
   };
 
   return (
@@ -61,7 +43,7 @@ function Filtro({ limiteRef, selecionados, toggleComponente }) {
           </h1>
         </div>
         <div className="flex flex-row pl-5">
-          <p>Acneica</p>
+          <p>{categoria}</p>
         </div>
       </div>
 
@@ -71,24 +53,21 @@ function Filtro({ limiteRef, selecionados, toggleComponente }) {
             Componentes
           </h1>
         </div>
+
         {componentes.map((item, index) => {
           const conflitos = combinacoesToxicas[item] || [];
-          const conflitoAtivo = selecionados.some((sel) =>
-            conflitos.includes(sel)
-          );
+          const conflitoAtivo = selecionados.some((sel) => conflitos.includes(sel));
 
           return (
             <label
               key={index}
-              className={`flex items-center pl-5 gap-2 cursor-pointer ${
-                conflitoAtivo ? "opacity-40 cursor-not-allowed" : ""
-              }`}
+              className={`flex items-center pl-5 gap-2 cursor-pointer ${conflitoAtivo ? "opacity-40 cursor-not-allowed" : ""}`}
             >
               <input
                 type="checkbox"
                 className="peer hidden"
                 checked={selecionados.includes(item)}
-                onChange={() => !conflitoAtivo && toggleComponente(item)} // bloqueia clique
+                onChange={() => !conflitoAtivo && toggleComponente(item)}
                 disabled={conflitoAtivo}
               />
               <div className="w-4 h-4 rounded-sm border-2 border-black/30 peer-checked:bg-purpledark peer-checked:border-none flex items-center justify-center"></div>
