@@ -33,6 +33,15 @@ function ProdutoCustomizavel({ dados }) {
     }
   };
 
+  console.log(tipo_final());
+
+  const componentesConvertidos = dados.componente
+    ? dados.componente
+      .replace(/^\{|\}$/g, "")      // remove { }
+      .split(",")                   // separa por vírgula
+      .map((item) => item.replace(/"/g, "")) // remove aspas
+    : [];
+
   useEffect(() => {
     if (!dados || !dados.id_produto) return;
 
@@ -80,51 +89,185 @@ function ProdutoCustomizavel({ dados }) {
 
   const [tab, setTab] = useState("funciona");
 
-  const combinacoesToxicas = {
-    Retinol: [
-      "Ácido Glicólico",
-      "Ácido Mandélico",
-      "Ácido Lático",
-      "Vitamina C",
-    ],
-    "Ácido Glicólico": ["Retinol", "Vitamina C"],
-    "Ácido Mandélico": ["Retinol", "Vitamina C"],
-    "Ácido Lático": ["Retinol", "Vitamina C"],
-    "Vitamina C": [
-      "Retinol",
-      "Ácido Glicólico",
-      "Ácido Mandélico",
-      "Ácido Lático",
-    ],
-  };
 
   const componentesDisponiveis = [
     {
+      nome: "Niacinamida",
+      descricao: "Forma de vitamina B3 que controla a oleosidade, reduz poros dilatados e melhora a barreira cutânea.",
+      beneficios: "Reduz inflamações, minimiza manchas, uniformiza o tom da pele e controla a produção de sebo."
+    },
+    {
+      nome: "Zinco PCA",
+      descricao: "Regulador de oleosidade natural que absorve o excesso de sebo sem ressecar.",
+      beneficios: "Controla brilho excessivo, reduz acne, tem ação adstringente leve e previne poros obstruídos."
+    },
+    {
+      nome: "Ácido salicílico",
+      descricao: "Esfoliante lipossolúvel que penetra profundamente nos poros.",
+      beneficios: "Desobstrui poros, combate cravos e espinhas, reduz inflamações e previne novas acne."
+    },
+    {
+      nome: "Aloe vera",
+      descricao: "Extrato vegetal com propriedades calmantes e hidratantes.",
+      beneficios: "Acaba com a vermelhidão, hidrata profundamente, acalma irritações e regenera a pele."
+    },
+    {
+      nome: "Chá verde",
+      descricao: "Potente antioxidante natural rico em polifenóis.",
+      beneficios: "Protege contra poluição, reduz inflamações, combate radicais livres e minimiza poros."
+    },
+    {
+      nome: "Centella asiática",
+      descricao: "Ativo reparador e calmante de origem asiática.",
+      beneficios: "Estimula a cicatrização, fortalece a barreira cutânea, reduz marcas e acalma irritações."
+    },
+    {
+      nome: "Prebióticos",
+      descricao: "Nutrientes que equilibram o microbioma da pele.",
+      beneficios: "Fortalecimento da barreira cutânea, redução de sensibilidade, equilíbrio do pH e proteção contra agressores externos."
+    },
+    {
+      nome: "Glicerina",
+      descricao: "Umectante natural que atrai água para a pele.",
+      beneficios: "Hidratação profunda, melhora da elasticidade, proteção da barreira hídrica e textura aveludada."
+    },
+    {
+      nome: "Óleo de abacate",
+      descricao: "Óleo nutritivo rico em vitaminas e ácidos graxos essenciais.",
+      beneficios: "Nutrição intensa, melhora da elasticidade, proteção antioxidante e restauração da barreira lipídica."
+    },
+    {
+      nome: "Pantenol",
+      descricao: "Pró-vitamina B5 com propriedades hidratantes e reparadoras.",
+      beneficios: "Hidratação profunda, aceleração da cicatrização, melhora da elasticidade e ação calmante."
+    },
+    {
+      nome: "Ceramidas",
+      descricao: "Lipídios naturais que formam a barreira protetora da pele.",
+      beneficios: "Restauração da barreira cutânea, redução da perda de água, proteção contra agressores e melhora da textura."
+    },
+    {
+      nome: "Ácido lático",
+      descricao: "AHA suave derivado do leite, com ação esfoliante e hidratante.",
+      beneficios: "Esfoliação suave, hidratação simultânea, uniformização do tom e melhora da textura."
+    },
+    {
+      nome: "Vitamina E",
+      descricao: "Poderoso antioxidante lipossolúvel.",
+      beneficios: "Proteção contra danos oxidativos, hidratação intensa, redução de linhas finas e cicatrização."
+    },
+    {
+      nome: "Ácido Hialurônico",
+      descricao: "Hidratante natural capaz de reter até 1000x seu peso em água.",
+      beneficios: "Hidratação profunda, preenchimento de linhas finas, melhora da elasticidade e viço imediato."
+    },
+    {
+      nome: "Extrato de camomila",
+      descricao: "Ativo calmante e anti-inflamatório natural.",
+      beneficios: "Redução de vermelhidão, acalmar irritações, ação antioxidante leve e hidratação suave."
+    },
+    {
+      nome: "Água marinha purificada",
+      descricao: "Água do mar rica em minerais e oligoelementos.",
+      beneficios: "Equilíbrio do pH, remineralização, hidratação e melhora da defesa natural da pele."
+    },
+    {
+      nome: "Vitamina C estabilizada",
+      descricao: "Antioxidante potente em forma estável.",
+      beneficios: "Proteção antioxidante, clareamento de manchas, estímulo de colágeno e uniformização do tom."
+    },
+    {
+      nome: "Algas vermelhas",
+      descricao: "Fonte natural de minerais e antioxidantes marinhos.",
+      beneficios: "Hidratação intensa, ação detoxificante, melhora da elasticidade e proteção antioxidante."
+    },
+    {
+      nome: "Ácido mandélico",
+      descricao: "AHA derivado da amêndoa, suave e eficaz.",
+      beneficios: "Esfoliação sem irritação, clareamento de manchas, ação antibacteriana e ideal para peles sensíveis."
+    },
+    {
+      nome: "Carvão ativado",
+      descricao: "Agente purificante que adsorve impurezas.",
+      beneficios: "Desintoxicação profunda, limpeza de poros, controle de oleosidade e pele mais respirável."
+    },
+    {
+      nome: "Algas marrons",
+      descricao: "Ricas em antioxidantes e minerais do oceano.",
+      beneficios: "Hidratação prolongada, ação firmadora, proteção contra poluição e melhora da densidade cutânea."
+    },
+    {
+      nome: "Glicerina vegetal",
+      descricao: "Umectante natural derivado de vegetais.",
+      beneficios: "Hidratação sustentada, melhora da barreira hídrica, textura não oleosa e compatível com todos os tipos de pele."
+    },
+    {
+      nome: "Retinol vegetal",
+      descricao: "Alternativa natural ao retinol tradicional.",
+      beneficios: "Renovação celular suave, redução de linhas finas, uniformização da textura sem irritação."
+    },
+    {
+      nome: "Extrato de pepino",
+      descricao: "Ativo refrescante e hidratante natural.",
+      beneficios: "Refrescância imediata, redução de inchaço, hidratação leve e ação calmante."
+    },
+    {
+      nome: "Manteiga de Karité",
+      descricao: "Emoliente natural rico em ácidos graxos e vitaminas.",
+      beneficios: "Nutrição profunda, reparação da barreira lipídica, proteção contra ressecamento e melhora da elasticidade."
+    },
+    {
+      nome: "Peptídeos biomiméticos",
+      descricao: "Cadeias de aminoácidos que imitam os peptídeos naturais da pele.",
+      beneficios: "Estímulo de colágeno, firmeza da pele, redução de rugas e melhora da densidade cutânea."
+    },
+    {
+      nome: "Vitamina A",
+      descricao: "Nutriente essencial para renovação celular.",
+      beneficios: "Renovação acelerada, tratamento de acne, uniformização do tom e estímulo de colágeno."
+    },
+    {
+      nome: "Resveratrol",
+      descricao: "Antioxidante potente derivado de uvas.",
+      beneficios: "Proteção contra estresse oxidativo, ação antienvelhecimento, revitalização e uniformização do tom."
+    },
+    {
+      nome: "Extrato de chá-preto",
+      descricao: "Rico em polifenóis e taninos.",
+      beneficios: "Proteção antioxidante, firmeza da pele, redução de inchaço e ação adstringente suave."
+    },
+    {
       nome: "Retinol",
-      descricao:
-        "É um dos ativos mais estudados em dermatologia. Estimula a renovação celular, aumenta a produção de colágeno e melhora linhas finas, manchas e textura da pele. Pode causar irritação inicial, por isso costuma ser introduzido aos poucos.",
+      descricao: "Derivado da vitamina A, um dos ativos mais estudados em dermatologia.",
+      beneficios: "Renovação celular acelerada, redução de rugas, tratamento de acne e estímulo de colágeno."
     },
     {
       nome: "Ácido Glicólico",
-      descricao:
-        "Faz uma esfoliação química suave, removendo células mortas, clareando manchas e ajudando na luminosidade. Também prepara a pele para absorver melhor outros ativos.",
+      descricao: "AHA derivado da cana-de-açúcar com alto poder esfoliante.",
+      beneficios: "Esfoliação profunda, clareamento de manchas, textura aveludada e aumento da penetração de ativos."
     },
     {
       nome: "Vitamina C",
-      descricao:
-        "Potente antioxidante que combate os radicais livres, previne envelhecimento precoce e auxilia na produção de colágeno. Também uniformiza o tom da pele, reduzindo manchas e dando mais viço.",
+      descricao: "Antioxidante potente que combate radicais livres.",
+      beneficios: "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares."
     },
     {
-      nome: "Ácido Mandélico",
-      descricao:
-        "AHA derivado das amêndoas amargas, é mais suave que o glicólico. Tem ação esfoliante, antimicrobiana e clareadora, sendo indicado até para peles sensíveis e com acne.",
-    },
-    {
-      nome: "Ácido Lático",
-      descricao:
-        "Hidrata ao mesmo tempo em que esfolia, ajudando a uniformizar o tom e a textura da pele sem agredir tanto..",
-    },
+      nome: "Óleo de Amêndoas",
+      descricao: "Poderoso Hidrantante natural.",
+      beneficios: "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares."
+    }
   ];
+
+  const combinacoesToxicas = {
+    Retinol: ["Ácido Glicólico", "Ácido Mandélico", "Ácido Lático", "Vitamina C", "Ácido Salicílico"],
+    "Retinol vegetal": ["Ácido Glicólico", "Ácido Mandélico", "Ácido Lático", "Vitamina C", "Ácido Salicílico"],
+    "Ácido Glicólico": ["Retinol", "Retinol vegetal", "Vitamina C"],
+    "Ácido Mandélico": ["Retinol", "Retinol vegetal", "Vitamina C"],
+    "Ácido Lático": ["Retinol", "Retinol vegetal", "Vitamina C"],
+    "Ácido Salicílico": ["Retinol", "Retinol vegetal"],
+    "Vitamina C": ["Retinol", "Retinol vegetal", "Ácido Glicólico", "Ácido Mandélico", "Ácido Lático"],
+    "Vitamina C estabilizada": ["Retinol", "Retinol vegetal", "Ácido Glicólico", "Ácido Mandélico", "Ácido Lático"]
+  };
 
   const [selecionados, setSelecionados] = useState([]);
 
@@ -177,7 +320,7 @@ function ProdutoCustomizavel({ dados }) {
           limiteRef={limiteRef}
           selecionados={selecionados}
           toggleComponente={toggleComponente}
-          componentes={dados.componentes || []}
+          componentes={componentesConvertidos}
           categoria={dados.categoria || "Acneica"}
         />
 
@@ -188,18 +331,18 @@ function ProdutoCustomizavel({ dados }) {
         {/* 2 - Fotos */}
         <div className="flex gap-6">
           {/* Coluna de miniaturas */}
-<div className="flex flex-col gap-4">
-  {fotos.map((foto, index) => (
-    <img
-      key={index}
-      src={foto}
-      alt={`Miniatura ${index}`}
-      className={`w-20 h-20 rounded-lg cursor-pointer border 
+          <div className="flex flex-col gap-4">
+            {fotos.map((foto, index) => (
+              <img
+                key={index}
+                src={foto}
+                alt={`Miniatura ${index}`}
+                className={`w-20 h-20 rounded-lg cursor-pointer border 
         ${activeIndex === index ? "border-purpledark" : "border-transparent"}`}
-      onClick={() => handleMiniClick(index)}
-    />
-  ))}
-</div>
+                onClick={() => handleMiniClick(index)}
+              />
+            ))}
+          </div>
 
 
           {/* Foto principal */}
@@ -212,26 +355,26 @@ function ProdutoCustomizavel({ dados }) {
             </button>
 
             <Swiper
-  modules={[Navigation]}
-  navigation={{
-    prevEl: ".custom-prev",
-    nextEl: ".custom-next",
-  }}
-  onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-  onSwiper={(swiper) => (swiperRef.current = swiper)}
-  initialSlide={activeIndex}
-  className="swiper-principal"
->
-  {fotos.map((foto, index) => (
-    <SwiperSlide key={index}>
-      <img
-        src={foto}
-        alt={`Foto ${index}`}
-        className="w-full h-full object-cover rounded-xl"
-      />
-    </SwiperSlide>
-  ))}
-</Swiper>
+              modules={[Navigation]}
+              navigation={{
+                prevEl: ".custom-prev",
+                nextEl: ".custom-next",
+              }}
+              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+              onSwiper={(swiper) => (swiperRef.current = swiper)}
+              initialSlide={activeIndex}
+              className="swiper-principal"
+            >
+              {fotos.map((foto, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={foto}
+                    alt={`Foto ${index}`}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
 
           </div>
         </div>
@@ -255,9 +398,9 @@ function ProdutoCustomizavel({ dados }) {
 
           <div className="pt-6 flex gap-3 items-center">
             <p className="line-through text-black/40 font-bold">R$89,90</p>
-           <p className=" text-purpledark font-bold text-[25px]">
-  R${dados.preco}
-</p>
+            <p className=" text-purpledark font-bold text-[25px]">
+              R${dados.preco}
+            </p>
 
           </div>
           <div>
