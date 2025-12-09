@@ -14,7 +14,7 @@ function CadastroPro() {
   const [breveDescricao, setBreveDescricao] = useState("");
   const [completaDescricao, setCompletaDescricao] = useState("");
   const [personalizado, setPersonalizado] = useState(false);
-  // const [componentes, setComponentes] = useState([]);
+  const [componente, setComponente] = useState([]);
 
   // novos estados para inputs/ selects
   const [titulo_, setTitulo_] = useState("");
@@ -42,16 +42,32 @@ function CadastroPro() {
     setImages(newImages);
   };
 
-  // const handleCheckbox = (e) => {
-  //   const value = e.target.value;
-  //   setComponentes((prev) =>
-  //     prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
-  //   );
-  // };
+  const handleCheckbox = (e) => {
+    const value = e.target.value;
+    setComponente((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+    );
+  };
 
   // ====== Função de envio ======
   const handleSubmit = async (e) => {
   e.preventDefault();
+
+  console.log("Dados enviados para o backend:", {
+  titulo_,
+  quantidade,
+  preco,
+  breveDescricao,
+  completaDescricao,
+  quantidadeEstrelas,
+  categoria,
+  peso,
+  personalizado,
+  quantidadeMinima,
+  tipo,
+  componente
+});
+
 
   // 🔥 nova validação dentro do handleSubmit
   const newErrors = {};
@@ -104,6 +120,7 @@ function CadastroPro() {
       quantidade_minima: Number(quantidadeMinima),
       data_lancamento: new Date().toISOString(),
       tipo: tipo,
+      componente
     };
 
     const res = await fetch("http://localhost:3000/produtos", {
@@ -512,15 +529,17 @@ function CadastroPro() {
           </div>
 
           {/* Opções de componentes */}
-          {/* <div>
+          <div>
             <p className="font-semibold text-gray2/80 mb-4">Opções de componentes</p>
             <div className="grid grid-cols-2 gap-3 text-sm text-gray1">
-              {["retinol","ácido mandélico","vitamina c","ácido glicólico","ácido lático"].map((item, idx) => (
+              {["Niacinamida","Ácido salicílico","Zinco PCA","Aloe Vera","Chá verde","Base em gel","Centella asiática","Prebióticos",
+              "Glicerina","Base oil-free","Óleo de abacate","Pantenol","Ceramidas","Ácido lático","Vitamina E"
+              ,"Base cremosa"].map((item, idx) => (
                 <label key={idx} className={`flex items-center gap-2 ${!personalizado ? "opacity-50 cursor-not-allowed" : ""}`}>
                   <input
                     type="checkbox"
                     value={item}
-                    checked={componentes.includes(item)}
+                    checked={componente.includes(item)}
                     onChange={handleCheckbox}
                     disabled={!personalizado}
                     className="appearance-none w-5 h-5 border-2 border-purpledark rounded-md checked:bg-purpledark transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed disabled:border-gray-300 disabled:checked:bg-gray-400"
@@ -529,7 +548,7 @@ function CadastroPro() {
                 </label>
               ))}
             </div>
-          </div> */}
+          </div>
 
           {/* Botão Publicar */}
           <div className="flex justify-end">

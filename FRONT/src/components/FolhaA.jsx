@@ -1,8 +1,56 @@
+import { useEffect, useState } from "react";
 import iconLupa from '../assets/iconLupa.svg';
 import setaSelectCinza from '../assets/setaSelectCinza.svg';
 import setaSelectPurple from '../assets/setaSelectPurple.svg';
 
 function FolhaA() {
+
+  const [produtos, setProdutos] = useState([]);
+  const [busca, setBusca] = useState("");
+  const [filtroId, setFiltroId] = useState("");
+  const [filtroPele, setFiltroPele] = useState("");
+  const [filtroData, setFiltroData] = useState("");
+
+  useEffect(() => {
+    async function carregarProdutos() {
+      try {
+        const response = await fetch("http://localhost:3000/produtos/listar");
+        const data = await response.json();
+        setProdutos(data);
+      } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+      }
+    }
+
+    carregarProdutos();
+  }, []);
+
+  const produtosFiltrados = produtos.filter((item) => {
+  
+    const buscaTexto = busca.toLowerCase();
+    const nome = item.nome_produto?.toLowerCase() || "";
+
+    const correspondeBusca =
+      nome.includes(buscaTexto) ||
+      item.id.toString().includes(buscaTexto);
+
+    const correspondeId =
+      filtroId === "" || item.id.toString() === filtroId;
+
+    const correspondePele =
+      filtroPele === "" || item.tipo_pele === filtroPele;
+
+    const correspondeData =
+      filtroData === "" || item.data_lancamento === filtroData;
+
+    return (
+      correspondeBusca &&
+      correspondeId &&
+      correspondePele &&
+      correspondeData
+    );
+  });
+
   return (
     <div className="w-[80%] h-[80vh] flex flex-col gap-10">
       <div className="w-full flex flex-col">
@@ -22,8 +70,10 @@ function FolhaA() {
           <input
             type="text"
             placeholder="Buscar"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
             className="w-full border border-gray3/50 rounded-full pl-4 pr-10 py-2 text-gray2 text-sm font-semibold 
-             focus:outline-none focus:ring-2 focus:ring-purpledark peer-focus:text-purpledark cursor-pointer"
+            focus:outline-none focus:ring-2 focus:ring-purpledark peer-focus:text-purpledark cursor-pointer"
           />
           <img
             src={iconLupa}
@@ -35,13 +85,18 @@ function FolhaA() {
         {/* Select ID */}
         <div className="relative w-[23%]">
           <select
-            defaultValue=""
-            id='id'
+            value={filtroId}
+            onChange={(e) => setFiltroId(e.target.value)}
             className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-gray1 text-sm 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
-            <option value="" disabled hidden></option>
-            <option>938595894</option>
+            <option value="" hidden></option>
+
+            {produtos.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.id}
+              </option>
+            ))}
           </select>
 
           <label
@@ -70,12 +125,12 @@ function FolhaA() {
         {/* Select Tipo de pele */}
         <div className="relative w-[23%]">
           <select
-            defaultValue=""
-            id='pele'
+            value={filtroPele}
+            onChange={(e) => setFiltroPele(e.target.value)}
             className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-gray1 text-sm 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
-            <option value="" disabled hidden></option>
+            <option value="" hidden></option>
             <option>Acneica</option>
             <option>Oleosa</option>
             <option>Seca</option>
@@ -107,14 +162,16 @@ function FolhaA() {
         {/* Select Data */}
         <div className="relative w-[23%]">
           <select
-            defaultValue=""
-            id="data"
+            value={filtroData}
+            onChange={(e) => setFiltroData(e.target.value)}
             className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-sm text-gray1 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
-            <option value="" disabled hidden></option>
-            <option>2023/03/15</option>
-            <option>2023/07/10</option>
+            <option value="" hidden></option>
+
+            {produtos.map((p) => (
+              <option key={p.id}>{p.data_lancamento}</option>
+            ))}
           </select>
 
           <label
@@ -173,68 +230,16 @@ function FolhaA() {
 
             {/* Corpo */}
             <tbody>
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Acneica</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">5</td>
-                <td className="px-6 py-4">Personalizável</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Seca</td>
-                <td className="px-6 py-4">Creme Firmador Diurno LiftingTime</td>
-                <td className="px-6 py-4">5</td>
-                <td className="px-6 py-4">Comum</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Acneica</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">20</td>
-                <td className="px-6 py-4">Personalizável</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Acneica</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">5</td>
-                <td className="px-6 py-4">Comum</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Madura</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">5</td>
-                <td className="px-6 py-4">Comum</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr className="">
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Acneica</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">5</td>
-                <td className="px-6 py-4">Personalizável</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
-
-              <tr>
-                <td className="px-6 py-4">ID 2123123</td>
-                <td className="px-6 py-4">Oleosa</td>
-                <td className="px-6 py-4">Sérum Rejuvenescedor Nocturne 45</td>
-                <td className="px-6 py-4">15</td>
-                <td className="px-6 py-4">Personalizável</td>
-                <td className="px-6 py-4">06/08/2025</td>
-              </tr>
+              {produtosFiltrados.map((item) => (
+                <tr key={item.id} className="">
+                  <td className="px-6 py-4">ID {item.id}</td>
+                  <td className="px-6 py-4">{item.tipo_pele}</td>
+                  <td className="px-6 py-4">{item.nome_produto}</td>
+                  <td className="px-6 py-4">{item.estoque}</td>
+                  <td className="px-6 py-4">{item.per_comu}</td>
+                  <td className="px-6 py-4">{item.data_lancamento}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
