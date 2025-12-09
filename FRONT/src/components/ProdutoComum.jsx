@@ -55,29 +55,34 @@ function ProdutoComum({ dados }) {
   useEffect(() => {
 
     async function buscaFoto(id_produto) {
+  try {
+    const novasFotos = [];
+
+    for (let posicao = 1; posicao < 4; posicao++) {
+      
+      let response;
+
       try {
-        const novasFotos = [...fotos];
-        const id = id_produto;
-
-        for (let posicao = 1; posicao < 4; posicao++) {
-          const response = await ky
-            .get(`http://localhost:3000/${id}/${posicao}/foto`)
-            .json();
-
-          if (!response.data) break;
-
-          const foto = response.data;
-
-          if (posicao === 1) novasFotos[0] = foto;
-          if (posicao === 2) novasFotos[1] = foto;
-          if (posicao === 3) novasFotos[2] = foto;
-        }
-
-        setFotos(novasFotos);
+        response = await ky.get(`http://localhost:3000/${id_produto}/${posicao}/foto`).json();
       } catch (err) {
-        console.error(err);
+        if (err.response && err.response.status === 404) {
+          console.log(`Foto na posição ${posicao} não existe`);
+          continue;
+        }
+        throw err;
       }
-    };
+
+      if (!response.data) continue;
+
+      novasFotos[posicao - 1] = response.data.url;
+    }
+
+    setFotos(novasFotos);
+
+  } catch (err) {
+    console.error("Erro geral:", err);
+  }
+}
     buscaFoto(dados.id_produto);
   }, []);
   
@@ -123,17 +128,17 @@ function ProdutoComum({ dados }) {
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               initialSlide={activeIndex}
             >
-                <SwiperSlide>
                   {
                     fotos.map((foto, index) => (
+                <SwiperSlide>
                       <img
                       className="h-[550px] w-[450px] object-cover"
                       src={foto}
                       alt={`foto-${index}`}
                       />
+                </SwiperSlide>
                     ))
                   }
-                </SwiperSlide>
             </Swiper>
           </div>
         </div>

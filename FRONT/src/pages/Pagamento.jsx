@@ -1,4 +1,3 @@
-// front/src/pages/Pagamento.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ky from "ky";
@@ -18,106 +17,146 @@ function Pagamento() {
   const [success, setSuccess] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
   const [produtos, setProdutos] = useState([]);
+
   const [cupom, setCupom] = useState("");
   const [cupomValido, setCupomValido] = useState(null);
 
   const navigate = useNavigate();
 
-  // Funções de formatação
-  const onlyDigits = (s = "") => (s ? s.replace(/\D/g, "") : "");
-
-  const formatAsAmex = (digits) => {
-    const p1 = digits.slice(0, 4);
-    const p2 = digits.slice(4, 10);
-    const p3 = digits.slice(10, 15);
-    return [p1, p2, p3].filter(Boolean).join(" ");
+  const cuponsValidos = {
+    DESCONTO10: { tipo: "percentual", valor: 10 },
+    MENOS20: { tipo: "fixo", valor: 20 },
+    TURBINADO: { tipo: "misto", percentual: 10, fixo: 15 },
   };
 
-  const formatDefault = (digits) => {
-    return digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+  const onlyDigits = (s = "") => (s ? s.replace(/\D/g, "") : "");
+
+  const detectFlag = (digits) => {
+    if (/^3[47]/.test(digits)) return "amex";
+    if (/^3(?:0[0-5]|[68])/.test(digits)) return "diners";
+    if (/^4/.test(digits)) return "visa";
+    if (/^5[1-5]/.test(digits)) return "mastercard";
+    return "outro";
   };
 
   const formatCardDisplay = (digits) => {
-    if (/^(34|37)/.test(digits)) return formatAsAmex(digits);
-    return formatDefault(digits);
-  };
+    const bandeira = detectFlag(digits);
 
-  // Máscaras
-  const cepMascara = (e) => {
-    let value = onlyDigits(e.target.value);
-    if (value.length > 8) value = value.slice(0, 8);
-    if (value.length > 5) value = value.replace(/(\d{5})(\d{1,3})/, "$1-$2");
-    setCep(value);
+    if (bandeira === "amex") {
+      const p1 = digits.slice(0, 4);
+      const p2 = digits.slice(4, 10);
+      const p3 = digits.slice(10, 15);
+      return [p1, p2, p3].filter(Boolean).join(" ");
+    }
+
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
   };
 
   const numerocartaoMasck = (e) => {
-    let digits = onlyDigits(e.target.value);
-    if (digits.length > 19) digits = digits.slice(0, 19);
+    let digits = onlyDigits(e.target.value).slice(0, 19);
     setCardNumber(formatCardDisplay(digits));
   };
 
   const handleCardPaste = (e) => {
     e.preventDefault();
-    const pasted = (e.clipboardData || window.clipboardData).getData("text");
-    let digits = onlyDigits(pasted).slice(0, 19);
-    setCardNumber(formatCardDisplay(digits));
+    let pasted = onlyDigits(e.clipboardData.getData("text")).slice(0, 19);
+    setCardNumber(formatCardDisplay(pasted));
   };
 
   const formatCardOnBlur = () => {
-    const digits = onlyDigits(cardNumber).slice(0, 19);
+    let digits = onlyDigits(cardNumber).slice(0, 19);
     setCardNumber(formatCardDisplay(digits));
   };
 
+  const cepMascara = (e) => {
+    let value = onlyDigits(e.target.value).slice(0, 8);
+    if (value.length > 5) value = value.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+    setCep(value);
+  };
+
   const dataMascara = (e) => {
-    let value = onlyDigits(e.target.value);
-    if (value.length > 4) value = value.slice(0, 4);
-    if (value.length > 2) value = value.replace(/(\d{2})(\d{1,2})/, "$1/$2");
-    setExpiry(value);
+    let v = onlyDigits(e.target.value).slice(0, 4);
+    if (v.length >= 3) v = v.replace(/(\d{2})(\d{1,2})/, "$1/$2");
+    setExpiry(v);
   };
 
   const CVCmascara = (e) => {
-    let value = onlyDigits(e.target.value);
-    if (value.length > 3) value = value.slice(0, 3);
-    setCvc(value);
+    let digits = onlyDigits(e.target.value);
+    const bandeira = detectFlag(onlyDigits(cardNumber));
+
+    const max = bandeira === "amex" ? 4 : 3;
+    setCvc(digits.slice(0, max));
   };
 
   const nomeMascara = (e) => {
     setCardName(e.target.value);
   };
 
-  // Validação dos campos
+  const validarLuhn = (num) => {
+    let arr = (num + "")
+      .split("")
+      .reverse()
+      .map((x) => parseInt(x));
+
+    let soma = 0;
+
+    arr.forEach((digit, i) => {
+      if (i % 2 !== 0) {
+        let d = digit * 2;
+        if (d > 9) d -= 9;
+        soma += d;
+      } else {
+        soma += digit;
+      }
+    });
+
+    return soma % 10 === 0;
+  };
+
   const validate = () => {
     const newErrors = {};
 
     if (!/^\d{5}-\d{3}$/.test(cep)) {
-      newErrors.cep = "CEP inválido. Ex: 88010-120";
+      newErrors.cep = "CEP inválido";
     }
 
-    const cleanNumber = onlyDigits(cardNumber);
-    if (cleanNumber.length < 13 || cleanNumber.length > 19) {
-      newErrors.cardNumber = "Número do cartão inválido (13-19 dígitos)";
+    const digits = onlyDigits(cardNumber);
+    const bandeira = detectFlag(digits);
+
+    if (digits.length < 13 || digits.length > 19) {
+      newErrors.cardNumber = "Número do cartão deve ter entre 13 e 19 dígitos";
+    }
+
+    if (!validarLuhn(digits)) {
+      newErrors.cardNumber = "Número do cartão inválido";
     }
 
     if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-      newErrors.expiry = "Data inválida. Ex: 10/30";
+      newErrors.expiry = "Data inválida";
     } else {
-      const [month, year] = expiry.split("/").map((n) => parseInt(n, 10));
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1;
-      const currentYear = currentDate.getFullYear() % 100;
-      if (month < 1 || month > 12) newErrors.expiry = "Mês inválido";
-      if (year < currentYear || (year === currentYear && month < currentMonth))
+      const [m, y] = expiry.split("/").map(Number);
+      const hoje = new Date();
+      const anoAtual = hoje.getFullYear() % 100;
+      const mesAtual = hoje.getMonth() + 1;
+
+      if (m < 1 || m > 12) newErrors.expiry = "Mês inválido";
+      if (y < anoAtual || (y === anoAtual && m < mesAtual))
         newErrors.expiry = "Cartão expirado";
     }
 
-    if (!/^\d{3}$/.test(cvc)) {
-      newErrors.cvc = "CVC deve ter 3 dígitos";
+    const cvcMin = bandeira === "amex" ? 4 : 3;
+    if (cvc.length !== cvcMin) {
+      newErrors.cvc = `CVC deve ter ${cvcMin} dígitos`;
     }
 
-    if (cardName.trim().split(" ").length < 2) {
-      newErrors.cardName = "Digite o nome completo do titular";
-    }
+    const palavras = cardName.trim().split(" ");
+    if (palavras.length < 2) newErrors.cardName = "Digite nome completo";
+    if (palavras.some((p) => p.length < 2))
+      newErrors.cardName = "Cada parte do nome deve ter ao menos 2 letras";
+    if (/[^a-zA-ZÀ-ÿ ]/.test(cardName))
+      newErrors.cardName = "Nome só pode conter letras";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -127,14 +166,12 @@ function Pagamento() {
     if (submitted) validate();
   }, [cep, cardNumber, expiry, cvc, cardName]);
 
-  // Integração com backend
   const getProducts = async () => {
     try {
       const data = await ky.get("http://localhost:3000/produtos").json();
       setProdutos(data);
-      console.log("Produtos carregados:", data);
-    } catch (error) {
-      console.error("Erro ao buscar produtos:", error.message);
+    } catch (err) {
+      console.log("Erro: ", err);
     }
   };
 
@@ -142,233 +179,215 @@ function Pagamento() {
     getProducts();
   }, []);
 
-
-
   const limparPagamento = async () => {
     try {
-      const response = await ky
-        .delete("http://localhost:3000/pagamento")
-        .json();
-      console.log(response.message);
+      await ky.delete("http://localhost:3000/pagamento").json();
       setProdutos([]);
     } catch (error) {
-      console.error("Erro ao limpar pagamento:", error.message);
+      console.log(error);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const aplicarCupom = () => {
+    if (!cupom) {
+      setCupomValido(null);
+      return;
+    }
+
+    const up = cupom.trim().toUpperCase();
+
+    if (!cuponsValidos[up]) {
+      setCupomValido(false);
+    } else {
+      setCupomValido(cuponsValidos[up]);
+    }
+  };
+
+  const frete = 16.9;
+  const subtotalOriginal = produtos.reduce((acc, p) => acc + p.preco, 0);
+
+  let desconto = 0;
+
+  if (cupomValido && cupomValido !== false) {
+    if (cupomValido.tipo === "percentual") {
+      desconto = subtotalOriginal * (cupomValido.valor / 100);
+    } else if (cupomValido.tipo === "fixo") {
+      desconto = cupomValido.valor;
+    } else if (cupomValido.tipo === "misto") {
+      desconto =
+        subtotalOriginal * (cupomValido.percentual / 100) + cupomValido.fixo;
+    }
+  }
+
+  const subtotal = Math.max(0, subtotalOriginal - desconto);
+  const total = subtotal + frete;
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
-    if (validate()) {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setSuccess(true);
-      }, 2000);
-    }
+
+    if (!validate()) return;
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
+    }, 1500);
   };
 
   useEffect(() => {
     if (success) {
       setRedirecting(true);
-      const timer = setTimeout(() => {
-        navigate("/produto/progresso");
-      }, 3000);
-      return () => clearTimeout(timer);
+      setTimeout(() => navigate("/produto/progresso"), 2000);
     }
-  }, [success, navigate]);
+  }, [success]);
 
   const InputError = ({ msg }) => (
-    <div className="h-5 mt-1 transition-all duration-300 ease-in-out">
-      {msg ? (
-        <p className="text-purpledark text-[14px] animate-fadeIn">{msg}</p>
-      ) : (
-        <p className="text-transparent text-xs">.</p>
-      )}
-    </div>
+    <p className="h-5 text-purpledark text-sm">{msg || ""}</p>
   );
 
   if (success) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen bg-blackwhite/2">
-        {redirecting && (
-          <div className="flex flex-col justify-center items-center">
-            <span className="w-10 h-10 border-4 border-purpledark border-t-transparent rounded-full animate-spin"></span>
-            <p className="mt-4 text-purpledark font-medium">
-              Pagamento Concluido! Redirecionando...
-            </p>
-          </div>
-        )}
+      <div className="h-screen flex flex-col justify-center items-center">
+        <span className="w-10 h-10 border-4 border-purpledark border-t-transparent rounded-full animate-spin"></span>
+        <p className="mt-3 text-purpledark">Pagamento aprovado...</p>
       </div>
     );
   }
 
-
-  const aplicarCupom = () => {
-    if (cupom.trim().toLowerCase() === "desconto10") {
-      setCupomValido(true);
-    } else {
-      setCupomValido(false);
-    }
-  };
-
-  const frete = 16.9;
-const subtotalOriginal = produtos.reduce((acc, p) => acc + (p.preco || 0), 0);
-const desconto = cupomValido ? subtotalOriginal * 0.5 : 0;
-const subtotal = subtotalOriginal - desconto;
-const total = subtotal + frete;
-
-
-
   return (
     <div>
       <CarrosselPQ />
-      <div className="w-full border-b border-b-blackwhite/20 flex items-center justify-center p-4">
-        <img className="w-30" src={Logo} alt="Logo" />
+
+      <div className="w-full border-b border-blackwhite/20 flex justify-center p-4">
+        <img src={Logo} alt="" className="w-30" />
       </div>
 
       <form onSubmit={handleSubmit} className="flex">
-        {/* Lado esquerdo */}
         <div className="w-[60%] p-5 mr-[40%]">
-          {/* Entrega */}
-          <div className="flex flex-col p-10 justify-center pl-[40%]">
-            <p className="text-2xl text-blackwhite/80">Entrega</p>
-            <label className="mt-3 text-blackwhite/80 font-semibold">CEP</label>
+          <div className="p-10 pl-[40%]">
+            <p className="text-2xl">Entrega</p>
+            <label className="font-semibold block mt-4">CEP</label>
             <input
-              className="text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] focus:border-purpledark border-blackwhite/60"
               type="text"
               value={cep}
               onChange={cepMascara}
-              placeholder="ex: 88010-120"
+              placeholder="88010-120"
+              className="border p-2 w-85 rounded"
             />
             <InputError msg={errors.cep} />
-            <div className="flex flex-col">
-              <label className="mt-3 text-blackwhite/80 font-semibold">
-                Cupom de Desconto
-              </label>
 
-              <div className="flex items-center gap-4 mt-1">
-                <input
-                  className="text-sm p-2 border px-2 w-60 rounded-[5px] focus:border-purpledark border-blackwhite/60"
-                  type="text"
-                  onChange={(e) => setCupom(e.target.value)}
-                />
-                <button
-                  type="button"
-                    onClick={aplicarCupom}
-                  className="bg-purpledark text-white p-2 w-20 rounded-[5px]"
-                >
-                  Aplicar
-                </button>
-              </div>
-                {cupomValido === true && (
-    <p className="text-green-600 text-sm mt-2 text-purpledark">Cupom aplicado! </p>
-  )}
-  {cupomValido === false && (
-    <p className="text-red-600 text-sm mt-2 text-purpledark">Cupom inválido </p>
-  )}
+            <label className="font-semibold block mt-4">
+              Cupom de Desconto
+            </label>
+
+            <div className="flex gap-3 mt-1">
+              <input
+                type="text"
+                onChange={(e) => setCupom(e.target.value)}
+                className="border p-2 w-60 rounded"
+              />
+              <button
+                type="button"
+                onClick={aplicarCupom}
+                className="bg-purpledark text-white px-6 rounded"
+              >
+                Aplicar
+              </button>
             </div>
+
+            {cupomValido === false && (
+              <p className="text-red-600 mt-2">Cupom inválido</p>
+            )}
+            {cupomValido && cupomValido !== false && (
+              <p className="text-green-600 mt-2">Cupom aplicado!</p>
+            )}
           </div>
 
-          
+          <div className="p-5 pl-[40%]">
+            <p className="text-xl font-bold">Resumo</p>
 
-          {/* Resumo */}
-          <div className="flex flex-col p-5 justify-center pl-[40%]">
-            <p className="text-1xl font-bold text-blackwhite/80">Resumo</p>
-            <div className="flex justify-between w-79 items-center">
-              <label className="mt-3 text-blackwhite/80 text-[13px]">
-                ENTREGA
-              </label>
-              <p className="mt-3 font-medium">R${frete.toFixed(2)}</p>
+            <div className="flex justify-between mt-3 w-79">
+              <span>Entrega</span>
+              <span>R${frete.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between w-79 items-center border-b pb-10 border-b-blackwhite/20">
-              <label className="mt-3 text-blackwhite/80 font-bold text-[20px]">
-                Subtotal
-              </label>
-              <p className="mt-3 font-medium text-2xl text-purpledark">
+
+            <div className="flex justify-between mt-5 w-79 border-b pb-6">
+              <span className="font-bold text-lg">Subtotal</span>
+              <span className="text-purpledark text-xl">
                 R${subtotal.toFixed(2)}
-              </p>
+              </span>
             </div>
           </div>
 
-          {/* Pagamento */}
-          <div className="flex flex-col p-6 justify-center pl-[40%]">
-            <p className="text-2xl text-blackwhite/80">Pagamento</p>
-            <label className="mt-3 text-blackwhite/80 font-semibold">
+          <div className="p-6 pl-[40%]">
+            <p className="text-2xl">Pagamento</p>
+
+            <label className="font-semibold block mt-4">
               Número do Cartão
             </label>
             <input
-              className="text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] border-blackwhite/60"
               type="text"
               value={cardNumber}
               onChange={numerocartaoMasck}
               onPaste={handleCardPaste}
               onBlur={formatCardOnBlur}
-              placeholder="ex: 1234 5678 9012 3456"
+              placeholder="1234 5678 9012 3456"
+              className="border p-2 w-85 rounded"
             />
             <InputError msg={errors.cardNumber} />
-          </div>
 
-          {/* Data e CVC */}
-          <div className="flex justify-center gap-5 pl-[17%]">
-            <div className="flex flex-col">
-              <label className="text-blackwhite/80 font-semibold">
-                Data de expiração
-              </label>
-              <input
-                className="text-sm p-2 mt-1 border px-2 w-40 rounded-[5px] border-blackwhite/60"
-                type="text"
-                value={expiry}
-                onChange={dataMascara}
-                placeholder="ex: 10/30"
-              />
-              <InputError msg={errors.expiry} />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-blackwhite/80 font-semibold">
-                Código de segurança
-              </label>
-              <input
-                className="text-sm p-2 mt-1 border px-2 w-40 rounded-[5px] border-blackwhite/60"
-                type="text"
-                value={cvc}
-                onChange={CVCmascara}
-                placeholder="ex: 975"
-              />
-              <InputError msg={errors.cvc} />
-            </div>
-          </div>
+            <div className="flex gap-5 mt-5">
+              <div className="flex flex-col w-40">
+                <label className="font-semibold ">Data de expiração</label>
+                <input
+                  type="text"
+                  value={expiry}
+                  onChange={dataMascara}
+                  placeholder="10/30"
+                  className="border p-2 rounded"
+                />
+                <InputError msg={errors.expiry} />
+              </div>
 
-          {/* Nome */}
-          <div className="flex flex-col p-6 justify-center pl-[40%]">
-            <label className="mt-3 text-blackwhite/80 font-semibold">
+              <div className="flex flex-col w-32">
+                <label className="font-semibold">CVC</label>
+                <input
+                  type="text"
+                  value={cvc}
+                  onChange={CVCmascara}
+                  placeholder="975"
+                  className="border p-2 rounded"
+                />
+                <InputError msg={errors.cvc} />
+              </div>
+            </div>
+
+            <label className="font-semibold block mt-5">
               Titular do Cartão
             </label>
             <input
-              className="text-sm p-2 mt-1 border px-2 w-85 rounded-[5px] border-blackwhite/60"
               type="text"
               value={cardName}
               onChange={nomeMascara}
-              placeholder="ex: Manassés Marcelino"
+              placeholder="ex: Maria Silva"
+              className="border p-2 w-85 rounded"
             />
             <InputError msg={errors.cardName} />
           </div>
 
-          {/* Total */}
-          <div className="flex flex-col p-10 justify-center pl-[40%]">
-            <div className="flex justify-between w-83 items-center pb-10">
-              <label className="mt-3 text-blackwhite/90 font-bold text-[22px]">
-                Valor Total
-              </label>
-              <p className="mt-3 font-medium text-2xl text-purpledark">
+          <div className="p-10 pl-[40%]">
+            <div className="flex justify-between w-83 pb-10">
+              <span className="font-bold text-xl">Valor Total</span>
+              <span className="text-purpledark text-2xl">
                 R${total.toFixed(2)}
-              </p>
+              </span>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="bg-purpledark w-85 p-2 rounded-[5px] text-white font-medium hover:bg-blue hover:text-purpledark flex justify-center items-center"
+              className="bg-purpledark text-white px-4 py-2 w-85 rounded flex justify-center"
             >
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -379,44 +398,42 @@ const total = subtotal + frete;
           </div>
         </div>
 
-        {/* Lado direito */}
         <div className="absolute right-0 top-27 w-[40%] h-[170vh] bg-blackwhite/10 overflow-y-auto">
           <div className="fixed right-0 top-27 w-[40%] h-[90%] overflow-y-auto">
-            <div className="flex flex-col p-10 gap-5">
-              <p className="text-[20px] font-semibold">Resumo de Pedidos</p>
+            <div className="p-10 flex flex-col gap-5">
+              <p className="text-lg font-semibold">Resumo de Pedidos</p>
 
               {produtos.length > 0 ? (
                 produtos.map((p) => (
                   <div key={p.id} className="flex gap-4 w-98">
-                    <img className="w-23" src={foto1} alt="" />
-                    <div className="flex flex-col">
-                      <p className="text-blackwhite/80">{p.nome}</p>
-                      <p className="mt-3 text-[19px] text-purpledark font-semibold">
+                    <img className="w-23" src={foto1} />
+                    <div>
+                      <p>{p.nome}</p>
+                      <p className="mt-2 text-purpledark text-xl">
                         R${p.preco}
                       </p>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-blackwhite/60 italic">
-                  Nenhum produto adicionado
-                </p>
+                <p className="italic">Nenhum produto adicionado</p>
               )}
 
-              <div className="flex gap-5 mt-6">
+              <div className="flex gap-4 mt-6">
                 <button
                   type="button"
                   onClick={limparPagamento}
-                  className="cursor-pointer border font-semibold border-purpledark p-1 px-5 text-purpledark rounded-[5px]"
+                  className="border border-purpledark text-purpledark px-5 py-1 rounded"
                 >
                   Limpar Pedido
                 </button>
+
                 <button
                   type="button"
                   onClick={() => navigate("/")}
-                  className="bg-purpledark rounded-[5px] p-1 px-7 text-white"
+                  className="bg-purpledark text-white px-6 py-1 rounded"
                 >
-                  Escolher Mais Produtos
+                  Escolher mais produtos
                 </button>
               </div>
             </div>
