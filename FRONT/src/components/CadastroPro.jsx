@@ -105,7 +105,7 @@ function CadastroPro() {
     if (images.filter((img) => img !== null).length < 3)
       newErrors.images = "Adicione no mínimo três fotos para a publicação";
 
-    if (personalizado && componente.length > 2)
+    if (personalizado && componente.length === 0)
       newErrors.componente = "Selecione ao menos 2 componentes";
 
     // aplica erros no estado
