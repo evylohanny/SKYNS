@@ -119,30 +119,29 @@ function NavBar({ search }) {
     navigate(`/results?search=${encodeURIComponent(event.target.value)}`);
   };
 
-  const [itensCarrinho, setItensCarrinho] = useState([
-    {
-      id:1,
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
-    {
-      id:2,
-      img: "img_pedidos.svg",
-      nome: "Esfiliante solar ultra UV - 300G colectins verao",
-      quantidade: "4",
-      preco: "89,90",
-      excluir: "lixo_pedido.svg",
-    },
-    
+  
    
+  const [itensCarrinho, setItensCarrinho] = useState([
+    
   ]);
+
+  useEffect(() => {
+  const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho")) || [];
+  setItensCarrinho(carrinhoSalvo);
+}, []);
+
+
  
   const removerItemCarrinho = (id) => {
-   setItensCarrinho(prevItens => prevItens.filter(item => item.id !== id));
-  };
+  const novoCarrinho = itensCarrinho.filter(item => item.id !== id);
+
+  // Atualiza o state
+  setItensCarrinho(novoCarrinho);
+
+  // Atualiza o localStorage
+  localStorage.setItem("carrinho", JSON.stringify(novoCarrinho));
+};
+
 
   const add_produtos = () => {
 
@@ -169,6 +168,8 @@ function NavBar({ search }) {
 
     buscarPerfil();
   }, []);
+
+
   return (
     <div className="w-full h-30">
       <div className="w-full h-40 fixed top-0 left-0 bg-white z-[999]">
@@ -295,7 +296,7 @@ function NavBar({ search }) {
                               <div className="h-full ml-12 w-12/100 cursor-pointer"
                               onClick={() => removerItemCarrinho(item.id)}
                               >
-                                <img src={item.excluir} alt="" />
+                                <img src={"lixo.svg"} alt="" />
                               </div>
                             </div>
                             <div className="h-10 flex justify-cente items-center ">
@@ -308,7 +309,7 @@ function NavBar({ search }) {
                               </div>
                               <div>
                                 <h1 className="text-md ml-16 text-purpledark font-bold">
-                                  R${item.preco}
+                                  R${item.valor}
                                 </h1>
                               </div>
                             </div>
@@ -354,7 +355,7 @@ function NavBar({ search }) {
                     <div className="w-full flex gap-2 flex-col items-center">
                       <div className="w-90/100 mt-3 flex justify-between">
                         <p className="text-[#abaaaa]">SUBTOTAL</p>
-                        <p className="font-semibold">R$ 89,90</p>
+                        <p className="font-semibold"> </p>
                       </div>
                       <div className="w-90/100 flex justify-between">
                         <p className="text-[#abaaaa]">FRETE</p>
@@ -362,7 +363,7 @@ function NavBar({ search }) {
                       </div>
                       <div className="w-90/100 pb-4 flex justify-between">
                         <p className="text-[#abaaaa]">TOTAL</p>
-                        <p className="font-semibold">R$ 89,90</p>
+                        <p className="font-semibold">R$  </p>
                       </div>
                     </div>
                     <div className="w-full flex justify-center">
