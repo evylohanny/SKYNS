@@ -33,8 +33,6 @@ function ProdutoCustomizavel({ dados }) {
     }
   };
 
-  console.log(tipo_final());
-
   const componentesConvertidos = dados.componente
     ? dados.componente
       .replace(/^\{|\}$/g, "")      // remove { }
