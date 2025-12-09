@@ -45,30 +45,6 @@ function Dados_pessoais() {
     buscarPerfil();
   }, []);
 
-  const validarMaioridade = (dataNascimento) => {
-    if (!dataNascimento) return false;
-    
-    // Converte a data do formato DD/MM/YYYY para Date object
-    const [dia, mes, ano] = dataNascimento.split('/').map(Number);
-    const dataNasc = new Date(ano, mes - 1, dia); // mês é 0-indexed no JavaScript
-    
-    // Data atual
-    const hoje = new Date();
-    
-    // Calcula a idade
-    let idade = hoje.getFullYear() - dataNasc.getFullYear();
-    const mesAtual = hoje.getMonth();
-    const diaAtual = hoje.getDate();
-    
-    // Ajusta a idade se ainda não fez aniversário este ano
-    if (mesAtual < dataNasc.getMonth() || 
-        (mesAtual === dataNasc.getMonth() && diaAtual < dataNasc.getDate())) {
-      idade--;
-    }
-    
-    return idade >= 18;
-  };
-
   const [nomeInvalido, setNomeInvalido] = useState(false);
   const mensagemNome = "Digite seu nome corretamente!";
   const [emailInvalido, setEmailInvalido] = useState(false);
@@ -76,50 +52,114 @@ function Dados_pessoais() {
   const [cpfInvalido, setCpfInvalido] = useState(false);
   const mensagemCpf = "Cpf invalido!";
   const [nascimentoInvalido, setNascimentoInvalido] = useState(false);
-  const mensagemNascimento = "Você deve ser maior de 18 anos!";
+  const mensagemNascimento = "Você deve ter 18 anos ou mais para se cadastrar!";
+  const [telefoneInvalido, setTelefoneInvalido] = useState(false);
+  const mensagemTelefone = "Telefone invalido!";
 
   const salvar_dados = async () => {
-    // Resetar estados de erro
     setNomeInvalido(false);
     setEmailInvalido(false);
     setCpfInvalido(false);
     setNascimentoInvalido(false);
 
-    let temErro = false;
-
-    // Validação do nome
+    let erroEditar = false;
     if (
       !dados_usuario.nome_usuario ||
       dados_usuario.nome_usuario.trim().length < 3
     ) {
       setNomeInvalido(true);
-      temErro = true;
+      erroEditar = true;
     }
 
-    // Validação do email
     if (
       !dados_usuario.email_usuario ||
       (!dados_usuario.email_usuario.trim().includes("@gmail.com") &&
         !dados_usuario.email_usuario.trim().includes("@hotmail.com"))
     ) {
       setEmailInvalido(true);
-      temErro = true;
+      erroEditar = true;
     }
 
-    // Validação do CPF
     if (!dados_usuario.cpf || dados_usuario.cpf.trim().length < 14) {
       setCpfInvalido(true);
-      temErro = true;
+      erroEditar = true;
     }
 
-    // Validação da data de nascimento
-    if (!dados_usuario.data_nascimento || !validarMaioridade(dados_usuario.data_nascimento)) {
+    // Função para converter qualquer data para objeto Date
+    const parsearData = (dataString) => {
+      if (!dataString) return null;
+
+      // Formato DD/MM/YYYY
+      if (dataString.includes("/")) {
+        const partes = dataString.split("/");
+        if (partes.length !== 3) return null;
+
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1;
+        const ano = parseInt(partes[2], 10);
+
+        return new Date(ano, mes, dia);
+      }
+
+      // Formato YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ss
+      if (dataString.includes("-")) {
+        const dataStr = dataString.split("T")[0];
+        const partes = dataStr.split("-");
+        if (partes.length !== 3) return null;
+
+        const ano = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1;
+        const dia = parseInt(partes[2], 10);
+
+        return new Date(ano, mes, dia);
+      }
+
+      // Tentar criar Date diretamente
+      return new Date(dataString);
+    };
+
+    // Na validação:
+    if (
+      !dados_usuario.data_nascimento ||
+      dados_usuario.data_nascimento.trim() === ""
+    ) {
       setNascimentoInvalido(true);
-      temErro = true;
+      erroEditar = true;
+    } else {
+      const dataNascimento = parsearData(dados_usuario.data_nascimento);
+
+      if (!dataNascimento || isNaN(dataNascimento.getTime())) {
+        setNascimentoInvalido(true);
+        erroEditar = true;
+      } else {
+        // Calcular idade
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNascimento.getFullYear();
+
+        const mesAtual = hoje.getMonth();
+        const diaAtual = hoje.getDate();
+        const mesNasc = dataNascimento.getMonth();
+        const diaNasc = dataNascimento.getDate();
+
+        if (
+          mesAtual < mesNasc ||
+          (mesAtual === mesNasc && diaAtual < diaNasc)
+        ) {
+          idade--;
+        }
+
+        if (idade < 18) {
+          setNascimentoInvalido(true);
+          erroEditar = true;
+        }
+      }
+    }
+    if (!dados_usuario.telefone || dados_usuario.telefone.length !== 11) {
+      setTelefoneInvalido(true);
+      erroEditar = true;
     }
 
-    // Se houver algum erro, não prossegue com o salvamento
-    if (temErro) {
+    if (erroEditar == true) {
       return;
     }
 
@@ -132,12 +172,12 @@ function Dados_pessoais() {
 
       const data = await response.json();
       console.log(data);
-      window.location.reload(); 
+
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao editar dados:", error);
     }
   };
-
 
   useEffect(() => {
     if (
@@ -158,26 +198,25 @@ function Dados_pessoais() {
   }, [dados_usuario.email_usuario]);
 
   useEffect(() => {
-    if (
-      dados_usuario.cpf &&
-      dados_usuario.cpf.trim().length > 0
-    ) {
+    if (dados_usuario.cpf && dados_usuario.cpf.trim().length > 0) {
       setCpfInvalido(false);
     }
   }, [dados_usuario.cpf]);
 
   useEffect(() => {
-    if (
-      dados_usuario.data_nascimento &&
-      validarMaioridade(dados_usuario.data_nascimento)
-    ) {
+    if (dados_usuario.data_nascimento && dados_usuario.data_nascimento) {
       setNascimentoInvalido(false);
     }
   }, [dados_usuario.data_nascimento]);
 
+  useEffect(() => {
+    if (dados_usuario.telefone && dados_usuario.telefone.trim().length > 0) {
+      setTelefoneInvalido(false);
+    }
+  }, [dados_usuario.telefone]);
 
   return (
-    <div className="bg-[#F4F4F4] w-60/100 flex flex-col items-center  rounded-2xl">
+    <div className="bg-[#F4F4F4] w-60/100 h-100/100 flex flex-col items-center  rounded-2xl">
       <div className="w-84/100 h-10/100 flex  mt-8 items-center">
         <h1 className="text-2xl font-medium text-purpledark ">
           Dados pessoais
@@ -275,13 +314,21 @@ function Dados_pessoais() {
                   )
                 : ""
             }
-            onChange={(e) =>
+            onChange={(e) => {
+              const valorFormatado = formatarData(e.target.value);
               setDados_usuario({
                 ...dados_usuario,
-                data_nascimento: e.target.value,
-              })
-            }
+                data_nascimento: valorFormatado, // Salva o valor formatado
+              });
+            }}
           />
+        </div>
+        <div className="h-2">
+          {nascimentoInvalido && (
+            <p className="text-red-500 text-sm  font-medium text-purpledark">
+              {mensagemNascimento}
+            </p>
+          )}
         </div>
         <label className="text-lg pt-5">Gênero</label>
         <div className="w-full pt-2">
@@ -319,7 +366,14 @@ function Dados_pessoais() {
             }
           />
         </div>
-        <div className="flex w-full justify-end items-center h-40">
+        <div className="h-6">
+          {telefoneInvalido && (
+            <p className="text-red-500  text-sm  font-medium text-purpledark">
+              {mensagemTelefone}
+            </p>
+          )}
+        </div>
+        <div className="flex w-full justify-end items-center h-20">
           <button
             className="p-2 border-purpledark border-2 w-38/100 rounded-lg font-medium text-purpledark 
             hover:cursor-pointer hover:bg-purpledark hover:text-white hover:transition duration-400 ease-in-out"
