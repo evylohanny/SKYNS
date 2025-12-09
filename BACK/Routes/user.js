@@ -237,6 +237,20 @@ router.post('/upload-foto', upload.single('foto'), async (req, res) => {
   }
 });
 
+router.post("/carrinho", async (req, res) => {
+  const { fk_id_usuario, fk_id_produto, quantidade } = req.body;
+
+  try {
+    await pool.query(
+      "INSERT INTO carrinho (fk_id_usuario, fk_id_produto, quantidade) VALUES ($1, $2, $3)",
+      [fk_id_usuario, fk_id_produto, quantidade]
+    );
+    res.status(201).send("Salvo");
+  } catch (err) {
+    res.status(500).send("Erro ao salvar");
+  }
+});
+
 router.use('/uploads', express.static('uploads'));
 
 
