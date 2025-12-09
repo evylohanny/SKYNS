@@ -44,9 +44,22 @@ function CadastroPro() {
 
   const handleCheckbox = (e) => {
     const value = e.target.value;
-    setComponente((prev) =>
-      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
-    );
+
+    setComponente((prev) => {
+      const updated = prev.includes(value)
+        ? prev.filter((c) => c !== value)
+        : [...prev, value];
+
+      // Se o usuário marcou algum componente → remove erro
+      if (updated.length >= 2) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          componente: "",
+        }));
+      }
+
+      return updated;
+    });
   };
 
   // ====== Função de envio ======
@@ -91,6 +104,9 @@ function CadastroPro() {
 
     if (images.filter((img) => img !== null).length < 3)
       newErrors.images = "Adicione no mínimo três fotos para a publicação";
+
+    if (personalizado && componente.length === 0)
+      newErrors.componente = "Selecione ao menos 2 componentes";
 
     // aplica erros no estado
     setErrors(newErrors);
@@ -149,14 +165,13 @@ function CadastroPro() {
         .filter(Boolean);
 
       for (const foto of fotosValidas) {
+        const formData = new FormData();
+        formData.append("foto", foto.file); // arquivo real
+        formData.append("posicao", foto.posicao);
+
         await fetch(`http://localhost:3000/produtos/${idProduto}/foto`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            url: foto.url,
-            posicao: foto.posicao,
-            fk_id_produto: idProduto,
-          }),
+          body: formData, // sem headers
         });
       }
 
@@ -195,12 +210,13 @@ function CadastroPro() {
       "Base cremosa",
     ],
     Gel: [
-      "Niacinamida", 
+      "Niacinamida",
       "Zinco PCA",
-      "Ácido salicílico", 
+      "Ácido salicílico",
       "Aloe vera",
       "Chá verde",
-      "Base em gel"],
+      "Base em gel",
+    ],
   };
 
   const componentesPermitidos = componentesPorTipo[tipo] || [];
@@ -618,7 +634,21 @@ function CadastroPro() {
               type="checkbox"
               id="modificado"
               checked={personalizado}
-              onChange={() => setPersonalizado(!personalizado)}
+              onChange={() => {
+                const novoValor = !personalizado;
+                setPersonalizado(novoValor);
+
+                if (!novoValor) {
+                  // limpando componentes quando desmarca
+                  setComponente([]);
+
+                  // limpando o erro visual
+                  setErrors((prev) => ({
+                    ...prev,
+                    componente: "",
+                  }));
+                }
+              }}
               className="w-5 h-5 rounded appearance-none border-2 border-purpledark checked:bg-purpledark checked:border-purpledark"
             />
             <label htmlFor="modificado" className="font-semibold text-gray2/80">
@@ -656,6 +686,13 @@ function CadastroPro() {
                   </label>
                 );
               })}
+            </div>
+            <div
+              className={`text-purpledark w-4/6 h-4 text-sm transition-opacity duration-500 ${
+                errors.componente ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <p>{errors.componente || ""}</p>
             </div>
           </div>
 
