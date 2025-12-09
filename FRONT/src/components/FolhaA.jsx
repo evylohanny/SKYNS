@@ -1,22 +1,38 @@
 import { useEffect, useState } from "react";
-import iconLupa from '../assets/iconLupa.svg';
-import setaSelectCinza from '../assets/setaSelectCinza.svg';
-import setaSelectPurple from '../assets/setaSelectPurple.svg';
+import iconLupa from "../assets/iconLupa.svg";
+import setaSelectCinza from "../assets/setaSelectCinza.svg";
+import setaSelectPurple from "../assets/setaSelectPurple.svg";
 
 function FolhaA() {
-
   const [produtos, setProdutos] = useState([]);
+
+  // estados dos filtros
   const [busca, setBusca] = useState("");
   const [filtroId, setFiltroId] = useState("");
   const [filtroPele, setFiltroPele] = useState("");
   const [filtroData, setFiltroData] = useState("");
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+    busca: "",
+    id: "",
+    pele: "",
+    data: "",
+  });
 
   useEffect(() => {
     async function carregarProdutos() {
       try {
         const response = await fetch("http://localhost:3000/produtos/listar");
         const data = await response.json();
-        setProdutos(data);
+        // Só para garantir, normaliza nomes das props caso a API retorne com claves diferentes
+        const normalize = data.map((p) => ({
+          id: p.id ?? p.id_produto ?? p.ID ?? null,
+          tipo_pele: p.tipo_pele ?? p.categoria ?? p.tipo ?? "",
+          nome_produto: p.nome_produto ?? p.titulo_ ?? p.title ?? "",
+          estoque: p.estoque ?? p.quantidade_estoque ?? p.qtd ?? 0,
+          per_comu: p.per_comu ?? p.per_comu ?? p.personalizado ?? false,
+          data_lancamento: p.data_lancamento ?? p.data ?? "",
+        }));
+        setProdutos(normalize);
       } catch (error) {
         console.error("Erro ao carregar produtos:", error);
       }
@@ -25,29 +41,50 @@ function FolhaA() {
     carregarProdutos();
   }, []);
 
+  // --- helpers para gerar listas únicas de opções
+  const uniqueIds = Array.from(new Set(produtos.map((p) => p.id))).filter(
+    Boolean
+  );
+  const uniquePeles = Array.from(
+    new Set(produtos.map((p) => p.tipo_pele))
+  ).filter(Boolean);
+  const uniqueDatas = Array.from(
+    new Set(produtos.map((p) => p.data_lancamento))
+  ).filter(Boolean);
+
+  // --- normalização para busca
+  const normalizeStr = (s = "") =>
+    String(s)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+
+  // Filtragem combinada
   const produtosFiltrados = produtos.filter((item) => {
-  
-    const buscaTexto = busca.toLowerCase();
-    const nome = item.nome_produto?.toLowerCase() || "";
+    const buscaTexto = normalizeStr(filtrosAplicados.busca);
+    const nome = normalizeStr(item.nome_produto);
+    const idStr = item.id ? String(item.id) : "";
+    const tipoPele = normalizeStr(item.tipo_pele);
+    const data = String(item.data_lancamento ?? "");
 
     const correspondeBusca =
+      filtrosAplicados.busca === "" ||
       nome.includes(buscaTexto) ||
-      item.id.toString().includes(buscaTexto);
+      idStr.includes(buscaTexto);
 
     const correspondeId =
-      filtroId === "" || item.id.toString() === filtroId;
+      filtrosAplicados.id === "" || idStr === filtrosAplicados.id;
 
     const correspondePele =
-      filtroPele === "" || item.tipo_pele === filtroPele;
+      filtrosAplicados.pele === "" ||
+      normalizeStr(filtrosAplicados.pele) === tipoPele;
 
     const correspondeData =
-      filtroData === "" || item.data_lancamento === filtroData;
+      filtrosAplicados.data === "" || data === filtrosAplicados.data;
 
     return (
-      correspondeBusca &&
-      correspondeId &&
-      correspondePele &&
-      correspondeData
+      correspondeBusca && correspondeId && correspondePele && correspondeData
     );
   });
 
@@ -64,7 +101,6 @@ function FolhaA() {
 
       {/* Barra de filtros */}
       <div className="w-full bg-white flex font-secondary items-center gap-6 p-6 rounded-sm shadow-md">
-        
         {/* Campo de busca */}
         <div className="relative w-[25%]">
           <input
@@ -73,7 +109,7 @@ function FolhaA() {
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             className="w-full border border-gray3/50 rounded-full pl-4 pr-10 py-2 text-gray2 text-sm font-semibold 
-            focus:outline-none focus:ring-2 focus:ring-purpledark peer-focus:text-purpledark cursor-pointer"
+             focus:outline-none focus:ring-2 focus:ring-purpledark peer-focus:text-purpledark cursor-pointer"
           />
           <img
             src={iconLupa}
@@ -87,14 +123,13 @@ function FolhaA() {
           <select
             value={filtroId}
             onChange={(e) => setFiltroId(e.target.value)}
-            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-gray1 text-sm 
+            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 text-gray1 text-sm 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
             <option value="" hidden></option>
-
-            {produtos.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.id}
+            {uniqueIds.map((id) => (
+              <option key={id} value={String(id)}>
+                {id}
               </option>
             ))}
           </select>
@@ -107,14 +142,11 @@ function FolhaA() {
             ID
           </label>
 
-          {/* seta cinza (default) */}
           <img
             src={setaSelectCinza}
             alt="seta select"
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 peer-focus:hidden"
           />
-
-          {/* seta roxa (quando em foco) */}
           <img
             src={setaSelectPurple}
             alt="seta select focus"
@@ -127,13 +159,15 @@ function FolhaA() {
           <select
             value={filtroPele}
             onChange={(e) => setFiltroPele(e.target.value)}
-            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-gray1 text-sm 
+            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 text-gray1 text-sm 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
             <option value="" hidden></option>
-            <option>Acneica</option>
-            <option>Oleosa</option>
-            <option>Seca</option>
+            {uniquePeles.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
 
           <label
@@ -144,14 +178,11 @@ function FolhaA() {
             Tipo de pele
           </label>
 
-          {/* seta cinza (default) */}
           <img
             src={setaSelectCinza}
             alt="seta select"
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 peer-focus:hidden"
           />
-
-          {/* seta roxa (quando em foco) */}
           <img
             src={setaSelectPurple}
             alt="seta select focus"
@@ -164,13 +195,14 @@ function FolhaA() {
           <select
             value={filtroData}
             onChange={(e) => setFiltroData(e.target.value)}
-            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 p-2 text-sm text-gray1 
+            className="peer w-full border border-gray3/50 rounded-md px-3 pt-5 text-sm text-gray1 
             focus:outline-none focus:ring-2 focus:ring-purpledark cursor-pointer appearance-none"
           >
             <option value="" hidden></option>
-
-            {produtos.map((p) => (
-              <option key={p.id}>{p.data_lancamento}</option>
+            {uniqueDatas.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
             ))}
           </select>
 
@@ -183,14 +215,11 @@ function FolhaA() {
             Data
           </label>
 
-          {/* seta cinza (default) */}
           <img
             src={setaSelectCinza}
             alt="seta select"
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 peer-focus:hidden"
           />
-
-          {/* seta roxa (quando em foco) */}
           <img
             src={setaSelectPurple}
             alt="seta select focus"
@@ -199,24 +228,51 @@ function FolhaA() {
         </div>
 
         {/* Botão Buscar */}
-        <div className='w-[25%] font-tertiary'>
-          <button className="bg-purpledark text-white font-medium px-5 py-2 rounded-md hover:bg-blue 
-           hover:text-purpledark transition cursor-pointer">
+        <div className="flex w-[25%] h-[80%] gap-1.5 font-tertiary">
+          <button
+            onClick={() => {
+              setFiltrosAplicados({
+                busca,
+                id: filtroId,
+                pele: filtroPele,
+                data: filtroData,
+              });
+            }}
+            className="bg-purpledark flex items-center text-white text-sm font-medium px-4 py-4 rounded-md hover:bg-blue 
+            hover:text-purpledark transition cursor-pointer"
+          >
             Buscar
+          </button>
+          <button
+            onClick={() => {
+              setBusca("");
+              setFiltroId("");
+              setFiltroPele("");
+              setFiltroData("");
+
+              // Limpa os filtros aplicados → mostra todos os produtos
+              setFiltrosAplicados({
+                busca: "",
+                id: "",
+                pele: "",
+                data: "",
+              });
+            }}
+            className="bg-purpledark flex items-center text-white text-sm font-medium px-4 py-4 rounded-md hover:bg-blue 
+            hover:text-purpledark transition cursor-pointer"
+          >
+            Limpar
           </button>
         </div>
       </div>
 
       <div className="w-full bg-white flex flex-col items-start gap-6 p-6 rounded-sm shadow-md">
-        {/* Título */}
         <h2 className="text-purpledark font-semibold text-lg">
           Folha de acompanhamento
         </h2>
 
-        {/* Tabela */}
         <div className="w-full overflow-x-auto">
           <table className="w-full text-sm text-left text-gray3 border-separate border-spacing-y-1">
-            {/* Cabeçalho */}
             <thead className="bg-grayNaosei/40 text-gray-500 text-xs text-gray2">
               <tr>
                 <th className="px-6 py-3">ID</th>
@@ -228,7 +284,6 @@ function FolhaA() {
               </tr>
             </thead>
 
-            {/* Corpo */}
             <tbody>
               {produtosFiltrados.map((item) => (
                 <tr key={item.id} className="">
@@ -236,7 +291,11 @@ function FolhaA() {
                   <td className="px-6 py-4">{item.tipo_pele}</td>
                   <td className="px-6 py-4">{item.nome_produto}</td>
                   <td className="px-6 py-4">{item.estoque}</td>
-                  <td className="px-6 py-4">{item.per_comu}</td>
+                  <td className="px-6 py-4">
+                    {String(item.per_comu) === "true" || item.per_comu === true
+                      ? "Personalizável"
+                      : "Comum"}
+                  </td>
                   <td className="px-6 py-4">{item.data_lancamento}</td>
                 </tr>
               ))}
@@ -245,7 +304,7 @@ function FolhaA() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default FolhaA;
