@@ -45,6 +45,7 @@ function PLogin() {
       return;
     }
 
+      let carrinho = JSON.parse(localStorage.getItem("carrinho"))
     try {
       const response = await ky
         .post("http://localhost:3000/login", {
@@ -53,9 +54,15 @@ function PLogin() {
         .json();
 
       localStorage.setItem("id_usuario_logado", response.decode.id);
-      console.log(response.decode.id)
+      console.log(response.decode.id);
 
+      if (response) {
+
+        if (carrinho) {
+         await valor_produto(carrinho); 
+        };
       navigate("/");
+      }
     } catch (error) {
       console.error("Erro ao logar:", error);
       setMensagem_erro_login("Email ou senha incorreto!");
