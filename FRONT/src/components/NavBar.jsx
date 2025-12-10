@@ -125,14 +125,52 @@ function NavBar({ search }) {
     
   ]);
 
+  const buscaCarrinho = async (id) => {
+
+    try {
+
+      const response = await ky.get(`http://localhost:3000/carrinho`, {
+        searchParams: {
+          fk_id_usuario: id
+        }
+      }).json();
+
+      if (response) setItensCarrinho(response.data); else console.log('Erro');
+    } catch (err) {
+
+      console.error(err);
+    };
+  };
+
+  const removerItem = async (id) => {
+
+     try {
+
+      const response = await ky.delete(`http://localhost:3000/carrinho`, {
+        searchParams: {
+          id_carrinho: id
+        }
+      }).json();
+
+      if (response) setItensCarrinho(response.data); else console.log('Erro');
+    } catch (err) {
+
+      console.error(err);
+    };
+  };
+
   useEffect(() => {
-  const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho")) || [];
-  setItensCarrinho(carrinhoSalvo);
+  const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho"));
+  const id_usuario = localStorage.getItem('id_usuario_logado');
+
+    if (carrinhoSalvo) setItensCarrinho(carrinhoSalvo) else await buscaCarrinho(id_usuario);
 }, []);
 
 
  
   const removerItemCarrinho = (id) => {
+  const id_usuario = localStorage.getItem('id_usuario_logado');
+    if (id_usuario) {
   const novoCarrinho = itensCarrinho.filter(item => item.id !== id);
 
   // Atualiza o state
@@ -140,6 +178,10 @@ function NavBar({ search }) {
 
   // Atualiza o localStorage
   localStorage.setItem("carrinho", JSON.stringify(novoCarrinho));
+    } else {
+
+      await removerItem();
+    };
 };
 
 
