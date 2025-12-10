@@ -241,11 +241,13 @@ router.post("/carrinho", async (req, res) => {
   const { fk_id_usuario, fk_id_produto, quantidade } = req.body;
 
   try {
-    await pool.query(
+    const response = await pool.query(
       "INSERT INTO carrinho (fk_id_usuario, fk_id_produto, quantidade) VALUES ($1, $2, $3)",
       [fk_id_usuario, fk_id_produto, quantidade]
     );
-    res.status(201).send("Salvo");
+
+    if (!response) return console.log(response.status);
+    res.status(201).json({ data: response.rows});
   } catch (err) {
     res.status(500).send("Erro ao salvar");
   }
@@ -259,6 +261,22 @@ router.get("/carrinho", async (req, res) => {
       "SELECT * FROM carrinho WHERE fk_id_usuario = $1",
       [fk_id_usuario]
     );
+    if (!response) return console.log(response.status);
+    res.status(201).json({ data: response.rows});
+  } catch (err) {
+    res.status(500).send("Erro ao buscar");
+  }
+});
+
+router.delete("/carrinho", async (req, res) => {
+  const { id_carrinho } = req.body;
+
+  try {
+    const response = await pool.query(
+      "DELETE FROM carrinho WHERE id_carrinho = $1 RETURNING *,
+      [id_carrinho]
+    );
+    if (!response) return console.log(response.status);
     res.status(201).json({ data: response.rows});
   } catch (err) {
     res.status(500).send("Erro ao buscar");
