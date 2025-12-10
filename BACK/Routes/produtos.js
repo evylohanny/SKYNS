@@ -93,51 +93,6 @@ router.post("/produtos", async (req, res) => {
   }
 });
 
-// Atualizar estoque do produto (venda/compra)
-router.put("/produtos/:id/estoque", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { quantidade } = req.body;
-    
-    const produto = new DbService();
-    const pool = produto.getPool();
-    
-    // Primeiro, verificar o estoque atual
-    const produtoAtual = await pool.query(
-      "SELECT quantidade_estoque FROM produtos WHERE id_produto = $1",
-      [id]
-    );
-    
-    if (produtoAtual.rows.length === 0) {
-      return res.status(404).json({ error: "Produto não encontrado" });
-    }
-    
-    const estoqueAtual = produtoAtual.rows[0].quantidade_estoque;
-    
-    // Verificar se há estoque suficiente
-    if (quantidade > estoqueAtual) {
-      return res.status(400).json({ 
-        error: "Estoque insuficiente", 
-        estoque_disponivel: estoqueAtual 
-      });
-    }
-    
-    // Atualizar o estoque
-    const novoEstoque = estoqueAtual - quantidade;
-    const response = await pool.query(
-      "UPDATE produtos SET quantidade_estoque = $1 WHERE id_produto = $2 RETURNING quantidade_estoque",
-      [novoEstoque, id]
-    );
-    
-    return res.json({
-      message: "Estoque atualizado com sucesso",
-      estoque_atualizado: response.rows[0].quantidade_estoque
-    });
-    
-  } catch (error) {
-    console.error("Erro ao atualizar estoque:", error);
-    return res.status(500).json({ error: "Erro interno no servidor" });
-  }
-});
+
 
 module.exports = router;

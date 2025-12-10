@@ -316,111 +316,22 @@ function ProdutoCustomizavel({ dados }) {
     window.scrollTo(0, 0);
   }, []);
 
-const handleAdicionarAoCarrinho = async () => {
-  if (estoqueDisponivel === 0) {
-    mostrarMensagem("❌ Este produto está esgotado no momento.");
-    return;
-  }
+ const handleAdicionarAoCarrinho = async () => {
+  const produtoParaCarrinho = {
+    id_produto: dados.id_produto,
+    nome: dados.titulo,
+    preco: dados.valor,
+    imagem: dados.imagens?.[0],
+    quantidade: 1
+  };
 
-  if (quantidade > estoqueDisponivel) {
-    mostrarMensagem(`⚠️ Quantidade indisponível. Estoque: ${estoqueDisponivel} unidades.`);
-    return;
-  }
-
-  setCarregando(true);
-
-  try {
-    // Obter a primeira foto como imagem do produto
-    const imagemProduto = fotos.length > 0 ? fotos[0] : null;
-
-    // Preparar dados do item
-    const itemCarrinho = {
-      fk_id_produto: dados.id_produto,
-      quantidade: quantidade,
-      preco_unitario: dados.preco,
-      nome_produto: dados.titulo_,
-      imagem_produto: imagemProduto,
-      componentes_selecionados: selecionados.join(", "),
-      timestamp: Date.now()
-    };
-
-    console.log("Tentando adicionar ao carrinho:", itemCarrinho);
-
-    // Verificar se usuário está logado
-    const id_usuario_logado = localStorage.getItem("id_usuario_logado");
-    
-    if (id_usuario_logado) {
-      // Usuário LOGADO: adicionar ao carrinho via API
-      try {
-        const response = await ky.post("http://localhost:3000/carrinho/adicionar", {
-          json: {
-            ...itemCarrinho,
-            fk_id_usuario: parseInt(id_usuario_logado)
-          }
-        }).json();
-
-        console.log("Resposta da API:", response);
-
-        if (response.success) {
-          mostrarMensagem(`✅ ${quantidade} unidade(s) adicionada(s) ao carrinho!`);
-          // Resetar quantidade para 1
-          setQuantidade(1);
-          
-          // Disparar evento para atualizar o carrinho no NavBar
-          window.dispatchEvent(new CustomEvent('carrinhoAtualizado'));
-        } else {
-          mostrarMensagem(`❌ Erro ao adicionar ao carrinho: ${response.message}`);
-        }
-      } catch (apiError) {
-        console.error("Erro na API:", apiError);
-        mostrarMensagem("❌ Erro na conexão com o servidor.");
-      }
+  if (window.adicionarProdutoAoCarrinho) {
+    const resultado = await window.adicionarProdutoAoCarrinho(produtoParaCarrinho);
+    if (resultado.success) {
+      alert(resultado.message);
     } else {
-      // Usuário NÃO LOGADO: usar carrinho local (localStorage)
-      console.log("Usando carrinho local (usuário não logado)");
-      
-      let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
-      console.log("Carrinho atual:", carrinhoLocal);
-      
-      // Verificar se o produto já existe no carrinho local (mesmo produto e mesmos componentes)
-      const itemExistenteIndex = carrinhoLocal.findIndex(item => 
-        item.fk_id_produto === dados.id_produto && 
-        item.componentes_selecionados === itemCarrinho.componentes_selecionados
-      );
-      
-      if (itemExistenteIndex !== -1) {
-        // Se já existe, atualizar quantidade
-        carrinhoLocal[itemExistenteIndex].quantidade += quantidade;
-        console.log("Atualizando item existente:", carrinhoLocal[itemExistenteIndex]);
-      } else {
-        // Se não existe, adicionar novo item
-        carrinhoLocal.push(itemCarrinho);
-        console.log("Adicionando novo item:", itemCarrinho);
-      }
-      
-      // Salvar no localStorage
-      localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
-      console.log("Carrinho salvo:", carrinhoLocal);
-      
-      // Verificar se salvou corretamente
-      const verify = JSON.parse(localStorage.getItem('carrinhoLocal'));
-      console.log("Verificação do localStorage:", verify);
-      
-      mostrarMensagem(`✅ ${quantidade} unidade(s) adicionada(s) ao carrinho!`);
-      // Resetar quantidade para 1
-      setQuantidade(1);
-      
-      // Disparar evento para atualizar o carrinho no NavBar com mais detalhes
-      window.dispatchEvent(new CustomEvent('carrinhoLocalAtualizado', {
-        detail: { carrinhoLocal }
-      }));
+      alert(resultado.message);
     }
-
-  } catch (error) {
-    console.error("Erro geral ao adicionar ao carrinho:", error);
-    mostrarMensagem("❌ Ocorreu um erro ao adicionar ao carrinho.");
-  } finally {
-    setCarregando(false);
   }
 };
 
@@ -442,6 +353,7 @@ const handleAdicionarAoCarrinho = async () => {
   useEffect(() => {
     buscarEstoqueAtualizado();
   }, [dados.id_produto]);
+  
 
   return (
     <div className="min-h-screen">

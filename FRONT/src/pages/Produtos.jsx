@@ -91,12 +91,26 @@ function Produtos() {
     );
   }
 
-  // Verifica se é personalizado - tenta de várias fontes
-  const isPersonalizado = 
-    initialData?.personalizado || 
-    produto?.personalizado || 
-    produto?.componente || 
-    false;
+  // Função para determinar se o produto é personalizado
+const isProdutoPersonalizado = (produtoData) => {
+  // Verifica se há flag explícita
+  if (produtoData?.personalizado === true) return true;
+  
+  // Verifica se tem componente não vazio
+  if (produtoData?.componente && Array.isArray(produtoData.componente) && produtoData.componente.length > 0) {
+    return true;
+  }
+  
+  // Verifica se tem opções de customização
+  if (produtoData?.opcoes_personalizacao && Object.keys(produtoData.opcoes_personalizacao).length > 0) {
+    return true;
+  }
+  
+  return false;
+};
+
+// No JSX
+const isPersonalizado = isProdutoPersonalizado(produto);
 
   return (
     <div>

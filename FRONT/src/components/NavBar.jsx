@@ -57,6 +57,76 @@ function NavBar({ search }) {
     }
   }, []);
 
+  // Função para adicionar produtos ao carrinho
+  const adicionarAoCarrinho = async (produto) => {
+    const id_usuario = localStorage.getItem('id_usuario_logado');
+    
+    console.log("Adicionando produto:", produto);
+    console.log("ID do usuário:", id_usuario);
+    
+    if (id_usuario) {
+      // Usuário logado - adiciona via API
+      try {
+        const response = await ky.post('http://localhost:3000/carrinho', {
+          json: {
+            fk_id_usuario: id_usuario,
+            fk_id_produto: produto.id_produto || produto.id,
+            quantidade: produto.quantidade || 1,
+            valor: produto.valor || produto.preco || produto.preco_unitario
+          }
+        }).json();
+        
+        console.log("Resposta da API:", response);
+        
+        if (response) {
+          // Atualiza o carrinho
+          carregarCarrinho();
+          // Dispara evento para outros componentes
+          window.dispatchEvent(new Event('carrinhoAtualizado'));
+          return { success: true, message: 'Produto adicionado ao carrinho!' };
+        }
+      } catch (error) {
+        console.error('Erro ao adicionar ao carrinho:', error);
+        return { success: false, message: 'Erro ao adicionar ao carrinho.' };
+      }
+    } else {
+      // Usuário não logado - adiciona ao localStorage
+      let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+      
+      console.log("Carrinho local atual:", carrinhoLocal);
+      
+      // Verifica se o produto já está no carrinho
+      const produtoExistenteIndex = carrinhoLocal.findIndex(item => 
+        item.fk_id_produto === (produto.id_produto || produto.id)
+      );
+      
+      if (produtoExistenteIndex !== -1) {
+        // Incrementa quantidade se já existe
+        carrinhoLocal[produtoExistenteIndex].quantidade = 
+          (carrinhoLocal[produtoExistenteIndex].quantidade || 1) + (produto.quantidade || 1);
+      } else {
+        // Adiciona novo produto
+        carrinhoLocal.push({
+          fk_id_produto: produto.id_produto || produto.id,
+          nome_produto: produto.nome || produto.titulo || produto.nome_produto,
+          preco_unitario: produto.valor || produto.preco || produto.preco_unitario,
+          quantidade: produto.quantidade || 1,
+          imagem_produto: produto.imagem || produto.img || produto.imagem_produto,
+          timestamp: Date.now()
+        });
+      }
+      
+      localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+      console.log("Carrinho local atualizado:", carrinhoLocal);
+      
+      // Atualiza o carrinho
+      carregarCarrinho();
+      // Dispara evento para outros componentes
+      window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
+      return { success: true, message: 'Produto adicionado ao carrinho!' };
+    }
+  };
+
   const carregarCarrinho = () => {
     const id_usuario = localStorage.getItem('id_usuario_logado');
 
@@ -200,17 +270,32 @@ function NavBar({ search }) {
   useEffect(() => {
     carregarCarrinho();
 
+    // Disponibiliza a função globalmente
+    window.adicionarProdutoAoCarrinho = adicionarAoCarrinho;
+    
+    // Listener para eventos de atualização do carrinho
     const handleCarrinhoAtualizado = () => {
       console.log("Evento de carrinho recebido, recarregando...");
       carregarCarrinho();
     };
 
+    // Listener para adição de produto via evento
+    const handleAdicionarProduto = (event) => {
+      if (event.detail) {
+        console.log("Recebendo produto via evento:", event.detail);
+        adicionarAoCarrinho(event.detail);
+      }
+    };
+
     window.addEventListener('carrinhoAtualizado', handleCarrinhoAtualizado);
     window.addEventListener('carrinhoLocalAtualizado', handleCarrinhoAtualizado);
+    window.addEventListener('adicionarAoCarrinho', handleAdicionarProduto);
 
     return () => {
       window.removeEventListener('carrinhoAtualizado', handleCarrinhoAtualizado);
       window.removeEventListener('carrinhoLocalAtualizado', handleCarrinhoAtualizado);
+      window.removeEventListener('adicionarAoCarrinho', handleAdicionarProduto);
+      delete window.adicionarProdutoAoCarrinho;
     };
   }, []);
 
@@ -257,35 +342,34 @@ function NavBar({ search }) {
     fechar();
   };
 
-const handleFinalizarCompra = () => {
-  const usuarioLogado = localStorage.getItem("id_usuario_logado");
-  
-  if (usuarioLogado) {
-    navigate('/pagamento');
-    fechar();
-  } else {
-    const carrinhoAtual = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+  const handleFinalizarCompra = () => {
+    const usuarioLogado = localStorage.getItem("id_usuario_logado");
     
-    localStorage.setItem('carrinho', JSON.stringify(carrinhoAtual));
-    localStorage.setItem('redirectAfterLogin', '/pagamento');
-    
-    fechar();
-    setModalLogin(true);
-  }
-};
+    if (usuarioLogado) {
+      navigate('/pagamento');
+      fechar();
+    } else {
+      const carrinhoAtual = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+      
+      localStorage.setItem('carrinho', JSON.stringify(carrinhoAtual));
+      localStorage.setItem('redirectAfterLogin', '/pagamento');
+      
+      fechar();
+      setModalLogin(true);
+    }
+  };
 
-const irParaLogin = () => {
-  setModalLogin(false);
-  navigate('/login', { 
-    state: { 
-      from: 'carrinho',
-      message: 'Faça login para finalizar sua compra. Seu carrinho será mantido.',
-      activeTab: 'login' 
-    } 
-  });
-};
+  const irParaLogin = () => {
+    setModalLogin(false);
+    navigate('/login', { 
+      state: { 
+        from: 'carrinho',
+        message: 'Faça login para finalizar sua compra. Seu carrinho será mantido.',
+        activeTab: 'login' 
+      } 
+    });
+  };
 
-  // Função para ir para o cadastro
   const irParaCadastro = () => {
     setModalLogin(false);
     navigate('/cadastro', { 
