@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import ky from "ky";
+import Checkroxinho from "../../assets/Checkroxinho.svg";
+
 function Dados_pessoais() {
   const id_usuario_logado = localStorage.getItem("id_usuario_logado");
   const [dados_usuario, setDados_usuario] = useState({});
@@ -26,6 +28,7 @@ function Dados_pessoais() {
     return value.slice(0, 15);
   };
 
+  const [SuccessModal, setSuccessModal] = useState(false);
   useEffect(() => {
     const buscarPerfil = async () => {
       try {
@@ -172,8 +175,17 @@ function Dados_pessoais() {
 
       const data = await response.json();
       console.log(data);
-
+      window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    
+    setSuccessModal(true);
+    setTimeout(() => {
+      setSuccessModal(false);
       window.location.reload();
+    }, 3000);
     } catch (error) {
       console.error("Erro ao editar dados:", error);
     }
@@ -383,6 +395,24 @@ function Dados_pessoais() {
           </button>
         </div>
       </div>
+       <div>
+              {SuccessModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                          <div className="bg-white rounded-4xl shadow-lg p-9 w-[450px] text-center">
+                            <div className="flex justify-center mb-4 w-[100%]">
+                              <img src={Checkroxinho} alt="" className="w-[25%]" />
+                            </div>
+              
+                            <h2 className="text-2xl font-semibold text-gray1/90">
+                                Tudo certo!
+                            </h2>
+                            <p className="text-gray3 mt-2 text-lg">
+                               Seus dados foram armazenados com segurança.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+            </div>
     </div>
   );
 }

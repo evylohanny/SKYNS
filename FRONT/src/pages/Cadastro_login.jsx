@@ -8,6 +8,7 @@ import PLogin from "../components/auth/PLogin";
 import PCadastro from "../components/auth/PCadastro";
 import ky from "ky"; // Importar ky
 
+
 function Login() {
   const imagens = [
     "img_login.svg",
@@ -33,10 +34,9 @@ function Login() {
     "img_login_sete.svg",
   ];
 
-  const [abaAtiva, setAbaAtiva] = useState("cadastro");
-  const navigate = useNavigate(); // Usar useNavigate
-
-  // Função para recuperar carrinho temporário após login
+  const [abaAtiva, setAbaAtiva] = useState("login");
+  const navigate = useNavigate(); 
+  
   const recuperarCarrinhoTemporario = async (usuarioId) => {
     try {
       const carrinhoTemporario = JSON.parse(localStorage.getItem('carrinhoTemporario'));
@@ -59,8 +59,8 @@ function Login() {
             }
           });
         }
-        
-        // Limpa os dados temporários
+  
+
         localStorage.removeItem('carrinhoTemporario');
         localStorage.removeItem('redirectAfterLogin');
         localStorage.removeItem('carrinhoLocal');

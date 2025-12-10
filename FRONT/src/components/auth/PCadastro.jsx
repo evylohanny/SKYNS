@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ky from "ky";
-
+import Checkroxinho from "../../assets/Checkroxinho.svg";
 function PCadastro() {
 
   const [valor_email_cadastro, setValor_email_cadastro] = useState("");
@@ -27,6 +27,7 @@ function PCadastro() {
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
 
+   const [SuccessModal, setSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const formatarCPF = (value) => {
@@ -172,8 +173,12 @@ function PCadastro() {
         return; 
       }
 
-      alert("Cadastro realizado com sucesso!");
-      navigate("/");
+      setSuccessModal(true);
+      setTimeout(() => {
+        setSuccessModal(false);
+        window.location.reload();
+      }, 3000);
+      navigate("/cadastro");
 
     } catch (error) {
       console.error("Erro inesperado:", error);
@@ -317,7 +322,26 @@ function PCadastro() {
           <p className="font-bold">Entrar com o Google</p>
         </div>
       </div>
+      <div>
+        {SuccessModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                    <div className="bg-white rounded-4xl shadow-lg p-9 w-[450px] text-center">
+                      <div className="flex justify-center mb-4 w-[100%]">
+                        <img src={Checkroxinho} alt="" className="w-[25%]" />
+                      </div>
+        
+                      <h2 className="text-2xl font-semibold text-gray1/90">
+                        Cadastro realizado!
+                      </h2>
+                      <p className="text-gray3 mt-2 text-lg">
+                        Agora conecte-se a sua conta!
+                      </p>
+                    </div>
+                  </div>
+                )}
+      </div>
     </div>
+    
   );
 }
 

@@ -241,45 +241,129 @@ router.post("/carrinho", async (req, res) => {
   const { fk_id_usuario, fk_id_produto, quantidade } = req.body;
 
   try {
-    const response = await pool.query(
-      "INSERT INTO carrinho (fk_id_usuario, fk_id_produto, quantidade) VALUES ($1, $2, $3)",
-      [fk_id_usuario, fk_id_produto, quantidade]
+    const db = new dbservice();
+    const pool = await db.getPool();
+
+    // 1. Verificar se o produto já está no carrinho do usuário
+    const existingItem = await pool.query(
+      `SELECT * FROM carrinho 
+       WHERE fk_id_usuario = $1 AND fk_id_produto = $2`,
+      [fk_id_usuario, fk_id_produto]
     );
 
-    if (!response) return console.log(response.status);
-    res.status(201).json({ data: response.rows});
+    if (existingItem.rows.length > 0) {
+      // 2. Se já existe, ATUALIZAR a quantidade
+      const currentQuantity = existingItem.rows[0].quantidade;
+      const newQuantity = currentQuantity + (parseInt(quantidade) || 1);
+      
+      const updateResponse = await pool.query(
+        `UPDATE carrinho 
+         SET quantidade = $1 
+         WHERE fk_id_usuario = $2 AND fk_id_produto = $3
+         RETURNING *`,
+        [newQuantity, fk_id_usuario, fk_id_produto]
+      );
+
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Quantidade atualizada',
+        data: updateResponse.rows[0]
+      });
+    } else {
+      // 3. Se não existe, INSERIR novo item
+      const insertResponse = await pool.query(
+        `INSERT INTO carrinho (fk_id_usuario, fk_id_produto, quantidade) 
+         VALUES ($1, $2, $3)
+         RETURNING *`,
+        [fk_id_usuario, fk_id_produto, quantidade || 1]
+      );
+
+      return res.status(201).json({ 
+        success: true, 
+        message: 'Produto adicionado ao carrinho',
+        data: insertResponse.rows[0]
+      });
+    }
   } catch (err) {
-    res.status(500).send("Erro ao salvar");
+    console.error("Erro ao salvar no carrinho:", err);
+    res.status(500).json({ 
+      success: false,
+      error: "Erro ao salvar no carrinho",
+      details: err.message 
+    });
   }
 });
 
 router.get("/carrinho", async (req, res) => {
-  const { fk_id_usuario } = req.body;
+  const { fk_id_usuario } = req.query;
 
   try {
+
+    console.log(fk_id_usuario)
+     const db = new dbservice();
+    const pool = await db.getPool();
     const response = await pool.query(
-      "SELECT * FROM carrinho WHERE fk_id_usuario = $1",
+      "SELECT c.id_carrinho, c.fk_id_usuario, c.fk_id_produto, c.quantidade, p.titulo_, p.preco FROM carrinho c INNER JOIN produtos p ON c.fk_id_produto = p.id_produto WHERE c.fk_id_usuario = $1",
       [fk_id_usuario]
     );
-    if (!response) return console.log(response.status);
+
+    console.log('aqui 2')
     res.status(201).json({ data: response.rows});
   } catch (err) {
+    console.log('aqui 3')
     res.status(500).send("Erro ao buscar");
   }
 });
 
 router.delete("/carrinho", async (req, res) => {
+  console.log("DELETE /carrinho chamado");
+  console.log("Body recebido:", req.body);
+  
   const { id_carrinho } = req.body;
 
+  if (!id_carrinho) {
+    console.log("ERRO: id_carrinho não fornecido");
+    return res.status(400).json({ 
+      success: false, 
+      error: "ID do carrinho é obrigatório" 
+    });
+  }
+
   try {
+    console.log(`Tentando deletar id_carrinho: ${id_carrinho}`);
+    
+    const db = new dbservice();
+    const pool = await db.getPool();
+    
     const response = await pool.query(
-      "DELETE FROM carrinho WHERE id_carrinho = $1 RETURNING *"
+      "DELETE FROM carrinho WHERE id_carrinho = $1 RETURNING *",
       [id_carrinho]
     );
-    if (!response) return console.log(response.status);
-    res.status(201).json({ data: response.rows});
+
+    console.log("Query executada, rows afetadas:", response.rowCount);
+    console.log("Itens retornados:", response.rows);
+
+    if (response.rows.length === 0) {
+      console.log(`Item com id_carrinho ${id_carrinho} não encontrado`);
+      return res.status(404).json({ 
+        success: false, 
+        error: "Item não encontrado no carrinho" 
+      });
+    }
+
+    console.log("DELETE bem sucedido");
+    res.status(200).json({ 
+      success: true, 
+      message: 'Item removido do carrinho',
+      data: response.rows[0]
+    });
   } catch (err) {
-    res.status(500).send("Erro ao buscar");
+    console.error("Erro ao remover do carrinho:", err);
+    res.status(500).json({ 
+      success: false,
+      error: "Erro ao remover item do carrinho",
+      details: err.message 
+    });
   }
 });
 

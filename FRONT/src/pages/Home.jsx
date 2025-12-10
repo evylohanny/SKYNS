@@ -196,14 +196,15 @@ const valor_produto = async (item) => {
 
   if (id_usuario_logado) {
     try {
-      const response = await ky.post("http://localhost:3000/carrinho/adicionar", {
+      const response = await ky.post("http://localhost:3000/carrinho", {
         json: {
-          ...itemCarrinho,
+          fk_id_produto: item.id_produto,
+          quantidade: 1,
           fk_id_usuario: parseInt(id_usuario_logado)
         }
       }).json();
 
-      if (response.success) {
+      if (response) {
         console.log("Produto adicionado via API");
         window.dispatchEvent(new Event('carrinhoAtualizado'));
       }

@@ -6,6 +6,8 @@ import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <GlobalContextProvider>
-    <RouterProvider router={router} ></RouterProvider>
+    <RouterProvider router={router} >
+
+    </RouterProvider>
   </GlobalContextProvider>,
 );

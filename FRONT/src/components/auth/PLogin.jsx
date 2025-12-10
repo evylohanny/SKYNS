@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ky from "ky";
 import { useNavigate } from "react-router-dom";
-
+import Checkroxinho from "../../assets/Checkroxinho.svg";
 function PLogin() {
   const navigate = useNavigate();
 
@@ -12,6 +12,8 @@ function PLogin() {
 
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
+  
+   const [SuccessModal, setSuccessModal] = useState(false);
 
   const alternarTipo = () => {
     setTipoInput((prev) => (prev === "password" ? "text" : "password"));
@@ -84,7 +86,13 @@ function PLogin() {
           console.log("Redirecionando para:", redirectAfterLogin);
           navigate(redirectAfterLogin);
         } else {
-          navigate("/");
+          setSuccessModal(true);
+          setTimeout(() => {
+         setSuccessModal(false);
+          navigate('/')
+              
+          }, 3000);
+          
         }
       }
     } catch (error) {
@@ -114,7 +122,7 @@ function PLogin() {
         
         console.log("Enviando item:", itemParaEnviar);
         
-        await ky.post("http://localhost:3000/carrinho/adicionar", {
+        await ky.post("http://localhost:3000/carrinho", {
           json: itemParaEnviar
         }).json();
         
@@ -194,6 +202,24 @@ function PLogin() {
           <p className="font-bold">Entrar com o Google</p>
         </div>
       </div>
+       <div>
+              {SuccessModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+                          <div className="bg-white rounded-4xl shadow-lg p-9 w-[450px] text-center">
+                            <div className="flex justify-center mb-4 w-[100%]">
+                              <img src={Checkroxinho} alt="" className="w-[25%]" />
+                            </div>
+              
+                            <h2 className="text-2xl font-semibold text-gray1/90">
+                              Login realizado!
+                            </h2>
+                            <p className="text-gray3 mt-2 text-lg">
+                                Seja bem-vindo(a) de volta!
+                            </p>
+                          </div>
+                        </div>
+                      )}
+            </div>
     </div>
   );
 }

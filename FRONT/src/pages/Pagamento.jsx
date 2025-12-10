@@ -167,13 +167,81 @@ function Pagamento() {
   }, [cep, cardNumber, expiry, cvc, cardName]);
 
   const getProducts = async () => {
+
+    const id = localStorage.getItem('id_usuario_logado')
     try {
-      const data = await ky.get("http://localhost:3000/produtos").json();
-      setProdutos(data);
+      const response = await ky.get("http://localhost:3000/carrinho", {
+        searchParams: {
+          fk_id_usuario: id
+        }
+      }).json();
+
+      if (response.data) {
+
+        console.log(response);
+        setProdutos(response.data);
+
+        buscarFotosParaItens(produtos);
+      }
     } catch (err) {
+      console.log('aqui')
       console.log("Erro: ", err);
     }
   };
+
+  const buscaFotoProduto = async (id_produto) => {
+  try {
+    console.log(`Buscando foto para produto ${id_produto}`);
+    
+    const response = await ky.get(`http://localhost:3000/${id_produto}/1/foto`).json();
+    
+    if (response && response.data && response.data.url) {
+      console.log(`Foto encontrada para produto ${id_produto}:`, response.data.url);
+      return response.data.url;
+    } else if (response && response.url) {
+      console.log(`Foto encontrada (formato alternativo) para produto ${id_produto}:`, response.url);
+      return response.url;
+    } else {
+      console.log(`Nenhuma foto encontrada para produto ${id_produto}, usando padrão`);
+      return "default-image.svg";
+    }
+  } catch (error) {
+    console.log(`Erro ao buscar foto do produto ${id_produto}:`, error.message);
+    return "default-image.svg";
+  }
+};
+
+// Função separada para buscar fotos
+const buscarFotosParaItens = async (itens) => {
+  console.log(`Buscando fotos para ${itens.length} itens...`);
+  
+  const itensAtualizados = [...itens];
+  
+  for (let i = 0; i < itensAtualizados.length; i++) {
+    const item = itensAtualizados[i];
+    
+    if (item.fk_id_produto) {
+      try {
+        const fotoUrl = await buscaFotoProduto(item.fk_id_produto);
+        itensAtualizados[i].img = fotoUrl;
+        
+        // Atualiza o estado com a nova foto
+        setItensCarrinho(prev => 
+          prev.map((prevItem, index) => 
+            index === i ? { ...prevItem, img: fotoUrl } : prevItem
+          )
+        );
+        
+        console.log(`Foto atualizada para item ${i}:`, fotoUrl);
+      } catch (error) {
+        console.error(`Erro ao buscar foto para item ${i}:`, error);
+        // Mantém a imagem padrão
+      }
+    }
+  }
+  
+  console.log("Itens com fotos atualizados:", itensAtualizados);
+};
 
   useEffect(() => {
     getProducts();
@@ -406,7 +474,7 @@ function Pagamento() {
               {produtos.length > 0 ? (
                 produtos.map((p) => (
                   <div key={p.id} className="flex gap-4 w-98">
-                    <img className="w-23" src={foto1} />
+                    <img className="w-23" src={p.img} />
                     <div>
                       <p>{p.nome}</p>
                       <p className="mt-2 text-purpledark text-xl">

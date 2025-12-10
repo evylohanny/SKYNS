@@ -52,7 +52,7 @@ function Pedidos() {
       <NavBar />
       <div className=" w-full  h-1/6 flex justify-center items-end">
         <div className="bg-[#FEF5FF] flex items-center text-lg p-4 w-76/100 h-48/100 font-medium  rounded-2xl">
-          <p className=" pl-2 text-purpledark">Olá, {dados_usuario.nome_usuario}</p>
+          <p className=" pl-2 text-purpledark">Olá, {dados_usuario.nome_usuario || "visitante"}</p>
         </div>
       </div>
       <div className=" w-full pt-6 flex justify-center items-center">

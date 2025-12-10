@@ -57,75 +57,77 @@ function NavBar({ search }) {
     }
   }, []);
 
-  // Função para adicionar produtos ao carrinho
-  const adicionarAoCarrinho = async (produto) => {
-    const id_usuario = localStorage.getItem('id_usuario_logado');
-    
-    console.log("Adicionando produto:", produto);
-    console.log("ID do usuário:", id_usuario);
-    
-    if (id_usuario) {
-      // Usuário logado - adiciona via API
-      try {
-        const response = await ky.post('http://localhost:3000/carrinho', {
-          json: {
-            fk_id_usuario: id_usuario,
-            fk_id_produto: produto.id_produto || produto.id,
-            quantidade: produto.quantidade || 1,
-            valor: produto.valor || produto.preco || produto.preco_unitario
-          }
-        }).json();
-        
-        console.log("Resposta da API:", response);
-        
-        if (response) {
-          // Atualiza o carrinho
-          carregarCarrinho();
-          // Dispara evento para outros componentes
-          window.dispatchEvent(new Event('carrinhoAtualizado'));
-          return { success: true, message: 'Produto adicionado ao carrinho!' };
-        }
-      } catch (error) {
-        console.error('Erro ao adicionar ao carrinho:', error);
-        return { success: false, message: 'Erro ao adicionar ao carrinho.' };
-      }
-    } else {
-      // Usuário não logado - adiciona ao localStorage
-      let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
-      
-      console.log("Carrinho local atual:", carrinhoLocal);
-      
-      // Verifica se o produto já está no carrinho
-      const produtoExistenteIndex = carrinhoLocal.findIndex(item => 
-        item.fk_id_produto === (produto.id_produto || produto.id)
-      );
-      
-      if (produtoExistenteIndex !== -1) {
-        // Incrementa quantidade se já existe
-        carrinhoLocal[produtoExistenteIndex].quantidade = 
-          (carrinhoLocal[produtoExistenteIndex].quantidade || 1) + (produto.quantidade || 1);
-      } else {
-        // Adiciona novo produto
-        carrinhoLocal.push({
+const adicionarAoCarrinho = async (produto) => {
+  const id_usuario = localStorage.getItem('id_usuario_logado');
+  
+  console.log("Adicionando produto:", produto);
+  console.log("ID do usuário:", id_usuario);
+  
+  if (id_usuario) {
+    // Usuário logado - adiciona via API
+    try {
+      const response = await ky.post('http://localhost:3000/carrinho', {
+        json: {
+          fk_id_usuario: id_usuario,
           fk_id_produto: produto.id_produto || produto.id,
-          nome_produto: produto.nome || produto.titulo || produto.nome_produto,
-          preco_unitario: produto.valor || produto.preco || produto.preco_unitario,
           quantidade: produto.quantidade || 1,
-          imagem_produto: produto.imagem || produto.img || produto.imagem_produto,
-          timestamp: Date.now()
-        });
+          valor: produto.valor || produto.preco || produto.preco_unitario
+        }
+      }).json();
+      
+      console.log("Resposta da API:", response);
+      
+      if (response.success) {
+        // Atualiza o carrinho
+        carregarCarrinho();
+        // Dispara evento para outros componentes
+        window.dispatchEvent(new Event('carrinhoAtualizado'));
+        return { success: true, message: response.message };
       }
-      
-      localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
-      console.log("Carrinho local atualizado:", carrinhoLocal);
-      
-      // Atualiza o carrinho
-      carregarCarrinho();
-      // Dispara evento para outros componentes
-      window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
-      return { success: true, message: 'Produto adicionado ao carrinho!' };
+    } catch (error) {
+      console.error('Erro ao adicionar ao carrinho:', error);
+      return { success: false, message: 'Erro ao adicionar ao carrinho.' };
     }
-  };
+  } else {
+    // Usuário não logado - adiciona ao localStorage
+    let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+    
+    console.log("Carrinho local atual:", carrinhoLocal);
+    
+    // Verifica se o produto já está no carrinho
+    const produtoExistenteIndex = carrinhoLocal.findIndex(item => 
+      item.fk_id_produto === (produto.id_produto || produto.id)
+    );
+    
+    if (produtoExistenteIndex !== -1) {
+      // Incrementa quantidade se já existe
+      const quantidadeAtual = carrinhoLocal[produtoExistenteIndex].quantidade || 1;
+      const quantidadeNova = produto.quantidade || 1;
+      carrinhoLocal[produtoExistenteIndex].quantidade = quantidadeAtual + quantidadeNova;
+      
+      console.log(`Produto existente, quantidade atualizada: ${quantidadeAtual} -> ${quantidadeAtual + quantidadeNova}`);
+    } else {
+      // Adiciona novo produto
+      carrinhoLocal.push({
+        fk_id_produto: produto.id_produto || produto.id,
+        nome_produto: produto.nome || produto.titulo || produto.nome_produto,
+        preco_unitario: produto.valor || produto.preco || produto.preco_unitario,
+        quantidade: produto.quantidade || 1,
+        imagem_produto: produto.imagem || produto.img || produto.imagem_produto,
+        timestamp: Date.now()
+      });
+    }
+    
+    localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+    console.log("Carrinho local atualizado:", carrinhoLocal);
+    
+    // Atualiza o carrinho
+    carregarCarrinho();
+    // Dispara evento para outros componentes
+    window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
+    return { success: true, message: 'Produto adicionado ao carrinho!' };
+  }
+};
 
   const carregarCarrinho = () => {
     const id_usuario = localStorage.getItem('id_usuario_logado');
@@ -179,93 +181,182 @@ function NavBar({ search }) {
   };
 
   const buscaCarrinhoAPI = async (id) => {
-    try {
-      const response = await ky.get(`http://localhost:3000/carrinho`, {
-        searchParams: { fk_id_usuario: id }
-      }).json();
+  try {
+    console.log(`=== INICIANDO buscaCarrinhoAPI para usuário: ${id} ===`);
+    
+    const response = await ky.get(`http://localhost:3000/carrinho`, {
+      searchParams: { fk_id_usuario: id }
+    }).json();
 
-      if (response && response.data) {
-        const itensFormatados = response.data.map(item => {
-          const precoUnitario = formatarPrecoParaNumero(item.valor || 0);
-          const quantidade = parseInt(item.quantidade || 1);
-          const totalItem = precoUnitario * quantidade;
+    console.log("Resposta da API do carrinho:", response);
 
-          return {
-            id: item.id_carrinho || item.id,
-            nome: item.nome || "Produto",
-            valor: precoUnitario,
-            quantidade: quantidade,
-            img: item.imagem_produto || item.img || "default-image.svg",
-            preco: totalItem,
-            preco_unitario: precoUnitario
-          };
-        });
+    if (response && response.data) {
+      console.log(`${response.data.length} itens encontrados no carrinho`);
+      
+      // Cria os itens básicos primeiro
+      const itensBasicos = response.data.map(item => {
+        const precoUnitario = formatarPrecoParaNumero(item.preco || 0);
+        const quantidade = parseInt(item.quantidade || 1);
+        const totalItem = precoUnitario * quantidade;
 
-        setItensCarrinho(itensFormatados);
-
-        const subtotalCalc = itensFormatados.reduce((total, item) => {
-          return total + (item.preco || 0);
-        }, 0);
-
-        setSubtotal(subtotalCalc.toFixed(2));
-      }
-    } catch (err) {
-      console.error("Erro ao buscar carrinho:", err);
-    }
-  };
-
-  const removerItemCarrinho = (id) => {
-    console.log("Tentando remover item ID:", id);
-
-    const id_usuario = localStorage.getItem('id_usuario_logado');
-
-    if (id_usuario) {
-      removerItemAPI(id);
-    } else {
-      let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
-
-      const index = carrinhoLocal.findIndex(item => {
-        if (item.id && item.id.toString() === id.toString()) return true;
-        if (item.timestamp && item.timestamp.toString() === id.toString()) return true;
-        if (item.fk_id_produto && item.fk_id_produto.toString() === id.toString()) return true;
-        return false;
+        return {
+          id: item.id_carrinho,
+          fk_id_produto: item.fk_id_produto,
+          nome: item.titulo_ || "Produto",
+          valor: precoUnitario,
+          quantidade: quantidade,
+          preco: totalItem,
+          preco_unitario: precoUnitario,
+          img: "default-image.svg" // Imagem padrão inicial
+        };
       });
 
-      if (index !== -1) {
-        console.log("Removendo item no índice:", index, "Item:", carrinhoLocal[index]);
-        carrinhoLocal.splice(index, 1);
-        localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+      console.log("Itens básicos criados:", itensBasicos);
+      
+      // Atualiza o estado com os itens básicos primeiro
+      setItensCarrinho(itensBasicos);
 
-        const subtotalCalc = carrinhoLocal.reduce((total, item) => {
-          const precoUnitario = parseFloat(item.preco_unitario || item.valor || 0);
-          const quantidade = parseInt(item.quantidade || 1);
-          return total + (precoUnitario * quantidade);
-        }, 0);
+      // Calcula subtotal com os itens básicos
+      const subtotalCalc = itensBasicos.reduce((total, item) => {
+        return total + (item.preco || 0);
+      }, 0);
 
-        console.log("Novo subtotal após remoção:", subtotalCalc.toFixed(2));
-        setSubtotal(subtotalCalc.toFixed(2));
+      setSubtotal(subtotalCalc.toFixed(2));
+      
+      // Depois busca fotos para cada item
+      buscarFotosParaItens(itensBasicos);
+      
+    } else {
+      console.log("Nenhum dado no carrinho");
+      setItensCarrinho([]);
+      setSubtotal("0.00");
+    }
+  } catch (err) {
+    console.error("Erro ao buscar carrinho:", err);
+    setItensCarrinho([]);
+    setSubtotal("0.00");
+  }
+};
 
-        carregarCarrinho();
-        window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
-      } else {
-        console.log("Item não encontrado no carrinho");
+const buscaFotoProduto = async (id_produto) => {
+  try {
+    console.log(`Buscando foto para produto ${id_produto}`);
+    
+    const response = await ky.get(`http://localhost:3000/${id_produto}/1/foto`).json();
+    
+    if (response && response.data && response.data.url) {
+      console.log(`Foto encontrada para produto ${id_produto}:`, response.data.url);
+      return response.data.url;
+    } else if (response && response.url) {
+      console.log(`Foto encontrada (formato alternativo) para produto ${id_produto}:`, response.url);
+      return response.url;
+    } else {
+      console.log(`Nenhuma foto encontrada para produto ${id_produto}, usando padrão`);
+      return "default-image.svg";
+    }
+  } catch (error) {
+    console.log(`Erro ao buscar foto do produto ${id_produto}:`, error.message);
+    return "default-image.svg";
+  }
+};
+
+// Função separada para buscar fotos
+const buscarFotosParaItens = async (itens) => {
+  console.log(`Buscando fotos para ${itens.length} itens...`);
+  
+  const itensAtualizados = [...itens];
+  
+  for (let i = 0; i < itensAtualizados.length; i++) {
+    const item = itensAtualizados[i];
+    
+    if (item.fk_id_produto) {
+      try {
+        const fotoUrl = await buscaFotoProduto(item.fk_id_produto);
+        itensAtualizados[i].img = fotoUrl;
+        
+        // Atualiza o estado com a nova foto
+        setItensCarrinho(prev => 
+          prev.map((prevItem, index) => 
+            index === i ? { ...prevItem, img: fotoUrl } : prevItem
+          )
+        );
+        
+        console.log(`Foto atualizada para item ${i}:`, fotoUrl);
+      } catch (error) {
+        console.error(`Erro ao buscar foto para item ${i}:`, error);
+        // Mantém a imagem padrão
       }
     }
-  };
+  }
+  
+  console.log("Itens com fotos atualizados:", itensAtualizados);
+};
 
-  const removerItemAPI = async (id) => {
-    try {
-      const response = await ky.delete(`http://localhost:3000/carrinho`, {
-        searchParams: { id_carrinho: id }
-      }).json();
+const removerItemCarrinho = async (id) => {
+  console.log("Tentando remover item ID:", id);
 
-      if (response) {
-        carregarCarrinho();
-      }
-    } catch (err) {
-      console.error("Erro ao remover item:", err);
+  const id_usuario = localStorage.getItem('id_usuario_logado');
+
+  if (id_usuario) {
+    const result = await removerItemAPI(id);
+    
+    if (result) {
+      // Atualiza o carrinho
+      carregarCarrinho();
+      // Dispara evento para outros componentes
+      window.dispatchEvent(new Event('carrinhoAtualizado'));
+    } else {
+      console.error("Erro ao remover item:", result.message);
     }
-  };
+  } else {
+    let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+
+    const index = carrinhoLocal.findIndex(item => {
+      if (item.id && item.id.toString() === id.toString()) return true;
+      if (item.timestamp && item.timestamp.toString() === id.toString()) return true;
+      if (item.fk_id_produto && item.fk_id_produto.toString() === id.toString()) return true;
+      return false;
+    });
+
+    if (index !== -1) {
+      console.log("Removendo item no índice:", index, "Item:", carrinhoLocal[index]);
+      carrinhoLocal.splice(index, 1);
+      localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+
+      const subtotalCalc = carrinhoLocal.reduce((total, item) => {
+        const precoUnitario = parseFloat(item.preco_unitario || item.valor || 0);
+        const quantidade = parseInt(item.quantidade || 1);
+        return total + (precoUnitario * quantidade);
+      }, 0);
+
+      console.log("Novo subtotal após remoção:", subtotalCalc.toFixed(2));
+      setSubtotal(subtotalCalc.toFixed(2));
+
+      carregarCarrinho();
+      window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
+    } else {
+      console.log("Item não encontrado no carrinho");
+    }
+  }
+};
+
+const removerItemAPI = async (id) => {
+  try {
+    const response = await ky.delete('http://localhost:3000/carrinho', {
+      json: { id_carrinho: id }  // ← Enviando no body, não como searchParams
+    }).json();
+
+    if (response) {
+      carregarCarrinho();
+      return { success: true, message: response.message };
+    } else {
+      return { success: false, message: response.error || 'Erro ao remover item' };
+    }
+  } catch (err) {
+    console.error("Erro ao remover item:", err);
+    return { success: false, message: 'Erro ao remover item do carrinho.' };
+  }
+};
 
   useEffect(() => {
     carregarCarrinho();
@@ -361,7 +452,7 @@ function NavBar({ search }) {
 
   const irParaLogin = () => {
     setModalLogin(false);
-    navigate('/login', { 
+    navigate('/cadastro', { 
       state: { 
         from: 'carrinho',
         message: 'Faça login para finalizar sua compra. Seu carrinho será mantido.',
@@ -412,7 +503,7 @@ function NavBar({ search }) {
               </Link>
               <div className="flex flex-col text-sm text-blackwhite/80 font-primary">
                 <p>Olá,</p>
-                <p>{dados_usuario.nome_usuario ? dados_usuario.nome_usuario : "Visitante"}</p>
+                <p>{dados_usuario.nome_usuario ? dados_usuario.nome_usuario.split(' ')[0] : "Visitante"}</p>
               </div>
               <Link onClick={abrir}>
                 <img src={iconCarrinho} alt="" className="pl-3" />
@@ -500,7 +591,7 @@ function NavBar({ search }) {
                           <div className="w-30/100 p-2">
                             <img
                               className="w-full h-24 object-cover rounded-lg"
-                              src={item.img || "default-image.svg"}
+                              src={item.img}
                               alt={item.nome}
                             />
                           </div>
