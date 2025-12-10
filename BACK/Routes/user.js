@@ -273,7 +273,7 @@ router.delete("/carrinho", async (req, res) => {
 
   try {
     const response = await pool.query(
-      "DELETE FROM carrinho WHERE id_carrinho = $1 RETURNING *,
+      "DELETE FROM carrinho WHERE id_carrinho = $1 RETURNING *"
       [id_carrinho]
     );
     if (!response) return console.log(response.status);
