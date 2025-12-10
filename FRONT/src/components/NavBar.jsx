@@ -159,16 +159,25 @@ function NavBar({ search }) {
     };
   };
 
-  useEffect(() => {
-  const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho"));
-  const id_usuario = localStorage.getItem('id_usuario_logado');
+useEffect(() => {
+  const carregar = async () => {
+    const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho"));
+    const id_usuario = localStorage.getItem('id_usuario_logado');
 
-    if (carrinhoSalvo) setItensCarrinho(carrinhoSalvo) else await buscaCarrinho(id_usuario);
+    if (carrinhoSalvo) {
+      setItensCarrinho(carrinhoSalvo);
+    } else {
+      await buscaCarrinho(id_usuario);
+    }
+  };
+
+  carregar();
 }, []);
 
 
+
  
-  const removerItemCarrinho = (id) => {
+  const removerItemCarrinho = async (id) => {
   const id_usuario = localStorage.getItem('id_usuario_logado');
     if (id_usuario) {
   const novoCarrinho = itensCarrinho.filter(item => item.id !== id);
