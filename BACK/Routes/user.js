@@ -251,6 +251,21 @@ router.post("/carrinho", async (req, res) => {
   }
 });
 
+router.get("/carrinho", async (req, res) => {
+  const { fk_id_usuario } = req.body;
+
+  try {
+    const response = await pool.query(
+      "SELECT * FROM carrinho WHERE fk_id_usuario = $1",
+      [fk_id_usuario]
+    );
+    res.status(201).json({ data: response.rows});
+  } catch (err) {
+    res.status(500).send("Erro ao buscar");
+  }
+});
+
+
 router.use('/uploads', express.static('uploads'));
 
 
