@@ -4,7 +4,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 
-// ---- CONFIG MULTER NO MESMO ARQUIVO ---- //
+// ---- CONFIG MULTER COM VALIDAÇÃO ---- //
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -15,47 +15,79 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+// 🔥 FILTRO DE ARQUIVO PARA ACEITAR SOMENTE FOTOS
+function fileFilter(req, file, cb) {
+  const allowedTypes = /jpeg|jpg|png|webp/;
 
-router.post("/produtos/:id/foto", upload.single("foto"), async (req, res) => {
-  console.log("FILE RECEBIDO:", req.file);
-  console.log("BODY RECEBIDO:", req.body);
+  const mimeIsValid = allowedTypes.test(file.mimetype);
+  const extIsValid = allowedTypes.test(
+    path.extname(file.originalname).toLowerCase()
+  );
 
-  const { id } = req.params;
-  const { posicao } = req.body;
+  if (mimeIsValid && extIsValid) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        "Tipo de arquivo inválido! Envie apenas imagens JPG, JPEG, PNG ou WEBP."
+      )
+    );
+  }
+}
 
-  try {
-    // não veio imagem?
-    if (!req.file) {
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // limite opcional: 5MB
+});
+
+router.post("/produtos/:id/foto", (req, res) => {
+  upload.single("foto")(req, res, async function (err) {
+    // --- ERROS DO MULTER ---
+    if (err instanceof multer.MulterError) {
       return res.status(400).json({
-        message: "Nenhuma imagem foi enviada!",
+        message: "Erro no upload!",
+        error: err.message,
+      });
+    } else if (err) {
+      return res.status(400).json({
+        message: err.message, // erro do fileFilter
       });
     }
 
-    // 🔥 CORREÇÃO: URL completa incluindo o host
-    const urlFinal = "http://localhost:3000/uploads/" + req.file.filename;
+    // --- SE CHEGOU AQUI, O ARQUIVO É VÁLIDO ---
+    console.log("FILE RECEBIDO:", req.file);
+    console.log("BODY RECEBIDO:", req.body);
 
-    const db = new DbService();
-    const sql = db.criaNovaFoto();
-    const pool = db.getPool();
+    const { id } = req.params;
+    const { posicao } = req.body;
 
-    const response = await pool.query(sql, [
-      urlFinal, // Agora salva a URL completa
-      posicao,
-      id, // id do produto
-    ]);
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          message: "Nenhuma imagem foi enviada!",
+        });
+      }
 
-    return res.status(200).json({
-      message: `Foto enviada com sucesso!`,
-      data: response.rows[0],
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Erro interno ao enviar foto",
-      error: error.mensagem,
-    });
-  }
+      const urlFinal = "http://localhost:3000/uploads/" + req.file.filename;
+
+      const db = new DbService();
+      const sql = db.criaNovaFoto();
+      const pool = db.getPool();
+
+      const response = await pool.query(sql, [urlFinal, posicao, id]);
+
+      return res.status(200).json({
+        message: "Foto enviada com sucesso!",
+        data: response.rows[0],
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Erro interno ao enviar foto",
+        error: error.message,
+      });
+    }
+  });
 });
 
 router.get("/fotos", async (req, res) => {
