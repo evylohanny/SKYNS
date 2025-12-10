@@ -331,9 +331,9 @@ function Home() {
                   <div className="flex flex-row w-full gap-1.5">
                     <div
                       className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300"
-                      onClick={() => handleProductClick(item.tipo)}
+                      onClick={() => handleProductClick(item)}
                     >
-                      Adicionar
+                      Comprar
                     </div>
                     <div
                       className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
@@ -437,8 +437,8 @@ function Home() {
                   </div>
                   <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
                   <div className="flex flex-row w-full gap-1.5">
-                    <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
-                      Adicionar
+                    <div onClick={() => handleProductClick(item)} className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
+                      Comprar
                     </div>
                     <div
                       className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
@@ -626,8 +626,8 @@ function Home() {
                   </div>
                   <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
                   <div className="flex flex-row w-full gap-1.5">
-                    <div className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
-                      Adicionar
+                    <div onClick={() => handleProductClick(item)} className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
+                      Comprar
                     </div>
                     <div
                       className="flex justify-center items-center border-[1.5px] w-20 border-purpledark rounded-xl p-2 hover:bg-purpledark transition duration-300"
