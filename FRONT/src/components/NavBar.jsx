@@ -19,6 +19,7 @@ import ky from "ky";
 function NavBar({ search }) {
   const [isCategoriasOpen, setCategoriasOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [subtotal, setSubtotal] = useState(0.00);
   const { logoAnimation } = useContext(GlobalContext);
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -220,6 +221,39 @@ useEffect(() => {
     buscarPerfil();
   }, []);
 
+  const buscaFoto = async(id) => {
+    try {
+      const response = await ky.get(`http://localhost:3000/${id}/foto`).json();
+
+      if (response) {
+        console.log(response.data);
+        return response.data.url;
+      }
+      console.log("Erro");
+    } catch (error) {
+      console.log({
+        message: `Erro ao buscar foto do produto ${id}`,
+        error: error.message,
+      });
+      return null;
+    };
+  };
+
+  useEffect(() => {
+
+    const calculaSubtotal = () => {
+
+      let subtotalAux = 0.00;
+      for (let i = 0; i < itensCarrinho.length; i++) {
+
+        subtotalAux = subtotalAux + parseFloat(itensCarrinho[i].preco);
+      };
+
+      setSubtotal(subtotalAux);
+    };
+
+    calculaSubtotal();
+  }, [itensCarrinho]);
 
   return (
     <div className="w-full h-30">
@@ -337,7 +371,7 @@ useEffect(() => {
                       {itensCarrinho.map((item, index) => (
                         <div className="w-full pb-4 flex justify-center">
                           <div className="w-30/100">
-                            <img className="w-65/100" src={item.img} alt="" />
+                            <img className="w-65/100" src={() => buscaFoto(item.id)} alt="" />
                           </div>
                           <div className="w-60/100 flex flex-col  ">
                             <div className="flex h-12 w-full ">
@@ -406,7 +440,7 @@ useEffect(() => {
                     <div className="w-full flex gap-2 flex-col items-center">
                       <div className="w-90/100 mt-3 flex justify-between">
                         <p className="text-[#abaaaa]">SUBTOTAL</p>
-                        <p className="font-semibold"> </p>
+                        <p className="font-semibold"> R${subtotal}</p>
                       </div>
                       <div className="w-90/100 flex justify-between">
                         <p className="text-[#abaaaa]">FRETE</p>
@@ -414,7 +448,7 @@ useEffect(() => {
                       </div>
                       <div className="w-90/100 pb-4 flex justify-between">
                         <p className="text-[#abaaaa]">TOTAL</p>
-                        <p className="font-semibold">R$  </p>
+                        <p className="font-semibold">R$ {subtotal}</p>
                       </div>
                     </div>
                     <div className="w-full flex justify-center">
