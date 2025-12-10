@@ -4,6 +4,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ky from 'ky';
+import { useNavigate } from "react-router-dom";
 
 // components importados
 import Filtro from "../components/Filtro.jsx";
@@ -21,6 +22,7 @@ import setaEsquerda from "../assets/SetaEsquerdaCinza.svg";
 import setaDireita from "../assets/SetaDireitaCinza.svg";
 
 function ProdutoCustomizavel({ dados }) {
+  const navigate = useNavigate();
   const limiteRef = useRef(null);
   const [fotos, setFotos] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -76,17 +78,25 @@ function ProdutoCustomizavel({ dados }) {
     buscaFoto(dados.id_produto);
   }, [dados]);
 
-
-
+  // Estados para estoque
   const [quantidade, setQuantidade] = useState(1);
+  const [estoqueDisponivel, setEstoqueDisponivel] = useState(dados.quantidade_estoque || 0);
+  const [carregando, setCarregando] = useState(false);
 
-  const aumentar = () => setQuantidade((prev) => prev + 1);
+  // Controle de quantidade
+  const aumentar = () => {
+    if (quantidade < estoqueDisponivel) {
+      setQuantidade(prev => prev + 1);
+    } else {
+      mostrarMensagem(`⚠️ Não há mais unidades disponíveis em estoque.`);
+    }
+  };
+
   const diminuir = () => {
-    if (quantidade > 1) setQuantidade((prev) => prev - 1);
+    if (quantidade > 1) setQuantidade(prev => prev - 1);
   };
 
   const [tab, setTab] = useState("funciona");
-
 
   const componentesDisponiveis = [
     {
@@ -274,7 +284,7 @@ function ProdutoCustomizavel({ dados }) {
 
   const mostrarMensagem = (texto) => {
     setMensagem(texto);
-    setTimeout(() => setMensagem(null), 5000); // some em 5s
+    setTimeout(() => setMensagem(null), 5000);
   };
 
   const toggleComponente = (nome) => {
@@ -306,6 +316,132 @@ function ProdutoCustomizavel({ dados }) {
     window.scrollTo(0, 0);
   }, []);
 
+const handleAdicionarAoCarrinho = async () => {
+  if (estoqueDisponivel === 0) {
+    mostrarMensagem("❌ Este produto está esgotado no momento.");
+    return;
+  }
+
+  if (quantidade > estoqueDisponivel) {
+    mostrarMensagem(`⚠️ Quantidade indisponível. Estoque: ${estoqueDisponivel} unidades.`);
+    return;
+  }
+
+  setCarregando(true);
+
+  try {
+    // Obter a primeira foto como imagem do produto
+    const imagemProduto = fotos.length > 0 ? fotos[0] : null;
+
+    // Preparar dados do item
+    const itemCarrinho = {
+      fk_id_produto: dados.id_produto,
+      quantidade: quantidade,
+      preco_unitario: dados.preco,
+      nome_produto: dados.titulo_,
+      imagem_produto: imagemProduto,
+      componentes_selecionados: selecionados.join(", "),
+      timestamp: Date.now()
+    };
+
+    console.log("Tentando adicionar ao carrinho:", itemCarrinho);
+
+    // Verificar se usuário está logado
+    const id_usuario_logado = localStorage.getItem("id_usuario_logado");
+    
+    if (id_usuario_logado) {
+      // Usuário LOGADO: adicionar ao carrinho via API
+      try {
+        const response = await ky.post("http://localhost:3000/carrinho/adicionar", {
+          json: {
+            ...itemCarrinho,
+            fk_id_usuario: parseInt(id_usuario_logado)
+          }
+        }).json();
+
+        console.log("Resposta da API:", response);
+
+        if (response.success) {
+          mostrarMensagem(`✅ ${quantidade} unidade(s) adicionada(s) ao carrinho!`);
+          // Resetar quantidade para 1
+          setQuantidade(1);
+          
+          // Disparar evento para atualizar o carrinho no NavBar
+          window.dispatchEvent(new CustomEvent('carrinhoAtualizado'));
+        } else {
+          mostrarMensagem(`❌ Erro ao adicionar ao carrinho: ${response.message}`);
+        }
+      } catch (apiError) {
+        console.error("Erro na API:", apiError);
+        mostrarMensagem("❌ Erro na conexão com o servidor.");
+      }
+    } else {
+      // Usuário NÃO LOGADO: usar carrinho local (localStorage)
+      console.log("Usando carrinho local (usuário não logado)");
+      
+      let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+      console.log("Carrinho atual:", carrinhoLocal);
+      
+      // Verificar se o produto já existe no carrinho local (mesmo produto e mesmos componentes)
+      const itemExistenteIndex = carrinhoLocal.findIndex(item => 
+        item.fk_id_produto === dados.id_produto && 
+        item.componentes_selecionados === itemCarrinho.componentes_selecionados
+      );
+      
+      if (itemExistenteIndex !== -1) {
+        // Se já existe, atualizar quantidade
+        carrinhoLocal[itemExistenteIndex].quantidade += quantidade;
+        console.log("Atualizando item existente:", carrinhoLocal[itemExistenteIndex]);
+      } else {
+        // Se não existe, adicionar novo item
+        carrinhoLocal.push(itemCarrinho);
+        console.log("Adicionando novo item:", itemCarrinho);
+      }
+      
+      // Salvar no localStorage
+      localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+      console.log("Carrinho salvo:", carrinhoLocal);
+      
+      // Verificar se salvou corretamente
+      const verify = JSON.parse(localStorage.getItem('carrinhoLocal'));
+      console.log("Verificação do localStorage:", verify);
+      
+      mostrarMensagem(`✅ ${quantidade} unidade(s) adicionada(s) ao carrinho!`);
+      // Resetar quantidade para 1
+      setQuantidade(1);
+      
+      // Disparar evento para atualizar o carrinho no NavBar com mais detalhes
+      window.dispatchEvent(new CustomEvent('carrinhoLocalAtualizado', {
+        detail: { carrinhoLocal }
+      }));
+    }
+
+  } catch (error) {
+    console.error("Erro geral ao adicionar ao carrinho:", error);
+    mostrarMensagem("❌ Ocorreu um erro ao adicionar ao carrinho.");
+  } finally {
+    setCarregando(false);
+  }
+};
+
+  // Função para buscar estoque atualizado do banco
+  const buscarEstoqueAtualizado = async () => {
+    if (!dados || !dados.id_produto) return;
+    
+    try {
+      const response = await ky.get(`http://localhost:3000/produtos/${dados.id_produto}`).json();
+      if (response.quantidade_estoque !== undefined) {
+        setEstoqueDisponivel(response.quantidade_estoque);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar estoque atualizado:", error);
+    }
+  };
+
+  // Busca estoque atualizado quando o componente é montado
+  useEffect(() => {
+    buscarEstoqueAtualizado();
+  }, [dados.id_produto]);
 
   return (
     <div className="min-h-screen">
@@ -313,7 +449,6 @@ function ProdutoCustomizavel({ dados }) {
 
       {/* primeira parte (filtro, fotos e descrição) */}
       <div className="pl-5">
-
         <Filtro
           limiteRef={limiteRef}
           selecionados={selecionados}
@@ -321,8 +456,6 @@ function ProdutoCustomizavel({ dados }) {
           componentes={componentesConvertidos}
           categoria={dados.categoria || "Acneica"}
         />
-
-
       </div>
 
       <div className="flex pt-18 gap-10 items-start justify-center pl-68">
@@ -336,15 +469,14 @@ function ProdutoCustomizavel({ dados }) {
                 src={foto}
                 alt={`Miniatura ${index}`}
                 className={`w-20 h-20 rounded-lg cursor-pointer border 
-        ${activeIndex === index ? "border-purpledark" : "border-transparent"}`}
+                  ${activeIndex === index ? "border-purpledark" : "border-transparent"}`}
                 onClick={() => handleMiniClick(index)}
               />
             ))}
           </div>
 
-
           {/* Foto principal */}
-          <div className="w-[450px] h-[550px] relative">
+          <div className="w-[330px] h-[600px] relative">
             <button className="custom-prev absolute top-1/2 left-2 -translate-y-1/2 z-10">
               <img src={setaEsquerda} alt="anterior" className="w-8 h-8" />
             </button>
@@ -373,7 +505,6 @@ function ProdutoCustomizavel({ dados }) {
                 </SwiperSlide>
               ))}
             </Swiper>
-
           </div>
         </div>
 
@@ -388,19 +519,30 @@ function ProdutoCustomizavel({ dados }) {
           <p className="pt-6 font-medium text-[25px] text-gray2">
             {dados.titulo_}
           </p>
-          <div className="flex justify-end ">
+          
+          {/* Mostra mensagem APENAS se estoque ≤ 10 e > 0 */}
+          {estoqueDisponivel <= 10 && estoqueDisponivel > 0 && (
+            <div className="mt-2">
+              <p className="text-orange-600 font-semibold text-sm">
+                ⚠️ Últimas unidades em estoque
+              </p>
+            </div>
+          )}
+          
+
+          <div className="flex justify-end">
             <p className="mt-4 bg-blackwhite/20 w-fit px-2 py-0.5 rounded">
               300g
             </p>
           </div>
 
           <div className="pt-6 flex gap-3 items-center">
-            <p className="line-through text-black/40 font-bold">R$89,90</p>
-            <p className=" text-purpledark font-bold text-[25px]">
+            <p className="line-through text-black/40 font-bold">89,90</p>
+            <p className="text-purpledark font-bold text-[25px]">
               R${dados.preco}
             </p>
-
           </div>
+
           <div>
             <p className="w-120 text-[16px] mt-2 text-blackwhite/95">
               {dados.completa_descricao}
@@ -437,23 +579,68 @@ function ProdutoCustomizavel({ dados }) {
             <div className="flex items-center border-2 border-purpledark rounded-lg w-30 p-6 py-1">
               <button
                 onClick={diminuir}
-                className="text-purpledark text-xl font-medium w-10"
+                disabled={estoqueDisponivel === 0 || carregando}
+                className={`text-purpledark text-xl font-medium w-10 ${
+                  estoqueDisponivel === 0 || carregando ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purpledark/10'
+                }`}
               >
                 −
               </button>
-              <span className="mx-3 text-purpledark font-medium w-10">
+              <span className={`mx-3 font-medium w-10 text-center ${
+                estoqueDisponivel === 0 ? 'text-gray-400' : 'text-purpledark'
+              }`}>
                 {quantidade}
               </span>
               <button
                 onClick={aumentar}
-                className="text-purpledark text-xl font-medium w-10"
+                disabled={estoqueDisponivel === 0 || quantidade >= estoqueDisponivel || carregando}
+                className={`text-purpledark text-xl font-medium w-10 ${
+                  (estoqueDisponivel === 0 || quantidade >= estoqueDisponivel || carregando) 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-purpledark/10'
+                }`}
               >
                 +
               </button>
             </div>
-            <button className="bg-blue text-purpledark font-semibold px-7 py-2 rounded-lg">
-              COMPRAR
+            
+            <button 
+              className={`font-semibold px-7 py-2 rounded-lg transition-all duration-200 flex items-center justify-center min-w-[140px] ${
+                estoqueDisponivel === 0 || carregando
+                  ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                  : 'bg-blue text-purpledark hover:bg-blue/90 hover:scale-105 active:scale-95'
+              }`}
+              disabled={estoqueDisponivel === 0 || carregando}
+              onClick={handleAdicionarAoCarrinho}
+            >
+              {carregando ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-purpledark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  ADICIONANDO...
+                </>
+              ) : estoqueDisponivel === 0 ? 'ESGOTADO' : 'ADICIONAR AO CARRINHO'}
             </button>
+          </div>
+          
+          {/* Informação do estoque */}
+          <div className="mt-4 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${
+                estoqueDisponivel > 10 ? 'bg-green-500' : 
+                estoqueDisponivel > 0 ? 'bg-orange-500' : 'bg-red-500'
+              }`}></span>
+              <p className="text-xs">
+                Estoque disponível: <span className={`font-semibold ${
+                  estoqueDisponivel > 10 ? 'text-green-600' : 
+                  estoqueDisponivel > 0 ? 'text-orange-600' : 'text-red-600'
+                }`}>
+                  {estoqueDisponivel} unidade(s)
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -464,7 +651,7 @@ function ProdutoCustomizavel({ dados }) {
           <button
             className={`pb-2 ${tab === "funciona"
               ? "border-b-2 border-purpledark font-semibold"
-              : "text-blackwhite/70"
+              : "text-blackwhite/70 hover:text-purpledark"
               }`}
             onClick={() => setTab("funciona")}
           >
@@ -473,7 +660,7 @@ function ProdutoCustomizavel({ dados }) {
           <button
             className={`pb-2 ${tab === "composicao"
               ? "border-b-2 border-purpledark font-semibold"
-              : "text-blackwhite/70"
+              : "text-blackwhite/70 hover:text-purpledark"
               }`}
             onClick={() => setTab("composicao")}
           >
@@ -547,18 +734,33 @@ function ProdutoCustomizavel({ dados }) {
       {mensagem && (
         <div
           className="fixed bottom-10 right-10 bg-purpledark text-white px-4 py-3 rounded-xl shadow-lg 
-                     transition-all duration-500 ease-out animate-[fadeIn_0.5s_ease-out]"
+                     transition-all duration-500 ease-out animate-[fadeIn_0.5s_ease-out] z-50 max-w-md"
           style={{
             animation: "fadeIn 0.5s ease-out",
           }}
         >
-          {mensagem}
+          <div className="flex items-center gap-2">
+            {mensagem.includes('✅') && <span className="text-xl">✅</span>}
+            {mensagem.includes('⚠️') && <span className="text-xl">⚠️</span>}
+            {mensagem.includes('❌') && <span className="text-xl">❌</span>}
+            <span>{mensagem}</span>
+          </div>
         </div>
       )}
+      
       <style>{`
         @keyframes fadeIn {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+          animation: spin 1s linear infinite;
         }
       `}</style>
     </div>

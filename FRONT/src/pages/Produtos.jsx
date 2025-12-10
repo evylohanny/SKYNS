@@ -1,44 +1,110 @@
 import React, { useEffect, useState } from "react";
 import ProdutoCustomizavel from "../components/ProdutoCustomizavel";
 import ProdutoComum from "../components/ProdutoComum";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import ky from "ky";
 
 function Produtos() {
   const location = useLocation();
-  const { dados } = location.state || {};
-  const [produto, setProduto] = useState({});
+  const params = useParams();
+  const navigate = useNavigate();
+  
+  // Tenta obter dados do state ou localStorage
+  const [initialData, setInitialData] = useState(() => {
+    const savedData = localStorage.getItem('currentProduct');
+    return savedData ? JSON.parse(savedData) : (location.state?.dados || {});
+  });
+  
+  const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const kyProdutos = async () => {
+    const fetchProduto = async () => {
       try {
-        console.log(dados.id_produto);
-        const id = dados.id_produto;
-        const res = await ky.get(`http://localhost:3000/produtos/${id}`).json();
+        let idProduto;
+        
+        // Salva os dados iniciais no localStorage para recuperar após refresh
+        if (initialData && initialData.id_produto) {
+          localStorage.setItem('currentProduct', JSON.stringify(initialData));
+          idProduto = initialData.id_produto;
+        } 
+        // Se não tem dados iniciais, tenta buscar da URL
+        else if (params.id) {
+          idProduto = params.id;
+        } 
+        else {
+          throw new Error("ID do produto não encontrado");
+        }
+
+        console.log("Buscando produto com ID:", idProduto);
+        const res = await ky.get(`http://localhost:3000/produtos/${idProduto}`).json();
+        console.log("Produto encontrado:", res);
+        
+        // Se não tem dados iniciais mas encontrou produto, salva no localStorage
+        if (!initialData && res) {
+          localStorage.setItem('currentProduct', JSON.stringify({
+            ...res,
+            id_produto: idProduto
+          }));
+        }
+        
         setProduto(res);
       } catch (error) {
         console.error("Erro ao carregar produto:", error);
+        // Limpa localStorage em caso de erro
+        localStorage.removeItem('currentProduct');
       } finally {
         setLoading(false);
       }
     };
 
-    kyProdutos();
+    fetchProduto();
+  }, [initialData, params.id]);
+
+  // Limpa localStorage ao sair da página
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('currentProduct');
+    };
   }, []);
 
-  if (loading) return <p>Carregando produtos...</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purpledark"></div>
+        <p className="ml-3 text-gray-600">Carregando produto...</p>
+      </div>
+    );
+  }
 
-  if (!produto) return <p>Nenhum produto encontrado.</p>;
+  if (!produto) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <p className="text-gray-600 mb-4">Produto não encontrado.</p>
+        <button 
+          onClick={() => navigate("/")}
+          className="px-4 py-2 bg-purpledark text-white rounded hover:bg-purpledark/90"
+        >
+          Ir para a página inicial
+        </button>
+      </div>
+    );
+  }
+
+  // Verifica se é personalizado - tenta de várias fontes
+  const isPersonalizado = 
+    initialData?.personalizado || 
+    produto?.personalizado || 
+    produto?.componente || 
+    false;
 
   return (
     <div>
-      {dados.personalizado &&
+      {isPersonalizado ? (
         <ProdutoCustomizavel dados={produto} />
-      }
-
-      {!dados.personalizado &&
+      ) : (
         <ProdutoComum dados={produto} />
-      }
+      )}
     </div>
   );
 }

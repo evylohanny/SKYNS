@@ -45,7 +45,10 @@ function PLogin() {
       return;
     }
 
-      let carrinho = JSON.parse(localStorage.getItem("carrinho"))
+    // Pegar o carrinho da chave 'carrinho' (que foi salva no NavBar)
+    let carrinhoTemporario = JSON.parse(localStorage.getItem("carrinho")) || [];
+    console.log("Carrinho temporário encontrado:", carrinhoTemporario);
+
     try {
       const response = await ky
         .post("http://localhost:3000/login", {
@@ -53,15 +56,36 @@ function PLogin() {
         })
         .json();
 
-      localStorage.setItem("id_usuario_logado", response.decode.id);
-      console.log(response.decode.id);
+      const usuarioId = response.decode.id;
+      localStorage.setItem("id_usuario_logado", usuarioId);
+      console.log("Usuário logado com ID:", usuarioId);
 
       if (response) {
+        // Se houver carrinho temporário, migrar para o usuário
+        if (carrinhoTemporario.length > 0) {
+          console.log("Migrando carrinho temporário para usuário...");
+          await migrarCarrinhoParaUsuario(usuarioId, carrinhoTemporario);
+        }
 
-        if (carrinho) {
-         await valor_produto(carrinho); 
-        };
-      navigate("/");
+        // Verificar se há redirecionamento pendente
+        const redirectAfterLogin = localStorage.getItem("redirectAfterLogin");
+        
+        // Limpar dados temporários
+        localStorage.removeItem("carrinho");
+        localStorage.removeItem("carrinhoLocal");
+        localStorage.removeItem("carrinhoTemporario");
+        localStorage.removeItem("redirectAfterLogin");
+        
+        // Disparar evento para atualizar o NavBar
+        window.dispatchEvent(new Event('carrinhoAtualizado'));
+        
+        // Redirecionar
+        if (redirectAfterLogin) {
+          console.log("Redirecionando para:", redirectAfterLogin);
+          navigate(redirectAfterLogin);
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("Erro ao logar:", error);
@@ -70,31 +94,37 @@ function PLogin() {
     }
   };
 
-  const valor_produto = async (itens) => {
-  localStorage.removeItem("carrinho");
-  const id_usuario_logado = localStorage.getItem("id_usuario_logado");
-
-  if (id_usuario_logado) {
-
-    for (let i=0; i < itens.length; i++) {
-    try {
-      await fetch("http://localhost:3000/carrinho", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fk_id_usuario: id_usuario_logado,
-          fk_id_produto: itens[i].id,
-          quantidade: 1,
-        }),
-      });
-    } catch (error) {
-      console.error("Erro ao salvar no banco:", error);
+  // Função para migrar carrinho temporário para usuário logado
+  const migrarCarrinhoParaUsuario = async (usuarioId, itens) => {
+    console.log(`Migrando ${itens.length} itens para usuário ${usuarioId}`);
+    
+    for (let i = 0; i < itens.length; i++) {
+      const item = itens[i];
+      try {
+        // Usar a mesma estrutura que o NavBar usa
+        const itemParaEnviar = {
+          fk_id_usuario: parseInt(usuarioId),
+          fk_id_produto: item.fk_id_produto || item.id,
+          quantidade: item.quantidade || 1,
+          preco_unitario: item.preco_unitario || item.valor || 0,
+          nome_produto: item.nome_produto || item.nome || "Produto",
+          imagem_produto: item.imagem_produto || item.img || "",
+          componentes_selecionados: item.componentes_selecionados || ""
+        };
+        
+        console.log("Enviando item:", itemParaEnviar);
+        
+        await ky.post("http://localhost:3000/carrinho/adicionar", {
+          json: itemParaEnviar
+        }).json();
+        
+        console.log(`Item ${i + 1} migrado com sucesso`);
+      } catch (error) {
+        console.error(`Erro ao migrar item ${i + 1}:`, error);
+      }
     }
-    }
-  }
-};
+    console.log("Migração de carrinho concluída");
+  };
 
   return (
     <div className="flex flex-col w-full pt-12">

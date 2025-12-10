@@ -35,6 +35,8 @@ import seta_comments from "../assets/seta-comments.svg";
 import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 import ProdutoComum from "../components/ProdutoComum";
+import { formatarPrecoParaNumero, formatarParaMoedaBrasileira } from "./utils/formatters";
+
 
 function Home() {
   const navigate = useNavigate();
@@ -171,46 +173,64 @@ function Home() {
     ));
   };
 
-  const valor_produto = async (item) => {
-  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+const valor_produto = async (item) => {
+  console.log("Adicionando produto ao carrinho:", item);
+  
   const id_usuario_logado = localStorage.getItem("id_usuario_logado");
-
-  const produtoFormatado = {
-    nome: item.titulo_,
-    valor: item.preco,
+  
+  const imagemProduto = productPhotos[item.id_produto] || null;
+  
+  // Formata o preço para número
+  const precoNumerico = formatarPrecoParaNumero(item.preco);
+  
+  // Preparar dados do item
+  const itemCarrinho = {
+    fk_id_produto: item.id_produto,
     quantidade: 1,
-    id: item.id_produto,
+    preco_unitario: precoNumerico, // Já formatado como número
+    nome_produto: item.titulo_,
+    imagem_produto: imagemProduto,
+    componentes_selecionados: "",
+    timestamp: Date.now()
   };
 
-  // Atualiza localStorage
-  const index = carrinho.findIndex(p => p.id === item.id_produto);
-  if (index !== -1) {
-    carrinho[index].quantidade += 1;
-  } else {
-    carrinho.push(produtoFormatado);
-  }
-
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-  // Se estiver logado, salva no banco
   if (id_usuario_logado) {
     try {
-      await fetch("http://localhost:3000/carrinho", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fk_id_usuario: id_usuario_logado,
-          fk_id_produto: item.id_produto,
-          quantidade: 1,
-        }),
-      });
+      const response = await ky.post("http://localhost:3000/carrinho/adicionar", {
+        json: {
+          ...itemCarrinho,
+          fk_id_usuario: parseInt(id_usuario_logado)
+        }
+      }).json();
+
+      if (response.success) {
+        console.log("Produto adicionado via API");
+        window.dispatchEvent(new Event('carrinhoAtualizado'));
+      }
     } catch (error) {
-      console.error("Erro ao salvar no banco:", error);
+      console.error("Erro ao adicionar ao carrinho via API:", error);
     }
+  } else {
+    console.log("Adicionando ao carrinho local");
+    
+    let carrinhoLocal = JSON.parse(localStorage.getItem('carrinhoLocal')) || [];
+    
+    const itemExistenteIndex = carrinhoLocal.findIndex(carrinhoItem => 
+      carrinhoItem.fk_id_produto === item.id_produto
+    );
+    
+    if (itemExistenteIndex !== -1) {
+      carrinhoLocal[itemExistenteIndex].quantidade += 1;
+    } else {
+      carrinhoLocal.push(itemCarrinho);
+    }
+    
+    localStorage.setItem('carrinhoLocal', JSON.stringify(carrinhoLocal));
+    
+    window.dispatchEvent(new Event('carrinhoLocalAtualizado'));
   }
 };
+
 
 
   return mostrarLogo && logoAnimation ? (
