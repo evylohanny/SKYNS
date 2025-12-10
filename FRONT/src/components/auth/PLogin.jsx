@@ -63,6 +63,32 @@ function PLogin() {
     }
   };
 
+  const valor_produto = async (itens) => {
+  localStorage.removeItem("carrinho");
+  const id_usuario_logado = localStorage.getItem("id_usuario_logado");
+
+  if (id_usuario_logado) {
+
+    for (let i=0; i < itens.length; i++) {
+    try {
+      await fetch("http://localhost:3000/carrinho", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fk_id_usuario: id_usuario_logado,
+          fk_id_produto: itens[i].id,
+          quantidade: 1,
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao salvar no banco:", error);
+    }
+    }
+  }
+};
+
   return (
     <div className="flex flex-col w-full pt-12">
       <div className="flex flex-col w-full justify-center items-center">
