@@ -79,35 +79,62 @@ router.get('/pedidos', async (req, res) => {
 });
 
 router.post("/pedido", async (req, res) => {
-  try {
-  const db = new DbService();
-  const pool = await db.getPool();
+    const db = new DbService();
+    const pool = await db.getPool();
 
-  const { id_usuario, total } = req.body;
+    try {
+        const { id_usuario, total } = req.body;
 
-  // Adiciona CURRENT_TIMESTAMP para a data
-  const result = await pool.query(
- `INSERT INTO pedidos (fk_id_usuario, valor_total, status, data)
- VALUES ($1, $2, 'ESTOQUE', CURRENT_TIMESTAMP)
- RETURNING id_pedido, data`, // <- Garante que id_pedido é retornado
- [id_usuario, total]
-     );
+        const result = await pool.query(
+            `INSERT INTO pedidos (fk_id_usuario, valor_total, status, data)
+            VALUES ($1, $2, 'ESTOQUE', CURRENT_TIMESTAMP)
+            RETURNING id_pedido, data`,
+            [id_usuario, total]
+        );
 
-    const { id_pedido, data } = result.rows[0]; // <- id_pedido é recuperado
+        const { id_pedido, data } = result.rows[0];
 
-  // Iniciar atualização automática
-  iniciarAtualizacaoAutomatica(id_pedido); // <- id_pedido é passado
+        const resCarrinho = await pool.query(
+            `SELECT fk_id_produto, quantidade FROM carrinho WHERE fk_id_usuario = $1`,
+            [id_usuario]
+        );
+        const produtosComprados = resCarrinho.rows;
 
-    res.status(201).json({
-      message: "Pedido criado com sucesso!",
-      id_pedido: id_pedido,
-      data: data
-    });
+        if (produtosComprados.length > 0) {
+            for (const item of produtosComprados) {
+                const id_produto = item.fk_id_produto;
+                const quantidade_comprada = item.quantidade;
 
-  } catch (err) {
-    console.error("ERRO AO CRIAR PEDIDO:", err);
-    res.status(500).json({ error: "Erro ao criar pedido" });
-  }
+                // Diminui a quantidade no estoque
+                await pool.query(
+                    `UPDATE produtos
+                    SET quantidade_estoque = quantidade_estoque - $1
+                    WHERE id_produto = $2`,
+                    [quantidade_comprada, id_produto]
+                );
+            }
+
+            // 3. Limpar o carrinho do usuário após a compra
+            await pool.query(
+                `DELETE FROM carrinho WHERE fk_id_usuario = $1`,
+                [id_usuario]
+            );
+        } else {
+             console.warn(`Carrinho vazio para o usuário ${id_usuario}. Nenhum estoque atualizado.`);
+        }
+
+        iniciarAtualizacaoAutomatica(id_pedido);
+
+        res.status(201).json({
+            message: "Pedido criado com sucesso!",
+            id_pedido: id_pedido,
+            data: data
+        });
+
+    } catch (err) {
+        console.error("ERRO AO CRIAR PEDIDO E ATUALIZAR ESTOQUE:", err);
+        res.status(500).json({ error: "Erro ao criar pedido ou atualizar estoque" });
+    }
 });
 
 

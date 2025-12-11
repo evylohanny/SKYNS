@@ -48,20 +48,20 @@ function Rastreio() {
     const getStatusMessage = () => {
         switch (currentPhase) {
             case 'ESTOQUE':
-                return 'Olá, Manassés! Seu pedido está em estoque, pronto para ser processado.';
+                return 'Olá! Seu pedido está em estoque, pronto para ser processado.';
             case 'PROCESSO':
-                return 'Olá, Manassés! Seu pedido está em processamento.';
+                return 'Olá! Seu pedido está em processamento.';
             case 'MONTAGEM':
-                return 'Olá, Manassés! Seu pedido está sendo montado.';
+                return 'Olá! Seu pedido está sendo montado.';
             case 'EXPEDIÇÃO':
-                return 'Olá, Manassés! Seu pedido está pronto para envio (expedição).';
+                return 'Olá! Seu pedido está pronto para envio (expedição).';
             case 'COMPLETED':
-                return 'Olá, Manassés! Seu pedido foi concluído e entregue!';
+                return 'Olá! Seu pedido foi concluído e entregue!';
             case 'NOT_FOUND':
             case 'UNKNOWN':
-                return 'Olá, Manassés! Não encontramos pedidos ativos, ou o status é desconhecido.';
+                return 'Olá! Não encontramos pedidos ativos, ou o status é desconhecido.';
             default:
-                return 'Olá, Manassés! Estamos preparando o seu pedido.';
+                return 'Olá! Estamos preparando o seu pedido.';
         }
     };
 

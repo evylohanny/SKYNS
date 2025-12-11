@@ -316,6 +316,7 @@ function ProdutoCustomizavel({ dados }) {
       "Vitamina C",
       "Ácido Salicílico",
     ],
+    
     "Retinol vegetal": [
       "Ácido Glicólico",
       "Ácido Mandélico",
@@ -396,9 +397,9 @@ function ProdutoCustomizavel({ dados }) {
         produtoParaCarrinho
       );
       if (resultado.success) {
-        alert(resultado.message);
+        console.log(resultado.message);
       } else {
-        alert(resultado.message);
+        console.log(resultado.message);
       }
     }
   };
