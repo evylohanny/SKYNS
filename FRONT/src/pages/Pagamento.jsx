@@ -20,6 +20,8 @@ function Pagamento() {
 
   const [produtos, setProdutos] = useState([]);
 
+  const [idPedido, setIdPedido] = useState(null);
+
   const [cupom, setCupom] = useState("");
   const [cupomValido, setCupomValido] = useState(null);
 
@@ -127,11 +129,7 @@ function Pagamento() {
 
     if (digits.length < 13 || digits.length > 19) {
       newErrors.cardNumber = "Número do cartão deve ter entre 13 e 19 dígitos";
-    }
-
-    if (!validarLuhn(digits)) {
-      newErrors.cardNumber = "Número do cartão inválido";
-    }
+    }    
 
     if (!/^\d{2}\/\d{2}$/.test(expiry)) {
       newErrors.expiry = "Data inválida";
@@ -176,72 +174,59 @@ function Pagamento() {
         }
       }).json();
 
-      if (response.data) {
+     if (response.data) {
+  console.log(response);
+  setProdutos(response.data);
 
-        console.log(response);
-        setProdutos(response.data);
+  buscarFotosParaItens(response.data); // <-- Agora funciona!
+}
 
-        buscarFotosParaItens(produtos);
-      }
     } catch (err) {
       console.log('aqui')
       console.log("Erro: ", err);
     }
   };
 
-  const buscaFotoProduto = async (id_produto) => {
-  try {
-    console.log(`Buscando foto para produto ${id_produto}`);
-    
-    const response = await ky.get(`http://localhost:3000/${id_produto}/1/foto`).json();
-    
-    if (response && response.data && response.data.url) {
-      console.log(`Foto encontrada para produto ${id_produto}:`, response.data.url);
-      return response.data.url;
-    } else if (response && response.url) {
-      console.log(`Foto encontrada (formato alternativo) para produto ${id_produto}:`, response.url);
-      return response.url;
-    } else {
-      console.log(`Nenhuma foto encontrada para produto ${id_produto}, usando padrão`);
-      return "default-image.svg";
-    }
-  } catch (error) {
-    console.log(`Erro ao buscar foto do produto ${id_produto}:`, error.message);
-    return "default-image.svg";
-  }
+ const buscaFotoProduto = async (id) => {
+
+try {
+const response = await ky.get(`http://localhost:3000/${id}/1/foto`).json();
+
+if (response.data) {
+return response.data.url;
 };
 
-// Função separada para buscar fotos
-const buscarFotosParaItens = async (itens) => {
-  console.log(`Buscando fotos para ${itens.length} itens...`);
-  
-  const itensAtualizados = [...itens];
-  
-  for (let i = 0; i < itensAtualizados.length; i++) {
-    const item = itensAtualizados[i];
-    
-    if (item.fk_id_produto) {
-      try {
-        const fotoUrl = await buscaFotoProduto(item.fk_id_produto);
-        itensAtualizados[i].img = fotoUrl;
-        
-        // Atualiza o estado com a nova foto
-        setItensCarrinho(prev => 
-          prev.map((prevItem, index) => 
-            index === i ? { ...prevItem, img: fotoUrl } : prevItem
-          )
-        );
-        
-        console.log(`Foto atualizada para item ${i}:`, fotoUrl);
-      } catch (error) {
-        console.error(`Erro ao buscar foto para item ${i}:`, error);
-        // Mantém a imagem padrão
-      }
-    }
-  }
-  
-  console.log("Itens com fotos atualizados:", itensAtualizados);
+console.log('Erro 404');
+} catch (err) {
+
+console.error(err);
 };
+};
+
+
+const buscarFotosParaItens = async (itens) => {
+  const itensAtualizados = [];
+
+  for (const item of itens) {
+    let fotoUrl = "default-image.svg";
+
+    if (item.fk_id_produto) {
+      fotoUrl = await buscaFotoProduto(item.fk_id_produto);
+    }
+
+    itensAtualizados.push({
+      ...item,
+      img: fotoUrl,
+      
+    });
+  }
+
+  setProdutos(itensAtualizados); 
+  console.log("PRODUTOS NO ESTADO: ", itensAtualizados);
+  console.log("TIPOS:", itensAtualizados.map(p => ({ preco: p.preco, tipo: typeof p.preco })));
+  console.log("VALORES DE PREÇO:", produtos.map(p => p.preco));
+};
+
 
   useEffect(() => {
     getProducts();
@@ -272,7 +257,24 @@ const buscarFotosParaItens = async (itens) => {
   };
 
   const frete = 16.9;
-  const subtotalOriginal = produtos.reduce((acc, p) => acc + p.preco, 0);
+  const parsePreco = (valor) => {
+  if (!valor) return 0;
+  return Number(
+    String(valor)
+      .replace("R$", "")
+      .replace("$", "")
+      .replace(",", ".")
+      .trim()
+  );
+};
+
+  const subtotalOriginal = produtos.reduce((acc, p) => {
+  const precoUnitario = parsePreco(p.preco);
+  const qtd = Number(p.quantidade) || 1;
+  return acc + precoUnitario * qtd;
+}, 0);
+
+
 
   let desconto = 0;
 
@@ -290,6 +292,7 @@ const buscarFotosParaItens = async (itens) => {
   const subtotal = Math.max(0, subtotalOriginal - desconto);
   const total = subtotal + frete;
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
@@ -303,12 +306,45 @@ const buscarFotosParaItens = async (itens) => {
     }, 1500);
   };
 
+const enviarPedido = async () => {
+  try {
+    const idUsuario = localStorage.getItem("id_usuario_logado");
+    console.log("ID DO USUÁRIO ENVIADO:", idUsuario);
+
+    const res = await ky.post("http://localhost:3000/pedido", {
+      json: {
+        id_usuario: idUsuario,
+        produtos: produtos,
+        total: total,
+        frete: frete,
+        desconto: desconto
+      }
+    }).json();
+
+    console.log("Pedido salvo com sucesso!", res.id_pedido);
+    return res.id_pedido;
+
+  } catch (err) {
+    console.error("Erro ao salvar pedido:", err);
+  }
+};
+
+
+
+
   useEffect(() => {
+  const finalizar = async () => {
     if (success) {
-      setRedirecting(true);
-      setTimeout(() => navigate("/produto/progresso"), 2000);
+      const id = await enviarPedido();  // 🤩 espera o retorno!
+      setIdPedido(id);
+
+      setTimeout(() => navigate(`/rastreio/${id}`), 1500);
     }
-  }, [success]);
+  };
+
+  finalizar();
+}, [success]);
+
 
   const InputError = ({ msg }) => (
     <p className="h-5 text-purpledark text-sm">{msg || ""}</p>
@@ -322,6 +358,8 @@ const buscarFotosParaItens = async (itens) => {
       </div>
     );
   }
+
+
 
   return (
     <div>
@@ -473,10 +511,11 @@ const buscarFotosParaItens = async (itens) => {
 
               {produtos.length > 0 ? (
                 produtos.map((p) => (
-                  <div key={p.id} className="flex gap-4 w-98">
+                  <div key={p.id_carrinho} className="flex gap-4 w-98">
                     <img className="w-23" src={p.img} />
                     <div>
-                      <p>{p.nome}</p>
+                      <p>{p.titulo_}</p>
+                      <p className="text-sm text-gray-600">Quantidade: {p.quantidade}</p>
                       <p className="mt-2 text-purpledark text-xl">
                         R${p.preco}
                       </p>

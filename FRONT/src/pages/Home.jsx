@@ -645,7 +645,7 @@ const valor_produto = async (item) => {
                     <img src={estrela} alt="" />
                     <img src={estrela} alt="" />
                   </div>
-                  <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
+                  <div className="text-purpledark text-[20px] font-semibold">{`R${item.preco}`}</div>
                   <div className="flex flex-row w-full gap-1.5">
                     <div onClick={() => handleProductClick(item)} className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
                       Comprar

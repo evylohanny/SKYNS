@@ -7,7 +7,7 @@ const pedidosProducao = require('./Routes/IOT/pedidos.js');
 const rastreio = require('./Routes/IOT/rastreio.js');
 const pedidos = require('./Routes/pedidos.js');
 const produtos = require('./Routes/produtos.js');
-const pagamento = require('./Routes/pagamento.js');
+const pagamento = require('./Routes/Pagamento.js');
 const gestao = require('./Routes/gestao.js');
 const fotos = require('./Routes/fotos.js');
 
@@ -27,7 +27,6 @@ app.use('/', pedidos);
 app.use('/', pagamento);
 app.use('/', gestao);
 app.use('/', produtos);
-app.use('/', pagamento);
 app.use('/', fotos);
 app.use('/', user);
 
