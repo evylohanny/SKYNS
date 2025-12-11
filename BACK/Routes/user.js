@@ -367,6 +367,37 @@ router.delete("/carrinho", async (req, res) => {
   }
 });
 
+router.post('/pedidos/usuario', async (req, res) => {
+  try {
+    const { id_usuario } = req.body;
+    
+    const db = new dbservice();
+    const pool = await db.getPool();
+    
+    const response = await pool.query(
+      `SELECT status FROM pedidos WHERE fk_id_usuario = $1`,
+      [id_usuario]
+    );
+
+    const pedidos = response.rows;
+
+    if (pedidos.length === 0) {
+      return res.status(404).json({
+        message: 'Nenhum pedido encontrado'
+      });
+    }
+
+    return res.status(200).json({
+      data: pedidos
+    });
+
+  } catch (error) {
+    console.error("Erro:", error);
+    return res.status(500).json({
+      message: 'Erro interno'
+    });
+  }
+});
 
 router.use('/uploads', express.static('uploads'));
 

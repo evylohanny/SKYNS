@@ -360,7 +360,6 @@ const enviarPedido = async () => {
   }
 
 
-
   return (
     <div>
       <CarrosselPQ />
@@ -517,7 +516,7 @@ const enviarPedido = async () => {
                       <p>{p.titulo_}</p>
                       <p className="text-sm text-gray-600">Quantidade: {p.quantidade}</p>
                       <p className="mt-2 text-purpledark text-xl">
-                        R${p.preco}
+                        R{p.preco}
                       </p>
                     </div>
                   </div>

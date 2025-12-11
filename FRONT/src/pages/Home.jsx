@@ -34,8 +34,7 @@ import image4 from "../assets/image4.svg";
 import seta_comments from "../assets/seta-comments.svg";
 import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
-import ProdutoComum from "../components/ProdutoComum";
-import { formatarPrecoParaNumero, formatarParaMoedaBrasileira } from "./utils/formatters";
+
 
 
 function Home() {
@@ -181,13 +180,13 @@ const valor_produto = async (item) => {
   const imagemProduto = productPhotos[item.id_produto] || null;
   
   // Formata o preço para número
-  const precoNumerico = formatarPrecoParaNumero(item.preco);
+  
   
   // Preparar dados do item
   const itemCarrinho = {
     fk_id_produto: item.id_produto,
     quantidade: 1,
-    preco_unitario: precoNumerico, // Já formatado como número
+    preco_unitario: item.preco, 
     nome_produto: item.titulo_,
     imagem_produto: imagemProduto,
     componentes_selecionados: "",
@@ -348,7 +347,7 @@ const valor_produto = async (item) => {
                     {item.breve_descricao}
                   </p>
                   <div className="w-full mt-5 flex gap-1">{renderStars(5)}</div>
-                  <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
+                  <div className="text-purpledark text-[20px] font-semibold">R{item.preco}</div>
                   <div className="flex flex-row w-full gap-1.5">
                     <div
                       className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300"
@@ -456,7 +455,7 @@ const valor_produto = async (item) => {
                     <img src={estrela} alt="" />
                     <img src={estrela} alt="" />
                   </div>
-                  <div className="text-purpledark text-[20px] font-semibold">{`R$ ${item.preco}`}</div>
+                  <div className="text-purpledark text-[20px] font-semibold">R{item.preco}</div>
                   <div className="flex flex-row w-full gap-1.5">
                     <div onClick={() => handleProductClick(item)} className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
                       Comprar
@@ -645,7 +644,7 @@ const valor_produto = async (item) => {
                     <img src={estrela} alt="" />
                     <img src={estrela} alt="" />
                   </div>
-                  <div className="text-purpledark text-[20px] font-semibold">{`R${item.preco}`}</div>
+                  <div className="text-purpledark text-[20px] font-semibold">R{item.preco}</div>
                   <div className="flex flex-row w-full gap-1.5">
                     <div onClick={() => handleProductClick(item)} className="flex w-45 bg-blue p-2 justify-center items-center text-purpledark rounded-xl font-semibold hover:bg-purpledark hover:text-white transition duration-300">
                       Comprar

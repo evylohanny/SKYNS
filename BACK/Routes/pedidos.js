@@ -47,23 +47,26 @@ router.post("/pedido", async (req, res) => {
     const pool = await db.getPool();
 
     const { id_usuario, total } = req.body;
-
+    
     const result = await pool.query(
       `INSERT INTO pedidos (fk_id_usuario, valor_total, status)
        VALUES ($1, $2, 'ESTOQUE')
        RETURNING id_pedido`,
       [id_usuario, total]
+
     );
 
     const idPedido = result.rows[0].id_pedido;
 
     // Iniciar atualização automática
     iniciarAtualizacaoAutomatica(idPedido);
-
+    
     res.status(201).json({
       message: "Pedido criado com sucesso!",
       id_pedido: idPedido
     });
+
+    
 
   } catch (err) {
     console.error("ERRO AO CRIAR PEDIDO:", err);

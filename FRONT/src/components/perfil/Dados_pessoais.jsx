@@ -157,7 +157,7 @@ function Dados_pessoais() {
         }
       }
     }
-    if (!dados_usuario.telefone || dados_usuario.telefone.length !== 11) {
+    if (!dados_usuario.telefone || dados_usuario.telefone.length < 11) {
       setTelefoneInvalido(true);
       erroEditar = true;
     }
