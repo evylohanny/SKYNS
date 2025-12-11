@@ -307,30 +307,33 @@ const buscarFotosParaItens = async (itens) => {
   };
 
 const enviarPedido = async () => {
-  try {
-    const idUsuario = localStorage.getItem("id_usuario_logado");
-    console.log("ID DO USUÁRIO ENVIADO:", idUsuario);
+    try {
+      const idUsuario = localStorage.getItem("id_usuario_logado");
+      console.log("ID DO USUÁRIO ENVIADO:", idUsuario);
 
-    const res = await ky.post("http://localhost:3000/pedido", {
-      json: {
-        id_usuario: idUsuario,
-        produtos: produtos,
-        total: total,
-        frete: frete,
-        desconto: desconto
-      }
-    }).json();
-
-    console.log("Pedido salvo com sucesso!", res.id_pedido);
-    return res.id_pedido;
-
-  } catch (err) {
-    console.error("Erro ao salvar pedido:", err);
-  }
+      // Usamos 'ky' para enviar o pedido
+      const res = await ky.post("http://localhost:3000/pedido", {
+        json: {
+          id_usuario: idUsuario,
+          // Agora, enviamos APENAS o total,
+          // pois a lógica de produtos/estoque/carrinho foi movida para o backend.
+          total: total, 
+        }
+      }).json();
+  
+      console.log("Pedido salvo com sucesso! ID:", res.id_pedido);
+      
+      // O backend agora deve ter limpado o carrinho e atualizado o estoque
+      setProdutos([]); // Limpa o estado local do carrinho
+      
+      return res.id_pedido;
+  
+    } catch (err) {
+      console.error("Erro ao salvar pedido:", err);
+      // Se houver erro, podemos lançar novamente para o useEffect capturar, ou retornar null/undefined
+      return null; 
+    }
 };
-
-
-
 
   useEffect(() => {
   const finalizar = async () => {

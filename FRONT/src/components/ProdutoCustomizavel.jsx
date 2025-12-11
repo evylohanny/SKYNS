@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import ky from 'ky';
+import ky from "ky";
 import { useNavigate } from "react-router-dom";
 
 // components importados
@@ -37,9 +37,9 @@ function ProdutoCustomizavel({ dados }) {
 
   const componentesConvertidos = dados.componente
     ? dados.componente
-      .replace(/^\{|\}$/g, "")      // remove { }
-      .split(",")                   // separa por vírgula
-      .map((item) => item.replace(/"/g, "")) // remove aspas
+        .replace(/^\{|\}$/g, "") // remove { }
+        .split(",") // separa por vírgula
+        .map((item) => item.replace(/"/g, "")) // remove aspas
     : [];
 
   useEffect(() => {
@@ -49,12 +49,13 @@ function ProdutoCustomizavel({ dados }) {
       try {
         const novasFotos = [];
 
-        for (let posicao = 1; posicao < 4; posicao++) {
+        for (let posicao = 0; posicao < 3; posicao++) {
+          // MUDANÇA: começa em 0
           let response;
 
           try {
             response = await ky
-              .get(`http://localhost:3000/${id_produto}/${posicao}/foto`)
+              .get(`http://localhost:3000/${id_produto}/${posicao}/foto`) // MUDANÇA: posicao começa em 0
               .json();
           } catch (err) {
             if (err.response && err.response.status === 404) {
@@ -65,7 +66,7 @@ function ProdutoCustomizavel({ dados }) {
           }
 
           if (response.data?.url) {
-            novasFotos[posicao - 1] = response.data.url;
+            novasFotos[posicao] = response.data.url; // MUDANÇA: index direto
           }
         }
 
@@ -80,20 +81,22 @@ function ProdutoCustomizavel({ dados }) {
 
   // Estados para estoque
   const [quantidade, setQuantidade] = useState(1);
-  const [estoqueDisponivel, setEstoqueDisponivel] = useState(dados.quantidade_estoque || 0);
+  const [estoqueDisponivel, setEstoqueDisponivel] = useState(
+    dados.quantidade_estoque || 0
+  );
   const [carregando, setCarregando] = useState(false);
 
   // Controle de quantidade
   const aumentar = () => {
     if (quantidade < estoqueDisponivel) {
-      setQuantidade(prev => prev + 1);
+      setQuantidade((prev) => prev + 1);
     } else {
       mostrarMensagem(`⚠️ Não há mais unidades disponíveis em estoque.`);
     }
   };
 
   const diminuir = () => {
-    if (quantidade > 1) setQuantidade(prev => prev - 1);
+    if (quantidade > 1) setQuantidade((prev) => prev - 1);
   };
 
   const [tab, setTab] = useState("funciona");
@@ -101,180 +104,244 @@ function ProdutoCustomizavel({ dados }) {
   const componentesDisponiveis = [
     {
       nome: "Niacinamida",
-      descricao: "Forma de vitamina B3 que controla a oleosidade, reduz poros dilatados e melhora a barreira cutânea.",
-      beneficios: "Reduz inflamações, minimiza manchas, uniformiza o tom da pele e controla a produção de sebo."
+      descricao:
+        "Forma de vitamina B3 que controla a oleosidade, reduz poros dilatados e melhora a barreira cutânea.",
+      beneficios:
+        "Reduz inflamações, minimiza manchas, uniformiza o tom da pele e controla a produção de sebo.",
     },
     {
       nome: "Zinco PCA",
-      descricao: "Regulador de oleosidade natural que absorve o excesso de sebo sem ressecar.",
-      beneficios: "Controla brilho excessivo, reduz acne, tem ação adstringente leve e previne poros obstruídos."
+      descricao:
+        "Regulador de oleosidade natural que absorve o excesso de sebo sem ressecar.",
+      beneficios:
+        "Controla brilho excessivo, reduz acne, tem ação adstringente leve e previne poros obstruídos.",
     },
     {
       nome: "Ácido salicílico",
       descricao: "Esfoliante lipossolúvel que penetra profundamente nos poros.",
-      beneficios: "Desobstrui poros, combate cravos e espinhas, reduz inflamações e previne novas acne."
+      beneficios:
+        "Desobstrui poros, combate cravos e espinhas, reduz inflamações e previne novas acne.",
     },
     {
       nome: "Aloe vera",
       descricao: "Extrato vegetal com propriedades calmantes e hidratantes.",
-      beneficios: "Acaba com a vermelhidão, hidrata profundamente, acalma irritações e regenera a pele."
+      beneficios:
+        "Acaba com a vermelhidão, hidrata profundamente, acalma irritações e regenera a pele.",
     },
     {
       nome: "Chá verde",
       descricao: "Potente antioxidante natural rico em polifenóis.",
-      beneficios: "Protege contra poluição, reduz inflamações, combate radicais livres e minimiza poros."
+      beneficios:
+        "Protege contra poluição, reduz inflamações, combate radicais livres e minimiza poros.",
     },
     {
       nome: "Centella asiática",
       descricao: "Ativo reparador e calmante de origem asiática.",
-      beneficios: "Estimula a cicatrização, fortalece a barreira cutânea, reduz marcas e acalma irritações."
+      beneficios:
+        "Estimula a cicatrização, fortalece a barreira cutânea, reduz marcas e acalma irritações.",
     },
     {
       nome: "Prebióticos",
       descricao: "Nutrientes que equilibram o microbioma da pele.",
-      beneficios: "Fortalecimento da barreira cutânea, redução de sensibilidade, equilíbrio do pH e proteção contra agressores externos."
+      beneficios:
+        "Fortalecimento da barreira cutânea, redução de sensibilidade, equilíbrio do pH e proteção contra agressores externos.",
     },
     {
       nome: "Glicerina",
       descricao: "Umectante natural que atrai água para a pele.",
-      beneficios: "Hidratação profunda, melhora da elasticidade, proteção da barreira hídrica e textura aveludada."
+      beneficios:
+        "Hidratação profunda, melhora da elasticidade, proteção da barreira hídrica e textura aveludada.",
     },
     {
       nome: "Óleo de abacate",
       descricao: "Óleo nutritivo rico em vitaminas e ácidos graxos essenciais.",
-      beneficios: "Nutrição intensa, melhora da elasticidade, proteção antioxidante e restauração da barreira lipídica."
+      beneficios:
+        "Nutrição intensa, melhora da elasticidade, proteção antioxidante e restauração da barreira lipídica.",
     },
     {
       nome: "Pantenol",
       descricao: "Pró-vitamina B5 com propriedades hidratantes e reparadoras.",
-      beneficios: "Hidratação profunda, aceleração da cicatrização, melhora da elasticidade e ação calmante."
+      beneficios:
+        "Hidratação profunda, aceleração da cicatrização, melhora da elasticidade e ação calmante.",
     },
     {
       nome: "Ceramidas",
       descricao: "Lipídios naturais que formam a barreira protetora da pele.",
-      beneficios: "Restauração da barreira cutânea, redução da perda de água, proteção contra agressores e melhora da textura."
+      beneficios:
+        "Restauração da barreira cutânea, redução da perda de água, proteção contra agressores e melhora da textura.",
     },
     {
       nome: "Ácido lático",
-      descricao: "AHA suave derivado do leite, com ação esfoliante e hidratante.",
-      beneficios: "Esfoliação suave, hidratação simultânea, uniformização do tom e melhora da textura."
+      descricao:
+        "AHA suave derivado do leite, com ação esfoliante e hidratante.",
+      beneficios:
+        "Esfoliação suave, hidratação simultânea, uniformização do tom e melhora da textura.",
     },
     {
       nome: "Vitamina E",
       descricao: "Poderoso antioxidante lipossolúvel.",
-      beneficios: "Proteção contra danos oxidativos, hidratação intensa, redução de linhas finas e cicatrização."
+      beneficios:
+        "Proteção contra danos oxidativos, hidratação intensa, redução de linhas finas e cicatrização.",
     },
     {
       nome: "Ácido Hialurônico",
-      descricao: "Hidratante natural capaz de reter até 1000x seu peso em água.",
-      beneficios: "Hidratação profunda, preenchimento de linhas finas, melhora da elasticidade e viço imediato."
+      descricao:
+        "Hidratante natural capaz de reter até 1000x seu peso em água.",
+      beneficios:
+        "Hidratação profunda, preenchimento de linhas finas, melhora da elasticidade e viço imediato.",
     },
     {
       nome: "Extrato de camomila",
       descricao: "Ativo calmante e anti-inflamatório natural.",
-      beneficios: "Redução de vermelhidão, acalmar irritações, ação antioxidante leve e hidratação suave."
+      beneficios:
+        "Redução de vermelhidão, acalmar irritações, ação antioxidante leve e hidratação suave.",
     },
     {
       nome: "Água marinha purificada",
       descricao: "Água do mar rica em minerais e oligoelementos.",
-      beneficios: "Equilíbrio do pH, remineralização, hidratação e melhora da defesa natural da pele."
+      beneficios:
+        "Equilíbrio do pH, remineralização, hidratação e melhora da defesa natural da pele.",
     },
     {
       nome: "Vitamina C estabilizada",
       descricao: "Antioxidante potente em forma estável.",
-      beneficios: "Proteção antioxidante, clareamento de manchas, estímulo de colágeno e uniformização do tom."
+      beneficios:
+        "Proteção antioxidante, clareamento de manchas, estímulo de colágeno e uniformização do tom.",
     },
     {
       nome: "Algas vermelhas",
       descricao: "Fonte natural de minerais e antioxidantes marinhos.",
-      beneficios: "Hidratação intensa, ação detoxificante, melhora da elasticidade e proteção antioxidante."
+      beneficios:
+        "Hidratação intensa, ação detoxificante, melhora da elasticidade e proteção antioxidante.",
     },
     {
       nome: "Ácido mandélico",
       descricao: "AHA derivado da amêndoa, suave e eficaz.",
-      beneficios: "Esfoliação sem irritação, clareamento de manchas, ação antibacteriana e ideal para peles sensíveis."
+      beneficios:
+        "Esfoliação sem irritação, clareamento de manchas, ação antibacteriana e ideal para peles sensíveis.",
     },
     {
       nome: "Carvão ativado",
       descricao: "Agente purificante que adsorve impurezas.",
-      beneficios: "Desintoxicação profunda, limpeza de poros, controle de oleosidade e pele mais respirável."
+      beneficios:
+        "Desintoxicação profunda, limpeza de poros, controle de oleosidade e pele mais respirável.",
     },
     {
       nome: "Algas marrons",
       descricao: "Ricas em antioxidantes e minerais do oceano.",
-      beneficios: "Hidratação prolongada, ação firmadora, proteção contra poluição e melhora da densidade cutânea."
+      beneficios:
+        "Hidratação prolongada, ação firmadora, proteção contra poluição e melhora da densidade cutânea.",
     },
     {
       nome: "Glicerina vegetal",
       descricao: "Umectante natural derivado de vegetais.",
-      beneficios: "Hidratação sustentada, melhora da barreira hídrica, textura não oleosa e compatível com todos os tipos de pele."
+      beneficios:
+        "Hidratação sustentada, melhora da barreira hídrica, textura não oleosa e compatível com todos os tipos de pele.",
     },
     {
       nome: "Retinol vegetal",
       descricao: "Alternativa natural ao retinol tradicional.",
-      beneficios: "Renovação celular suave, redução de linhas finas, uniformização da textura sem irritação."
+      beneficios:
+        "Renovação celular suave, redução de linhas finas, uniformização da textura sem irritação.",
     },
     {
       nome: "Extrato de pepino",
       descricao: "Ativo refrescante e hidratante natural.",
-      beneficios: "Refrescância imediata, redução de inchaço, hidratação leve e ação calmante."
+      beneficios:
+        "Refrescância imediata, redução de inchaço, hidratação leve e ação calmante.",
     },
     {
       nome: "Manteiga de Karité",
       descricao: "Emoliente natural rico em ácidos graxos e vitaminas.",
-      beneficios: "Nutrição profunda, reparação da barreira lipídica, proteção contra ressecamento e melhora da elasticidade."
+      beneficios:
+        "Nutrição profunda, reparação da barreira lipídica, proteção contra ressecamento e melhora da elasticidade.",
     },
     {
       nome: "Peptídeos biomiméticos",
-      descricao: "Cadeias de aminoácidos que imitam os peptídeos naturais da pele.",
-      beneficios: "Estímulo de colágeno, firmeza da pele, redução de rugas e melhora da densidade cutânea."
+      descricao:
+        "Cadeias de aminoácidos que imitam os peptídeos naturais da pele.",
+      beneficios:
+        "Estímulo de colágeno, firmeza da pele, redução de rugas e melhora da densidade cutânea.",
     },
     {
       nome: "Vitamina A",
       descricao: "Nutriente essencial para renovação celular.",
-      beneficios: "Renovação acelerada, tratamento de acne, uniformização do tom e estímulo de colágeno."
+      beneficios:
+        "Renovação acelerada, tratamento de acne, uniformização do tom e estímulo de colágeno.",
     },
     {
       nome: "Resveratrol",
       descricao: "Antioxidante potente derivado de uvas.",
-      beneficios: "Proteção contra estresse oxidativo, ação antienvelhecimento, revitalização e uniformização do tom."
+      beneficios:
+        "Proteção contra estresse oxidativo, ação antienvelhecimento, revitalização e uniformização do tom.",
     },
     {
       nome: "Extrato de chá-preto",
       descricao: "Rico em polifenóis e taninos.",
-      beneficios: "Proteção antioxidante, firmeza da pele, redução de inchaço e ação adstringente suave."
+      beneficios:
+        "Proteção antioxidante, firmeza da pele, redução de inchaço e ação adstringente suave.",
     },
     {
       nome: "Retinol",
-      descricao: "Derivado da vitamina A, um dos ativos mais estudados em dermatologia.",
-      beneficios: "Renovação celular acelerada, redução de rugas, tratamento de acne e estímulo de colágeno."
+      descricao:
+        "Derivado da vitamina A, um dos ativos mais estudados em dermatologia.",
+      beneficios:
+        "Renovação celular acelerada, redução de rugas, tratamento de acne e estímulo de colágeno.",
     },
     {
       nome: "Ácido Glicólico",
       descricao: "AHA derivado da cana-de-açúcar com alto poder esfoliante.",
-      beneficios: "Esfoliação profunda, clareamento de manchas, textura aveludada e aumento da penetração de ativos."
+      beneficios:
+        "Esfoliação profunda, clareamento de manchas, textura aveludada e aumento da penetração de ativos.",
     },
     {
       nome: "Vitamina C",
       descricao: "Antioxidante potente que combate radicais livres.",
-      beneficios: "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares."
+      beneficios:
+        "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares.",
     },
     {
       nome: "Óleo de Amêndoas",
       descricao: "Poderoso Hidrantante natural.",
-      beneficios: "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares."
-    }
+      beneficios:
+        "Proteção antioxidante, clareamento uniforme, estímulo de colágeno e redução de danos solares.",
+    },
   ];
 
   const combinacoesToxicas = {
-    Retinol: ["Ácido Glicólico", "Ácido Mandélico", "Ácido Lático", "Vitamina C", "Ácido Salicílico"],
-    "Retinol vegetal": ["Ácido Glicólico", "Ácido Mandélico", "Ácido Lático", "Vitamina C", "Ácido Salicílico"],
+    Retinol: [
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+      "Vitamina C",
+      "Ácido Salicílico",
+    ],
+    
+    "Retinol vegetal": [
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+      "Vitamina C",
+      "Ácido Salicílico",
+    ],
     "Ácido Glicólico": ["Retinol", "Retinol vegetal", "Vitamina C"],
     "Ácido Mandélico": ["Retinol", "Retinol vegetal", "Vitamina C"],
     "Ácido Lático": ["Retinol", "Retinol vegetal", "Vitamina C"],
     "Ácido Salicílico": ["Retinol", "Retinol vegetal"],
-    "Vitamina C": ["Retinol", "Retinol vegetal", "Ácido Glicólico", "Ácido Mandélico", "Ácido Lático"],
-    "Vitamina C estabilizada": ["Retinol", "Retinol vegetal", "Ácido Glicólico", "Ácido Mandélico", "Ácido Lático"]
+    "Vitamina C": [
+      "Retinol",
+      "Retinol vegetal",
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+    ],
+    "Vitamina C estabilizada": [
+      "Retinol",
+      "Retinol vegetal",
+      "Ácido Glicólico",
+      "Ácido Mandélico",
+      "Ácido Lático",
+    ],
   };
 
   const [selecionados, setSelecionados] = useState([]);
@@ -316,31 +383,35 @@ function ProdutoCustomizavel({ dados }) {
     window.scrollTo(0, 0);
   }, []);
 
- const handleAdicionarAoCarrinho = async () => {
-  const produtoParaCarrinho = {
-    id_produto: dados.id_produto,
-    nome: dados.titulo,
-    preco: dados.valor,
-    imagem: dados.imagens?.[0],
-    quantidade: 1
-  };
+  const handleAdicionarAoCarrinho = async () => {
+    const produtoParaCarrinho = {
+      id_produto: dados.id_produto,
+      nome: dados.titulo,
+      preco: dados.valor,
+      imagem: dados.imagens?.[0],
+      quantidade: 1,
+    };
 
-  if (window.adicionarProdutoAoCarrinho) {
-    const resultado = await window.adicionarProdutoAoCarrinho(produtoParaCarrinho);
-    if (resultado.success) {
-      alert(resultado.message);
-    } else {
-      alert(resultado.message);
+    if (window.adicionarProdutoAoCarrinho) {
+      const resultado = await window.adicionarProdutoAoCarrinho(
+        produtoParaCarrinho
+      );
+      if (resultado.success) {
+        console.log(resultado.message);
+      } else {
+        console.log(resultado.message);
+      }
     }
-  }
-};
+  };
 
   // Função para buscar estoque atualizado do banco
   const buscarEstoqueAtualizado = async () => {
     if (!dados || !dados.id_produto) return;
-    
+
     try {
-      const response = await ky.get(`http://localhost:3000/produtos/${dados.id_produto}`).json();
+      const response = await ky
+        .get(`http://localhost:3000/produtos/${dados.id_produto}`)
+        .json();
       if (response.quantidade_estoque !== undefined) {
         setEstoqueDisponivel(response.quantidade_estoque);
       }
@@ -353,7 +424,6 @@ function ProdutoCustomizavel({ dados }) {
   useEffect(() => {
     buscarEstoqueAtualizado();
   }, [dados.id_produto]);
-  
 
   return (
     <div className="min-h-screen">
@@ -381,7 +451,11 @@ function ProdutoCustomizavel({ dados }) {
                 src={foto}
                 alt={`Miniatura ${index}`}
                 className={`w-20 h-20 rounded-lg cursor-pointer border 
-                  ${activeIndex === index ? "border-purpledark" : "border-transparent"}`}
+                  ${
+                    activeIndex === index
+                      ? "border-purpledark"
+                      : "border-transparent"
+                  }`}
                 onClick={() => handleMiniClick(index)}
               />
             ))}
@@ -431,7 +505,7 @@ function ProdutoCustomizavel({ dados }) {
           <p className="pt-6 font-medium text-[25px] text-gray2">
             {dados.titulo_}
           </p>
-          
+
           {/* Mostra mensagem APENAS se estoque ≤ 10 e > 0 */}
           {estoqueDisponivel <= 10 && estoqueDisponivel > 0 && (
             <div className="mt-2">
@@ -440,7 +514,6 @@ function ProdutoCustomizavel({ dados }) {
               </p>
             </div>
           )}
-          
 
           <div className="flex justify-end">
             <p className="mt-4 bg-blackwhite/20 w-fit px-2 py-0.5 rounded">
@@ -493,62 +566,103 @@ function ProdutoCustomizavel({ dados }) {
                 onClick={diminuir}
                 disabled={estoqueDisponivel === 0 || carregando}
                 className={`text-purpledark text-xl font-medium w-10 ${
-                  estoqueDisponivel === 0 || carregando ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purpledark/10'
+                  estoqueDisponivel === 0 || carregando
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purpledark/10"
                 }`}
               >
                 −
               </button>
-              <span className={`mx-3 font-medium w-10 text-center ${
-                estoqueDisponivel === 0 ? 'text-gray-400' : 'text-purpledark'
-              }`}>
+              <span
+                className={`mx-3 font-medium w-10 text-center ${
+                  estoqueDisponivel === 0 ? "text-gray-400" : "text-purpledark"
+                }`}
+              >
                 {quantidade}
               </span>
               <button
                 onClick={aumentar}
-                disabled={estoqueDisponivel === 0 || quantidade >= estoqueDisponivel || carregando}
+                disabled={
+                  estoqueDisponivel === 0 ||
+                  quantidade >= estoqueDisponivel ||
+                  carregando
+                }
                 className={`text-purpledark text-xl font-medium w-10 ${
-                  (estoqueDisponivel === 0 || quantidade >= estoqueDisponivel || carregando) 
-                    ? 'opacity-50 cursor-not-allowed' 
-                    : 'hover:bg-purpledark/10'
+                  estoqueDisponivel === 0 ||
+                  quantidade >= estoqueDisponivel ||
+                  carregando
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purpledark/10"
                 }`}
               >
                 +
               </button>
             </div>
-            
-            <button 
+
+            <button
               className={`font-semibold px-7 py-2 rounded-lg transition-all duration-200 flex items-center justify-center min-w-[140px] ${
                 estoqueDisponivel === 0 || carregando
-                  ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                  : 'bg-blue text-purpledark hover:bg-blue/90 hover:scale-105 active:scale-95'
+                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                  : "bg-blue text-purpledark hover:bg-blue/90 hover:scale-105 active:scale-95"
               }`}
               disabled={estoqueDisponivel === 0 || carregando}
               onClick={handleAdicionarAoCarrinho}
             >
               {carregando ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-purpledark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-purpledark"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   ADICIONANDO...
                 </>
-              ) : estoqueDisponivel === 0 ? 'ESGOTADO' : 'ADICIONAR AO CARRINHO'}
+              ) : estoqueDisponivel === 0 ? (
+                "ESGOTADO"
+              ) : (
+                "ADICIONAR AO CARRINHO"
+              )}
             </button>
           </div>
-          
+
           {/* Informação do estoque */}
           <div className="mt-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${
-                estoqueDisponivel > 10 ? 'bg-green-500' : 
-                estoqueDisponivel > 0 ? 'bg-orange-500' : 'bg-red-500'
-              }`}></span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  estoqueDisponivel > 10
+                    ? "bg-green-500"
+                    : estoqueDisponivel > 0
+                    ? "bg-orange-500"
+                    : "bg-red-500"
+                }`}
+              ></span>
               <p className="text-xs">
-                Estoque disponível: <span className={`font-semibold ${
-                  estoqueDisponivel > 10 ? 'text-green-600' : 
-                  estoqueDisponivel > 0 ? 'text-orange-600' : 'text-red-600'
-                }`}>
+                Estoque disponível:{" "}
+                <span
+                  className={`font-semibold ${
+                    estoqueDisponivel > 10
+                      ? "text-green-600"
+                      : estoqueDisponivel > 0
+                      ? "text-orange-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {estoqueDisponivel} unidade(s)
                 </span>
               </p>
@@ -561,19 +675,21 @@ function ProdutoCustomizavel({ dados }) {
       <div className="w-[80%] mx-auto pl-54">
         <div className="flex border-b-2 border-b-blackwhite/50 gap-6 ">
           <button
-            className={`pb-2 ${tab === "funciona"
-              ? "border-b-2 border-purpledark font-semibold"
-              : "text-blackwhite/70 hover:text-purpledark"
-              }`}
+            className={`pb-2 ${
+              tab === "funciona"
+                ? "border-b-2 border-purpledark font-semibold"
+                : "text-blackwhite/70 hover:text-purpledark"
+            }`}
             onClick={() => setTab("funciona")}
           >
             Como funciona
           </button>
           <button
-            className={`pb-2 ${tab === "composicao"
-              ? "border-b-2 border-purpledark font-semibold"
-              : "text-blackwhite/70 hover:text-purpledark"
-              }`}
+            className={`pb-2 ${
+              tab === "composicao"
+                ? "border-b-2 border-purpledark font-semibold"
+                : "text-blackwhite/70 hover:text-purpledark"
+            }`}
             onClick={() => setTab("composicao")}
           >
             Composição especificada
@@ -652,14 +768,14 @@ function ProdutoCustomizavel({ dados }) {
           }}
         >
           <div className="flex items-center gap-2">
-            {mensagem.includes('✅') && <span className="text-xl">✅</span>}
-            {mensagem.includes('⚠️') && <span className="text-xl">⚠️</span>}
-            {mensagem.includes('❌') && <span className="text-xl">❌</span>}
+            {mensagem.includes("✅") && <span className="text-xl">✅</span>}
+            {mensagem.includes("⚠️") && <span className="text-xl">⚠️</span>}
+            {mensagem.includes("❌") && <span className="text-xl">❌</span>}
             <span>{mensagem}</span>
           </div>
         </div>
       )}
-      
+
       <style>{`
         @keyframes fadeIn {
           0% { opacity: 0; transform: translateY(20px); }

@@ -2,10 +2,50 @@ const DbService = require('../config/db.config.js');
 const express = require('express');
 const router = express.Router();
 
+// Função para atualizar status automaticamente
+function iniciarAtualizacaoAutomatica(idPedido) {
+  const db = new DbService();
+
+  const statusList = [
+    "ESTOQUE",
+    "PROCESSO",
+    "MONTAGEM",
+    "EXPEDIÇÃO",
+    "COMPLETED"
+  ];
+
+  let etapa = 0;
+
+  const interval = setInterval(async () => {
+    try {
+      const pool = await db.getPool();
+
+      if (etapa >= statusList.length) {
+        clearInterval(interval);
+        return;
+      }
+
+      const novoStatus = statusList[etapa];
+      
+      await pool.query(
+        `UPDATE pedidos SET status = $1 WHERE id_pedido = $2`,
+        [novoStatus, idPedido]
+      );
+
+      console.log(`Pedido ${idPedido} atualizado para: ${novoStatus}`);
+      etapa++;
+
+    } catch (err) {
+      console.error("Erro ao atualizar status:", err);
+      clearInterval(interval);
+    }
+  }, 30000); // 1 MINUTO
+}
+
 router.get('/pedidos', async (req, res) => {
   try {
     const pedido = new DbService();
-    const response = await pedido.buscaPedidos(); // AGORA EXECUTA
+    const response = await pedido.buscaPedidos();
 
     if (!response || response.length === 0) {
       return res.status(404).json({
@@ -13,12 +53,9 @@ router.get('/pedidos', async (req, res) => {
       });
     }
 
-    // Garantir que "componentes" sempre vira array
     const pedidosFormatados = response.map(p => {
       let comps = p.componentes;
-
       if (typeof comps === "string") {
-        // Se vier "Ácido Hialurônico,Niacinamida"
         comps = comps.split(",").map(c => c.trim());
       }
 
@@ -42,78 +79,63 @@ router.get('/pedidos', async (req, res) => {
 });
 
 router.post("/pedido", async (req, res) => {
-  try {
     const db = new DbService();
     const pool = await db.getPool();
 
-    const { id_usuario, total } = req.body;
-    
-    const result = await pool.query(
-      `INSERT INTO pedidos (fk_id_usuario, valor_total, status)
-       VALUES ($1, $2, 'ESTOQUE')
-       RETURNING id_pedido`,
-      [id_usuario, total]
-
-    );
-
-    const idPedido = result.rows[0].id_pedido;
-
-    // Iniciar atualização automática
-    iniciarAtualizacaoAutomatica(idPedido);
-    
-    res.status(201).json({
-      message: "Pedido criado com sucesso!",
-      id_pedido: idPedido
-    });
-
-    
-
-  } catch (err) {
-    console.error("ERRO AO CRIAR PEDIDO:", err);
-    res.status(500).json({ error: "Erro ao criar pedido" });
-  }
-});
-
-
-// 🚀 Atualizar status a cada 1 minuto
-function iniciarAtualizacaoAutomatica(idPedido) {
-  const db = new DbService();
-
-  const statusList = [
-    "ESTOQUE",
-    "PROCESSO",
-    "MONTAGEM",
-    "EXPEDIÇÃO",
-    "COMPLETED"
-  ];
-
-  let etapa = 0;
-
-  const interval = setInterval(async () => {
     try {
-      const pool = await db.getPool();
+        const { id_usuario, total } = req.body;
 
-      if (etapa >= statusList.length) {
-        clearInterval(interval); // acabou
-        return;
-      }
+        const result = await pool.query(
+            `INSERT INTO pedidos (fk_id_usuario, valor_total, status, data)
+            VALUES ($1, $2, 'ESTOQUE', CURRENT_TIMESTAMP)
+            RETURNING id_pedido, data`,
+            [id_usuario, total]
+        );
 
-      const novoStatus = statusList[etapa];
+        const { id_pedido, data } = result.rows[0];
 
-      await pool.query(
-        `UPDATE pedidos SET status = $1 WHERE id_pedido = $2`,
-        [novoStatus, idPedido]
-      );
+        const resCarrinho = await pool.query(
+            `SELECT fk_id_produto, quantidade FROM carrinho WHERE fk_id_usuario = $1`,
+            [id_usuario]
+        );
+        const produtosComprados = resCarrinho.rows;
 
-      console.log(`Pedido ${idPedido} atualizado para: ${novoStatus}`);
-      etapa++;
+        if (produtosComprados.length > 0) {
+            for (const item of produtosComprados) {
+                const id_produto = item.fk_id_produto;
+                const quantidade_comprada = item.quantidade;
+
+                // Diminui a quantidade no estoque
+                await pool.query(
+                    `UPDATE produtos
+                    SET quantidade_estoque = quantidade_estoque - $1
+                    WHERE id_produto = $2`,
+                    [quantidade_comprada, id_produto]
+                );
+            }
+
+            // 3. Limpar o carrinho do usuário após a compra
+            await pool.query(
+                `DELETE FROM carrinho WHERE fk_id_usuario = $1`,
+                [id_usuario]
+            );
+        } else {
+             console.warn(`Carrinho vazio para o usuário ${id_usuario}. Nenhum estoque atualizado.`);
+        }
+
+        iniciarAtualizacaoAutomatica(id_pedido);
+
+        res.status(201).json({
+            message: "Pedido criado com sucesso!",
+            id_pedido: id_pedido,
+            data: data
+        });
 
     } catch (err) {
-      console.error("Erro ao atualizar status:", err);
-      clearInterval(interval);
+        console.error("ERRO AO CRIAR PEDIDO E ATUALIZAR ESTOQUE:", err);
+        res.status(500).json({ error: "Erro ao criar pedido ou atualizar estoque" });
     }
-  }, 60000); // 1 MINUTO
-}
+});
 
 
 module.exports = router;

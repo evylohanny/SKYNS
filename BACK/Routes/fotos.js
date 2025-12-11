@@ -4,7 +4,6 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 
-// ---- CONFIG MULTER COM VALIDAÇÃO ---- //
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -15,7 +14,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// 🔥 FILTRO DE ARQUIVO PARA ACEITAR SOMENTE FOTOS
 function fileFilter(req, file, cb) {
   const allowedTypes = /jpeg|jpg|png|webp/;
 

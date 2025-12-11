@@ -265,7 +265,7 @@ function Perfil() {
     };
 
     // Verificar se algum pedido tem status "COMPLETED"
-    if (id_usuario_logado) {
+    if (id_usuario_logado ) {
         buscarCarrinho();
       
     }
