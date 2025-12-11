@@ -28,9 +28,10 @@ function Rastreio() {
 
         const getProductState = async() => {
 
+            const id_usuario = localStorage.getItem('id_usuario_logado');
             try {
 
-                const response = await ky.get(`http://localhost:3000/rastreio/${id}`).json();
+                const response = await ky.get(`http://localhost:3000/rastreio/${id_usuario}`).json();
 
                 if (!response) {
 
