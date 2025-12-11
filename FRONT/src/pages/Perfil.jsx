@@ -15,30 +15,27 @@ function Perfil() {
   const [tipoInput, setTipoInput] = useState("password");
   const [tipoIconSenha, setTipoIconSenha] = useState("icon_nao_ver.png");
   const id_usuario_logado = localStorage.getItem("id_usuario_logado");
+
   const [dados_usuario, setDados_usuario] = useState({});
-  const [carrinho, setCarrinho] = useState([]);
+
+  // 🔥 Carrega carrinho salvo
+  const carrinhoSalvo = JSON.parse(localStorage.getItem("carrinho_usuario") || "[]");
+  const [carrinho, setCarrinho] = useState(carrinhoSalvo);
+
   const [status, setStatus] = useState([]);
   const [fotosProdutos, setFotosProdutos] = useState({});
   const [fotoPreview, setFotoPreview] = useState("");
 
   const alternarTipo = () => {
-    setTipoInput((prev) => (prev === "password" ? "text" : "password"));
-    setTipoIconSenha((prev) =>
+    setTipoInput(prev => prev === "password" ? "text" : "password");
+    setTipoIconSenha(prev =>
       prev === "icon_nao_ver.png" ? "icon_ver.png" : "icon_nao_ver.png"
     );
   };
 
-  const ativaAbaDados = () => {
-    setInfoAtiva("dados");
-  };
-
-  const ativaAbaEnd = () => {
-    setInfoAtiva("endereco");
-  };
-
-  const ativaAbaCard = () => {
-    setInfoAtiva("cartoes");
-  };
+  const ativaAbaDados = () => setInfoAtiva("dados");
+  const ativaAbaEnd = () => setInfoAtiva("endereco");
+  const ativaAbaCard = () => setInfoAtiva("cartoes");
 
   const [aberto, setAberto] = useState(false);
   const abrir = () => setAberto(true);
@@ -55,20 +52,14 @@ function Perfil() {
 
   const excluir = async () => {};
 
-  const inicio = () => {
-    navigate("/");
-  };
+  const inicio = () => navigate("/");
 
   useEffect(() => {
-    if (valorSenhaExcluir.length > 0) {
-      setErroExcluir(false);
-    }
+    if (valorSenhaExcluir.length > 0) setErroExcluir(false);
   }, [valorSenhaExcluir]);
 
   useEffect(() => {
-    if (valorEmailExcluir.length > 0) {
-      setErroExcluir(false);
-    }
+    if (valorEmailExcluir.length > 0) setErroExcluir(false);
   }, [valorEmailExcluir]);
 
   useEffect(() => {
@@ -82,6 +73,7 @@ function Perfil() {
 
         const dados = response;
         setDados_usuario(dados);
+
         if (dados.foto_perfil) {
           setFotoPreview(dados.foto_perfil);
         }
@@ -100,9 +92,7 @@ function Perfil() {
 
   const fileInputRef = useRef(null);
 
-  const abrirExplorador = () => {
-    fileInputRef.current.click();
-  };
+  const abrirExplorador = () => fileInputRef.current.click();
 
   const selecionarImagem = (e) => {
     const file = e.target.files[0];
@@ -134,8 +124,6 @@ function Perfil() {
         .json();
 
       if (response.success) {
-        console.log("Foto atualizada com sucesso!");
-
         setDados_usuario((prev) => ({
           ...prev,
           foto: response.fotoUrl,
@@ -149,95 +137,9 @@ function Perfil() {
     }
   };
 
-  // Buscar pedidos do usuário
-  useEffect(() => {
-    const buscarPedidos = async () => {
-      try {
-        const response = await ky
-          .post("http://localhost:3000/pedidos/usuario", {
-            json: {
-              id_usuario: id_usuario_logado,
-            },
-          })
-          .json();
-
-        console.log("Resposta da API de pedidos:", response);
-
-        if (response.data) {
-          console.log("Pedidos encontrados:", response.data);
-          setStatus(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar pedidos:", error);
-      }
-    };
-
-    if (id_usuario_logado) {
-      buscarPedidos();
-    }
-  }, [id_usuario_logado]);
-
-  // Função para buscar foto do produto
-  const buscarFotoProduto = async (id_produto) => {
-    try {
-      console.log(`Buscando foto para produto ${id_produto}`);
-      
-      const response = await ky.get(`http://localhost:3000/${id_produto}/foto`).json();
-      
-      if (response && response.data && response.data.url) {
-        console.log(`Foto encontrada para produto ${id_produto}:`, response.data.url);
-        return response.data.url;
-      } else if (response && response.url) {
-        console.log(`Foto encontrada (formato alternativo) para produto ${id_produto}:`, response.url);
-        return response.url;
-      } else {
-        console.log(`Nenhuma foto encontrada para produto ${id_produto}, usando padrão`);
-        return "foto_prduto.svg";
-      }
-    } catch (error) {
-      console.log(`Erro ao buscar foto do produto ${id_produto}:`, error.message);
-      return "foto_prduto.svg";
-    }
-  };
-
-  // Função para buscar fotos para todos os itens do carrinho
-  const buscarFotosParaItensCarrinho = async (itens) => {
-    console.log(`Buscando fotos para ${itens.length} itens do carrinho...`);
-    
-    const fotosAtualizadas = { ...fotosProdutos };
-    let atualizouAlguma = false;
-    
-    for (const item of itens) {
-      if (item.fk_id_produto && !fotosAtualizadas[item.fk_id_produto]) {
-        try {
-          const fotoUrl = await buscarFotoProduto(item.fk_id_produto);
-          fotosAtualizadas[item.fk_id_produto] = fotoUrl;
-          atualizouAlguma = true;
-          
-          console.log(`Foto atualizada para produto ${item.fk_id_produto}:`, fotoUrl);
-        } catch (error) {
-          console.error(`Erro ao buscar foto para produto ${item.fk_id_produto}:`, error);
-          fotosAtualizadas[item.fk_id_produto] = "foto_prduto.svg";
-        }
-      }
-    }
-    
-    if (atualizouAlguma) {
-      setFotosProdutos(fotosAtualizadas);
-    }
-    
-    console.log("Fotos atualizadas:", fotosAtualizadas);
-  };
-
-  // Função para obter a imagem do produto
-  const getProductImage = (item) => {
-    if (item.fk_id_produto && fotosProdutos[item.fk_id_produto]) {
-      return fotosProdutos[item.fk_id_produto];
-    }
-    return "foto_prduto.svg";
-  };
-
-  
+  // ==================================
+  // 🔥 Mantém carrinho salvo
+  // ==================================
   useEffect(() => {
     const buscarCarrinho = async () => {
       try {
@@ -249,13 +151,11 @@ function Perfil() {
           })
           .json();
 
-        console.log("Resposta da API do carrinho:", response);
-        
-        if (response.data) {
-          console.log("Carrinho encontrado:", response.data);
+        if (response.data && response.data.length > 0) {
+          // 🔥 Salva no estado e no localStorage
           setCarrinho(response.data);
-          
-          // Buscar fotos para os produtos
+          localStorage.setItem("carrinho_usuario", JSON.stringify(response.data));
+
           buscarFotosParaItensCarrinho(response.data);
         }
 
@@ -264,16 +164,53 @@ function Perfil() {
       }
     };
 
-    // Verificar se algum pedido tem status "COMPLETED"
-    if (id_usuario_logado ) {
-        buscarCarrinho();
-      
-    }
+    if (id_usuario_logado) buscarCarrinho();
   }, [id_usuario_logado]);
 
+  const buscarFotoProduto = async (id_produto) => {
+    try {
+      const response = await ky
+        .get(`http://localhost:3000/${id_produto}/foto`)
+        .json();
+
+      if (response?.data?.url) return response.data.url;
+      if (response?.url) return response.url;
+      return "foto_prduto.svg";
+
+    } catch {
+      return "foto_prduto.svg";
+    }
+  };
+
+  const buscarFotosParaItensCarrinho = async (itens) => {
+    const fotosAtualizadas = { ...fotosProdutos };
+    let atualizou = false;
+
+    for (const item of itens) {
+      if (item.fk_id_produto && !fotosAtualizadas[item.fk_id_produto]) {
+        fotosAtualizadas[item.fk_id_produto] = await buscarFotoProduto(item.fk_id_produto);
+        atualizou = true;
+      }
+    }
+
+    if (atualizou) setFotosProdutos(fotosAtualizadas);
+  };
+
+  const getProductImage = (item) => {
+    if (item.fk_id_produto && fotosProdutos[item.fk_id_produto]) {
+      return fotosProdutos[item.fk_id_produto];
+    }
+    return "foto_prduto.svg";
+  };
+
+  // ==================================
+  // RENDERIZAÇÃO
+  // ==================================
+  
   return (
     <div className="w-full h-full">
       <NavBar />
+
       <div className=" w-full h-1/6 flex justify-center items-end">
         <div className="bg-[#FEF5FF] flex items-center text-lg p-4 w-76/100 h-48/100 font-medium rounded-2xl">
           <p className="pl-2 text-purpledark">
@@ -281,8 +218,8 @@ function Perfil() {
           </p>
         </div>
       </div>
-      
-      {/* Seção de Pedidos COMPLETED */}
+
+      {/* 🔥 Carrinho mantido (mesmo se API estiver vazia) */}
       {carrinho && carrinho.length > 0 ? (
         <>
           <div className="w-full pt-6 flex justify-center items-center">
@@ -293,48 +230,47 @@ function Perfil() {
 
           <div className="w-full flex justify-center">
             <div className="w-79/100 ml-12 flex flex-col justify-start pr-9 items-center overflow-y-auto">
-              {carrinho.map((item, index) => {
-                return (
-                  <div
-                    className="w-full flex items-center pt-8 justify-center"
-                    key={index}
-                  >
-                    <div className="bg-[#F4F4F4] h-36 flex items-center w-full rounded-2xl">
-                      <div className="ml-4 w-9/100 mr-40 flex justify-center items-center">
-                        <img
-                          className="w-100/100 h-24 object-cover rounded-lg"
-                          src={getProductImage(item)}
-                          alt={item.titulo_ || "Produto"}
-                          onError={(e) => {
-                            e.target.src = "foto_prduto.svg";
-                          }}
-                        />
-                      </div>
-                      <div className="w-20/100 mr-20">
-                        <h1 className="text-lg">{item.titulo_ || "Produto"}</h1>
-                      </div>
-                      
-                      <div className="border-2 h-8 w-7/100 border-[#97989C] ml-15 mr-4 gap-3 flex justify-center items-center rounded-lg">
-                        <h1 className="text-4xl pb-1 text-[#97989C]">-</h1>
-                        <h1 className="text-[#97989C] text-lg">
-                          {item.quantidade || 1}
-                        </h1>
-                        <h1 className="text-[#97989C] text-2xl">+</h1>
-                      </div>
-                      <div>
-                        <h1 className="text-purpledark text-2xl font-bold ml-24 mr-10">
-                          R${item.preco || "0,00"}
-                        </h1>
-                      </div>
-                      <div className="h-full w-12/100 justify-end items-end flex pb-5">
-                        <button className="border-2 w-full p-1.5 text-sm rounded-lg border-purpledark text-purpledark cursor-pointer">
-                          VER DETALHES
-                        </button>
-                      </div>
+              {carrinho.map((item, index) => (
+                <div
+                  className="w-full flex items-center pt-8 justify-center"
+                  key={index}
+                >
+                  <div className="bg-[#F4F4F4] h-36 flex items-center w-full rounded-2xl">
+                    <div className="ml-4 w-9/100 mr-40 flex justify-center items-center">
+                      <img
+                        className="w-100/100 h-24 object-cover rounded-lg"
+                        src={getProductImage(item)}
+                        alt={item.titulo_ || "Produto"}
+                        onError={(e) => (e.target.src = "foto_prduto.svg")}
+                      />
+                    </div>
+
+                    <div className="w-20/100 mr-20">
+                      <h1 className="text-lg">{item.titulo_}</h1>
+                    </div>
+
+                    <div className="border-2 h-8 w-7/100 border-[#97989C] ml-15 mr-4 gap-3 flex justify-center items-center rounded-lg">
+                      <h1 className="text-4xl pb-1 text-[#97989C]">-</h1>
+                      <h1 className="text-[#97989C] text-lg">
+                        {item.quantidade || 1}
+                      </h1>
+                      <h1 className="text-[#97989C] text-2xl">+</h1>
+                    </div>
+
+                    <div>
+                      <h1 className="text-purpledark text-2xl font-bold ml-24 mr-10">
+                        R${item.preco}
+                      </h1>
+                    </div>
+
+                    <div className="h-full w-12/100 justify-end items-end flex pb-5">
+                      <button className="border-2 w-full p-1.5 text-sm rounded-lg border-purpledark text-purpledark cursor-pointer">
+                        VER DETALHES
+                      </button>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </>
@@ -361,7 +297,8 @@ function Perfil() {
           </div>
         </div>
       )}
-      
+
+
       <div className="w-full flex justify-center items-center">
         <div className="flex items-center mt-6 text-3xl p-2 w-76/100 font-medium">
           Informação da conta
