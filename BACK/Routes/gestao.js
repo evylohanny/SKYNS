@@ -109,9 +109,9 @@ router.delete("/produtos/:id", async (req, res) => {
       });
     }
 
-    // Primeiro, exclui as fotos relacionadas ao produto (se houver tabela de fotos)
+  
     try {
-      await pool.query("DELETE FROM fotos WHERE id_produto = $1", [id]);
+      await pool.query("DELETE FROM fotos WHERE fk_id_produto = $1", [id]);
     } catch (fotoError) {
       console.log(
         "Nenhuma foto para excluir ou tabela de fotos não existe:",
