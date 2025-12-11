@@ -329,9 +329,6 @@ const enviarPedido = async () => {
   }
 };
 
-
-
-
   useEffect(() => {
   const finalizar = async () => {
     if (success) {

@@ -56,7 +56,6 @@ router.get('/pagamento', async (req, res) => {
   }
 });
 
-// Salvar pagamento
 router.post('/pagamento', async (req, res) => {
   try {
     const db = new DbService();
@@ -67,19 +66,22 @@ router.post('/pagamento', async (req, res) => {
       return res.status(400).json({ error: 'Nenhum produto enviado' });
     }
 
-    if (salvarPor30Dias) {
-      await pool.query(
-        'INSERT INTO pagamentos (produtos_json) VALUES ($1)',
-        [JSON.stringify(produtos)]
-      );
-    }
+    // Inserir pagamento
+    const result = await pool.query(
+      'INSERT INTO pagamentos (produtos_json) VALUES ($1) RETURNING id_pagamento',
+      [JSON.stringify(produtos)]
+    );
 
-    res.json({ message: 'Pagamento salvo com sucesso' });
+    const id_pagamento = result.rows[0].id_pagamento;
+
+    res.json({ message: 'Pagamento salvo com sucesso', id_pagamento });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao salvar pagamento' });
   }
 });
+
 
 // Limpar pagamento
 router.delete('/pagamento', async (req, res) => {
