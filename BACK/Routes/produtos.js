@@ -43,6 +43,45 @@ router.get("/produtos/:id", async (req, res) => {
   }
 });
 
+router.get('/produtos/:id/foto', async (req, res) => {
+  try {
+    const db = new DbService();
+    const pool = await db.getPool();
+    const { id } = req.params;
+
+    const result = await pool.query(
+      'SELECT img FROM produtos WHERE id_produto = $1',
+      [id]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].img) {
+      return res.status(404).json({ error: 'Foto não encontrada' });
+    }
+
+    const filename = result.rows[0].img;
+
+    const filePath = require('path').join(
+      __dirname,
+      '..',
+      'uploads',
+      filename
+    );
+
+    console.log("🔎 Enviando foto:", filePath);
+
+    return res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("Erro ao enviar foto:", err);
+        res.status(500).json({ error: "Erro ao carregar foto" });
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Erro ao buscar foto' });
+  }
+});
+
 // CRIAR PRODUTO
 router.post("/produtos", async (req, res) => {
   try {

@@ -1,16 +1,18 @@
+const dbservice = require('../../config/db.config.js');
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
 router.get('/rastreio/:id', async (req, res) => {
 
-    try {
-      
+    try {      
         const { id } = req.params;
+        const rastreio = new dbservice();
+        const pool = rastreio.getPool();
 
-        const response = await axios.get(`http://52.72.137.244:3000/queue/items/${id}`, { timeout: 10000 });
+        const response = await pool.query('SELECT status FROM pedidos WHERE id_usuario = $1', [id]);
 
-        const status = response.data.status;
+        const status = response.rows[0];
         console.log(status);
 
         if (response && status === 'ESTOQUE') {
