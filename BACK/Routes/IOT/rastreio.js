@@ -5,8 +5,7 @@ const router = express.Router();
 
 router.get('/rastreio/:id', async (req, res) => {
 
-    try {
-      
+    try {      
         const { id } = req.params;
         const rastreio = new dbservice();
         const pool = rastreio.getPool();
